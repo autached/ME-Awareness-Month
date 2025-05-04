@@ -1,11 +1,36 @@
 body {
   font-family: sans-serif;
+  font-size: 16px;
   text-align: center;
   margin: 20px;
   background-color: #557b7c;
   color: #000;
 }
+
+@media (max-width: 600px) {
+  body {
+    font-size: 18px;
+  }
+
+  .generator {
+    padding: 16px;
+  }
+
+  .template-thumb {
+    width: 80px;
+  }
+
+  input[type="file"],
+  input[type="range"],
+  input[type="text"],
+  textarea,
+  button {
+    font-size: 16px;
+  }
+}
+
 .canvas-container {
+  margin-top: 20px;
   position: relative;
   /* display: inline-block; */
   display: flex;
@@ -31,7 +56,11 @@ canvas {
 }
 
 .template-selector {
-  margin: 10px auto;
+  margin: 16px auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .template-thumb {
   width: 100px;
@@ -41,4 +70,11 @@ canvas {
 }
 .template-thumb:hover {
   border: 2px solid #333;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 6px;
 }
