@@ -5,7 +5,11 @@ body {
 }
 .canvas-container {
   position: relative;
-  display: inline-block;
+  /* display: inline-block; */
+  display: flex;
+  max-width: 100%;
+  width: auto;
+  justify-content: center;
 }
 canvas {
   border: 1px solid #ccc;
