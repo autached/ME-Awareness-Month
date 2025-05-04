@@ -14,7 +14,7 @@ body {
 canvas {
   border: 1px solid #ccc;
   width: 100%;         /* Fill container width */
-  max-width: 200px;    /* But never exceed 540px */
+  max-width: 540px;    /* But never exceed 540px */
   height: auto;
 }
 .generator {
