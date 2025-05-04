@@ -9,6 +9,9 @@ body {
 }
 canvas {
   border: 1px solid #ccc;
+  width: 100%;         /* Fill container width */
+  max-width: 540px;    /* But never exceed 540px */
+  height: auto;
 }
 .generator {
   margin-top: 20px;
