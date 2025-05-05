@@ -241,20 +241,6 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   ctx.fillText(line, x, y);
 }
 
-function downloadImage(type) {
-  const canvas = type === 'cover' ? document.getElementById("cover-canvas") : document.getElementById("poster-canvas");
-  const link = document.createElement("a");
-  const baseName = selectedTemplate.replace(".png", "").replace(".jpg", "").replace(".jpeg", "");
-  link.download = "ME-" + baseName + ".png";
-  canvas.toBlob(function(blob) {
-    const url = URL.createObjectURL(blob);
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
-  });
-}
-
-
 // Zoom functionality
 let zoomFactor = 1;
 coverCanvas.addEventListener("wheel", function(e) {
@@ -315,8 +301,19 @@ document.getElementById("zoom-slider").addEventListener("input", function(e) {
 function downloadImage(type) {
   const canvas = type === 'cover' ? document.getElementById("cover-canvas") : document.getElementById("poster-canvas");
   const link = document.createElement("a");
-  link.download = type + "-me-awareness.png";
 
+  let filename = "ME-profile-image.png"; // fallback
+
+  if (type === 'cover' && typeof selectedTemplate !== 'undefined') {
+    const baseName = selectedTemplate.split("/").pop().replace(/\.[^/.]+$/, ""); // remove extension
+    filename = "ME-" + baseName + ".png";
+  } else if (type === 'poster') {
+    filename = "ME-poster.png";
+  }
+
+  link.download = filename;
+
+  // Prefer toBlob if available
   if (canvas.toBlob) {
     canvas.toBlob(function(blob) {
       const url = URL.createObjectURL(blob);
