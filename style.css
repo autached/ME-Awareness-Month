@@ -113,4 +113,13 @@ body.legal-page {
   max-width: 720px;
   margin: 0 auto;
   padding: 2em 1.5em 0 1.5em;
+
+  /* sticky header */
+    position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #557b7c;   /* ← use the page-wide background colour */
+  padding-bottom: .5em;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+
 }
