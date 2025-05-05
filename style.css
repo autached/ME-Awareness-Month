@@ -62,11 +62,12 @@ button {
   font-size: 16px;
   border-radius: 999px; /* ← this creates the round/pill look */
   border-color: white;
+  box-shadow: none;        /* removes any drop shadow */
+  outline: none;           /* removes dotted keyboard focus outline (if unwanted) */
   cursor: pointer;
   background-color: #e8b4a0;
   color: #24514d;
   font-weight: 600;
-
 }
 
 button:hover {
