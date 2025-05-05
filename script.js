@@ -327,3 +327,20 @@ function downloadImage(type) {
     link.click();
   }
 }
+
+// Zähler für Cover-Generator
+fetch('https://api.countapi.xyz/hit/memonat.mecfs.space/cover-generator')
+  .then(res => res.json())
+  .then(data => {
+    const el = document.getElementById('coverCount');
+    if (el) el.textContent = data.value;
+  });
+
+// Zähler für Poster-Generator
+fetch('https://api.countapi.xyz/hit/memonat.mecfs.space/poster-generator')
+  .then(res => res.json())
+  .then(data => {
+    const el = document.getElementById('posterCount');
+    if (el) el.textContent = data.value;
+  });
+
