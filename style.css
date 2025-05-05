@@ -3,20 +3,22 @@ header h4, header h5, header h6 {
   color: #e8b4a0;
 }
 
-header p,
-footer p {
+header p, footer p {
   color: #f0f0f0;
 }
 
-header a,
-footer a, {
+header a, footer a, {
   color: #f48c74;
   text-decoration: none;
 }
 
 header a:hover, footer a:hover {
   text-decoration: underline;
-  color: #e8b4a0
+  color: #e8b4a0;
+}
+
+header a:visited, footer a:visited {
+  color: #e8b4a0; /* or any color you prefer */
 }
 
 body {
