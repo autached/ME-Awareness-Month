@@ -338,3 +338,12 @@ function downloadImage(type) {
   }
 }
 
+document.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    // Remove from all buttons first (optional, for exclusive selection)
+    document.querySelectorAll('button').forEach(b => b.classList.remove('sticky-active'));
+
+    // Then add to clicked one
+    btn.classList.add('sticky-active');
+  });
+});
