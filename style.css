@@ -1,3 +1,8 @@
+header h1, header h2, header h3,
+header h4, header h5, header h6 {
+  color: #f2d7c9;
+}
+
 body {
   font-family: sans-serif;
   font-size: 16px;
