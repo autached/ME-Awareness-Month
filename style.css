@@ -90,7 +90,7 @@ body.legal-page {
 }
 
 .legal-main {
-  background-color: #f2f2f2;
+  background-color: #f0f0f0;
   max-width: 720px;
   margin: 2em auto;
   padding: 2em 1.5em;
@@ -98,18 +98,19 @@ body.legal-page {
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
-/* RECHTLICHES.HTML */
+/* RECHTLICHES.HTML ======================================= */
+.legal-main {
+  background-color: #f2f2f2;      /* helles Grau für Lesebereich */
+  max-width: 720px;
+  margin: 2em auto;
+  padding: 2em 1.5em;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,.2);
+  text-align: left;               /* sicher linksbündig */
+}
+
 .legal-header {
   max-width: 720px;
   margin: 0 auto;
   padding: 2em 1.5em 0 1.5em;
-}
-
-.legal-main h1, .legal-main h2 {
-  color: #000;
-}
-
-input[type="file"] { /* control margin to other objects like the zoom slider */
-  display: block;
-  margin: 0 auto 12px auto;
 }
