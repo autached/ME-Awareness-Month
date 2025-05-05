@@ -321,6 +321,16 @@ function downloadImage(type) {
       link.href = url;
       link.click();
       URL.revokeObjectURL(url);
+        /* +++ NEU: nur für Cover das CountAPI-Hit auslösen + Text aktualisieren +++ */
+      if (type === 'cover') {
+        fetch('https://api.countapi.xyz/hit/memonat.mecfs.space/cover-generator')
+          .then(res => res.json())
+          .then(data => {
+            const el = document.getElementById('cover-download-count');
+            if (el) el.textContent =
+              `Es wurden ${data.value} Profilbilder insgesamt bereits heruntergeladen.`;
+          });
+      }
     }, "image/png");
   } else {
     link.href = canvas.toDataURL("image/png");
