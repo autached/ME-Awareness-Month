@@ -6,17 +6,10 @@ let coverDragging = false;
 let lastTouchDistance = null;
 
 function setMode(selectedMode) {
-  const messageBox = document.getElementById("message-box");
-  if (selectedMode === "poster") {
-    messageBox.textContent = "Poster Generator für den 12. Mai – In Bearbeitung. Schaut bald wieder vorbei!";
-    return;
-  }
-  messageBox.textContent = "";
   mode = selectedMode;
   document.getElementById('cover-generator').style.display = mode === 'cover' ? 'block' : 'none';
-  document.getElementById('poster-generator').style.display = 'none';
+  document.getElementById('poster-generator').style.display = mode === 'poster' ? 'block' : 'none';
 }
-
 
 const coverCanvas = document.getElementById("cover-canvas");
 const posterCanvas = document.getElementById("poster-canvas");
@@ -55,7 +48,7 @@ document.getElementById("cover-image-upload").addEventListener("change", functio
 
 
 let overlayImage = new Image();
-overlayImage.src = "assets/templates/profile/profile-monat2-de.png";
+overlayImage.src = "assets/templates/profile/profile-monat2-de";
 overlayImage.onload = function() {
   drawCoverCanvas(); // trigger initial draw when overlay is ready
 };
