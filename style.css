@@ -1,10 +1,22 @@
 header h1, header h2, header h3,
 header h4, header h5, header h6 {
-  color: #f2d7c9;
+  color: #e8b4a0;
 }
 
-header p {
+header p,
+footer p {
   color: #f0f0f0;
+}
+
+header a,
+footer a, {
+  color: #f48c74;
+  text-decoration: none;
+}
+
+header a:hover, footer a:hover {
+  text-decoration: underline;
+  color: #e8b4a0
 }
 
 body {
