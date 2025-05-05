@@ -62,6 +62,15 @@ button {
   color: white;
 }
 
+button:hover {
+  background-color: #f2d7c9;
+}
+
+button:active {
+  background-color: #f2d7c9;
+  transform: scale(0.97);
+}
+
 .canvas-container {
   margin-top: 20px;
   position: relative;
