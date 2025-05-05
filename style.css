@@ -76,7 +76,7 @@ button:hover {
 
 button.sticky-active {
   background-color: #f2d7c9;
-  transform: scale(0.97);
+ /* transform: scale(0.97); */
 }
 
 .canvas-container {
