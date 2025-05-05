@@ -112,8 +112,9 @@ body.legal-page {
 .legal-header {
   max-width: 720px;
   margin: 0 auto;
-  /* padding: 2em 1.5em 0 1.5em; */
-
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+  
   /* sticky header */
   position: sticky;
   top: 0;
