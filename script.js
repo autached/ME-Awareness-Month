@@ -12,9 +12,9 @@ function setMode(selectedMode) {
 }
 
 const coverCanvas = document.getElementById("cover-canvas");
-const posterCanvas = document.getElementById("poster-canvas");
+// const posterCanvas = document.getElementById("poster-canvas");
 const coverCtx = coverCanvas.getContext("2d");
-const posterCtx = posterCanvas.getContext("2d");
+// const posterCtx = posterCanvas.getContext("2d");
 
 let coverDrawnImage = {
   img: null,
@@ -179,7 +179,7 @@ coverCanvas.addEventListener("touchend", function() {
 });
 
 // Poster logic (unchanged, still minimal)
-document.getElementById("poster-image-before").addEventListener("change", function(e) {
+/* document.getElementById("poster-image-before").addEventListener("change", function(e) {
   drawPosterCanvas();
 });
 document.getElementById("poster-image-now").addEventListener("change", function(e) {
@@ -222,6 +222,7 @@ function drawPosterCanvas() {
     }
   };
 }
+*/
 
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   const words = text.split(' ');
