@@ -7,13 +7,6 @@ body {
   color: #000;
 }
 
-message-box {
-  background-color: #f0f0f0;
-  color: #333;
-  padding: 8px;
-  border-radius: 4px;
-}
-
 @media (max-width: 600px) {
   body {
     font-size: 18px;
@@ -92,4 +85,3 @@ input[type="file"] { /* control margin to other objects like the zoom slider */
   display: block;
   margin: 0 auto 12px auto;
 }
-
