@@ -14,6 +14,7 @@ body {
 
   .generator {
     padding: 16px;
+    box-sizing: border-box;
   }
 
   .template-thumb {
@@ -27,6 +28,13 @@ body {
   button {
     font-size: 16px;
   }
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 6px;
 }
 
 .canvas-container {
@@ -72,9 +80,8 @@ canvas {
   border: 2px solid #333;
 }
 
-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 6px;
+input[type="file"] { /* control margin to other objects like the zoom slider */
+  display: block;
+  margin: 0 auto 12px auto;
 }
+
