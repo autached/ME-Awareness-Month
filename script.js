@@ -244,7 +244,8 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
 function downloadImage(type) {
   const canvas = type === 'cover' ? document.getElementById("cover-canvas") : document.getElementById("poster-canvas");
   const link = document.createElement("a");
-  link.download = type + "-me-awareness.png";
+  const baseName = selectedTemplate.replace(".png", "").replace(".jpg", "").replace(".jpeg", "");
+  link.download = "ME-" + baseName + ".png";
   canvas.toBlob(function(blob) {
     const url = URL.createObjectURL(blob);
     link.href = url;
