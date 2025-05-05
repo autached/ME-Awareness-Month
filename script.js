@@ -111,8 +111,20 @@ coverCanvas.addEventListener("touchstart", function(e) {
     y >= coverDrawnImage.y && y <= coverDrawnImage.y + coverDrawnImage.height
   ) {
     coverDragging = true;
-    coverOffsetX = x - coverDrawnImage.x;
-    coverOffsetY = y - coverDrawnImage.y;
+   // Make sure offset is based on current zoom + position
+    const imageX = coverDrawnImage.x;
+    const imageY = coverDrawnImage.y;
+    const imageW = coverDrawnImage.width;
+    const imageH = coverDrawnImage.height;
+    
+    if (
+      x >= imageX && x <= imageX + imageW &&
+      y >= imageY && y <= imageY + imageH
+    ) {
+      coverDragging = true;
+      coverOffsetX = x - imageX;
+      coverOffsetY = y - imageY;
+    }
   }
 });
 
@@ -125,9 +137,8 @@ coverCanvas.addEventListener("touchmove", function(e) {
     const x = touch.clientX - rect.left;
     const y = touch.clientY - rect.top;
 
-    const dragMultiplier = 1.5; // tweak this value if needed
-    coverDrawnImage.x = x - coverOffsetX * dragMultiplier;
-    coverDrawnImage.y = y - coverOffsetY * dragMultiplier;
+    coverDrawnImage.x = x - coverOffsetX;
+    coverDrawnImage.y = y - coverOffsetY;
     drawCoverCanvas();
   }
 
