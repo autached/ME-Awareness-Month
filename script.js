@@ -3,6 +3,7 @@ let coverImage = null;
 let coverOffsetX = 0;
 let coverOffsetY = 0;
 let coverDragging = false;
+let lastTouchDistance = null;
 
 function setMode(selectedMode) {
   mode = selectedMode;
@@ -117,22 +118,53 @@ coverCanvas.addEventListener("touchstart", function(e) {
 
 // Touch move
 coverCanvas.addEventListener("touchmove", function(e) {
-  if (coverDragging) {
-    e.preventDefault(); // very important
+  if (e.touches.length === 1 && coverDragging) {
+    e.preventDefault();
     const rect = coverCanvas.getBoundingClientRect();
     const touch = e.touches[0];
     const x = touch.clientX - rect.left;
     const y = touch.clientY - rect.top;
 
-    coverDrawnImage.x = x - coverOffsetX;
-    coverDrawnImage.y = y - coverOffsetY;
+    const dragMultiplier = 1.5; // tweak this value if needed
+    coverDrawnImage.x = x - coverOffsetX * dragMultiplier;
+    coverDrawnImage.y = y - coverOffsetY * dragMultiplier;
     drawCoverCanvas();
+  }
+
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (lastTouchDistance !== null) {
+      const zoomChange = distance / lastTouchDistance;
+      zoomFactor *= zoomChange;
+
+      // Clamp zoomFactor
+      zoomFactor = Math.max(0.2, Math.min(3, zoomFactor));
+
+      const newWidth = coverImage.width * (1080 / Math.min(coverImage.width, coverImage.height)) * zoomFactor;
+      const newHeight = coverImage.height * (1080 / Math.min(coverImage.width, coverImage.height)) * zoomFactor;
+      const centerX = coverDrawnImage.x + coverDrawnImage.width / 2;
+      const centerY = coverDrawnImage.y + coverDrawnImage.height / 2;
+
+      coverDrawnImage.width = newWidth;
+      coverDrawnImage.height = newHeight;
+      coverDrawnImage.x = centerX - newWidth / 2;
+      coverDrawnImage.y = centerY - newHeight / 2;
+
+      drawCoverCanvas();
+    }
+
+    lastTouchDistance = distance;
   }
 }, { passive: false });
 
 // Touch end
 coverCanvas.addEventListener("touchend", function() {
   coverDragging = false;
+  lastTouchDistance = null;
 });
 
 // Poster logic (unchanged, still minimal)
