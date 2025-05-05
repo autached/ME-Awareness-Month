@@ -14,7 +14,7 @@ header a, footer a, {
 
 header a:hover, footer a:hover {
   text-decoration: underline;
-  color: #e8b4a0;
+  color: #f2d7c9;
 }
 
 header a:visited, footer a:visited {
@@ -58,6 +58,8 @@ button {
   padding: 10px 20px;
   font-size: 16px;
   border-radius: 6px;
+  background-color: #e8b4a0;
+  color: white;
 }
 
 .canvas-container {
