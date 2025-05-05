@@ -55,7 +55,7 @@ document.getElementById("cover-image-upload").addEventListener("change", functio
 
 
 let overlayImage = new Image();
-overlayImage.src = "assets/templates/profile/profile-monat2-de";
+overlayImage.src = "assets/templates/profile/profile-monat2-de.png";
 overlayImage.onload = function() {
   drawCoverCanvas(); // trigger initial draw when overlay is ready
 };
