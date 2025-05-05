@@ -63,7 +63,7 @@ function drawCoverCanvas() {
 }
 
 
-// Dragging functionality
+// Dragging functionality MOUSE
 coverCanvas.addEventListener("mousedown", function(e) {
   const rect = coverCanvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
@@ -95,6 +95,41 @@ coverCanvas.addEventListener("mouseup", function() {
 });
 
 coverCanvas.addEventListener("mouseleave", function() {
+  coverDragging = false;
+});
+
+// Touch drag start
+coverCanvas.addEventListener("touchstart", function(e) {
+  const rect = coverCanvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  if (
+    x >= coverDrawnImage.x && x <= coverDrawnImage.x + coverDrawnImage.width &&
+    y >= coverDrawnImage.y && y <= coverDrawnImage.y + coverDrawnImage.height
+  ) {
+    coverDragging = true;
+    coverOffsetX = x - coverDrawnImage.x;
+    coverOffsetY = y - coverDrawnImage.y;
+  }
+});
+
+// Touch move
+coverCanvas.addEventListener("touchmove", function(e) {
+  if (coverDragging) {
+    e.preventDefault();
+    const rect = coverCanvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    coverDrawnImage.x = x - coverOffsetX;
+    coverDrawnImage.y = y - coverOffsetY;
+    drawCoverCanvas();
+  }
+}, { passive: false });
+
+// Touch end
+coverCanvas.addEventListener("touchend", function() {
   coverDragging = false;
 });
 
