@@ -347,3 +347,10 @@ document.querySelectorAll('button').forEach(btn => {
     btn.classList.add('sticky-active');
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("cover-button");
+  if (btn) {
+    btn.classList.add("sticky-active");
+  }
+});
