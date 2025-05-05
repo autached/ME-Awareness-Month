@@ -48,7 +48,7 @@ document.getElementById("cover-image-upload").addEventListener("change", functio
 
 
 let overlayImage = new Image();
-overlayImage.src = "assets/templates/cover-template.png";
+overlayImage.src = "assets/templates/profile/profile-monat2-de";
 overlayImage.onload = function() {
   drawCoverCanvas(); // trigger initial draw when overlay is ready
 };
@@ -283,12 +283,12 @@ coverCanvas.addEventListener("wheel", function(e) {
 }, { passive: false });
 
 
-let selectedTemplate = "cover-template.png";
+let selectedTemplate = "profile-monat2-de";
 
 function selectCoverTemplate(templateFile) {
   selectedTemplate = templateFile;
   if (overlayImage.src.indexOf(templateFile) === -1) {
-    overlayImage.src = "assets/templates/" + templateFile;
+    overlayImage.src = "assets/templates/profile/" + templateFile;
   } else {
     drawCoverCanvas();
   }
