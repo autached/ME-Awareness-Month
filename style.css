@@ -190,12 +190,13 @@ body.legal-page {
     font-size: 16px;
   }
   
-  .poster-wrapper{
-    width:100vw;               /* full viewport width */
-    height:calc(1350px * (100vw / 1080)); /* keep aspect */
+   .poster-preview {
+    transform: scale(calc(100vw / 1080));
   }
-  .poster-preview{
-    transform:scale(calc(100vw / 1080));
+
+  /* .box is already responsive, but ensure it matches new height */
+  .box:has(.poster-preview) {
+    height: calc(1350px * (100vw / 1080));
   }
 }
 
@@ -213,7 +214,7 @@ body.legal-page {
   overflow:hidden;         /* hide any overflow while dragging */
 
   transform-origin:top left;   /* scale from the corner */
-  transform:scale(.5);         /* 1080px * .5 = 540px */
+  transform: scale(0.5);        /* 1080 → 540 */  
 }
 
 /* headline */
@@ -227,18 +228,6 @@ body.legal-page {
   margin:0 0 60px;
   font-size:72px;
   text-align:center;
-}
-
-/* ================================
-   Poster preview responsive width
-   ================================*/
-
-/* baseline: desktop & larger — half-size (1080 → 540 px) */
-.poster-wrapper{
-  width:540px;
-  height:675px;                /* 1350 px × 0.5 */
-  padding:16px 0;              /* a little breathing room */
-  margin:0 auto;               /* centre on wide screens */
 }
 
 /* photo frames */
