@@ -258,13 +258,17 @@ body.legal-page {
 
 /* pill for name */
 .name-pill{
-  width:780px; height:80px;
-  margin:40px auto 20px;
-  background:#fff; color:#334;
+  width:660px;              /* narrower than before */
+  height:80px;
+  margin:0 auto;            /* remove top margin */
+  transform:translateY(-40px); /* pull upward 40 px to overlap photos */
+  background:#fff;
+  color:#334;
   border-radius:40px;
   display:flex; align-items:center; justify-content:center;
   font-size:48px; font-weight:600;
   text-align:center;
+  box-shadow:0 4px 8px rgba(0,0,0,0.12);  /* subtle lift */
 }
 
 /* quote */
