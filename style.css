@@ -193,6 +193,14 @@ body.legal-page {
   button {
     font-size: 16px;
   }
+  
+  .poster-wrapper{
+    width:100vw;               /* full viewport width */
+    height:calc(1350px * (100vw / 1080)); /* keep aspect */
+  }
+  .poster-preview{
+    transform:scale(calc(100vw / 1080));
+  }
 }
 
 /* =========================================================
@@ -207,6 +215,9 @@ body.legal-page {
   color:#fff;
   font-family:sans-serif;
   overflow:hidden;         /* hide any overflow while dragging */
+
+  transform-origin:top left;   /* scale from the corner */
+  transform:scale(.5);         /* 1080px * .5 = 540px */
 }
 
 /* headline */
@@ -220,6 +231,17 @@ body.legal-page {
   margin:0 0 60px;
   font-size:72px;
   text-align:center;
+}
+
+/* ================================
+   Poster preview responsive width
+   ================================*/
+
+/* baseline: desktop & larger — half-size (1080 → 540 px) */
+.poster-wrapper{
+  width:540px;                 /* hard cap */
+  padding:16px 0;              /* a little breathing room */
+  margin:0 auto;               /* centre on wide screens */
 }
 
 /* photo frames */
