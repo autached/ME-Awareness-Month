@@ -195,7 +195,7 @@ body.legal-page {
   }
 
   .box:has(.poster-preview) {
-    height: calc(1350px * (100vw / 1080));
+    height: auto;
   }
   
 }
