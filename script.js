@@ -178,6 +178,129 @@ coverCanvas.addEventListener("touchend", function() {
   lastTouchDistance = null;
 });
 
+// ===========================================================
+// Poster-generator (DOM) – drag + zoom for each photo
+// ===========================================================
+
+// -------- element shortcuts --------------------------------
+const beforeInput  = document.getElementById('poster-image-before');
+const afterInput   = document.getElementById('poster-image-after');
+const beforeImg    = document.getElementById('before-img');
+const afterImg     = document.getElementById('after-img');
+
+const nameInput    = document.getElementById('poster-name-info');
+const noteInput    = document.getElementById('poster-note');
+const namePill     = document.getElementById('name-pill');
+const noteBox      = document.getElementById('note-box');
+
+const posterNode   = document.getElementById('poster');   // whole poster div
+const downloadBtn  = document.getElementById('poster-download');
+
+// -------- simple helpers -----------------------------------
+function setSrc(imgEl, file){
+  imgEl.src = URL.createObjectURL(file);
+}
+
+// -------- upload handlers ----------------------------------
+beforeInput.onchange = e => {
+  const file = e.target.files[0];
+  if(file) setSrc(beforeImg, file);
+};
+afterInput.onchange  = e => {
+  const file = e.target.files[0];
+  if(file) setSrc(afterImg, file);
+};
+
+// -------- live text binding --------------------------------
+nameInput.oninput = () => namePill.textContent = nameInput.value;
+noteInput.oninput = () => noteBox.textContent = noteInput.value;
+
+// -------- drag + zoom per image ----------------------------
+// each img keeps its own transform state
+function enableDragZoom(imgEl){
+  let scale = 1, posX = 0, posY = 0;
+  let startX=0, startY=0, dragging=false, lastDist=null;
+
+  // helper to apply CSS transform
+  const apply = () =>
+    imgEl.style.transform = `translate(${posX}px,${posY}px) scale(${scale})`;
+
+  // mouse drag
+  imgEl.addEventListener('mousedown', e=>{
+    dragging=true; startX=e.clientX-posX; startY=e.clientY-posY;
+    imgEl.style.cursor='grabbing';
+  });
+  window.addEventListener('mousemove', e=>{
+    if(!dragging) return;
+    posX = e.clientX-startX; posY = e.clientY-startY; apply();
+  });
+  window.addEventListener('mouseup', ()=>{ dragging=false; imgEl.style.cursor='grab'; });
+
+  // wheel zoom
+  imgEl.addEventListener('wheel', e=>{
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 1.05 : 0.95;
+    scale = Math.max(0.2, Math.min(3, scale*delta));
+    apply();
+  }, {passive:false});
+
+  // pinch-zoom + drag on touch
+  imgEl.addEventListener('touchstart', e=>{
+    if(e.touches.length===1){
+      dragging=true;
+      const t=e.touches[0];
+      startX=t.clientX-posX; startY=t.clientY-posY;
+    }
+    lastDist=null;
+  },{passive:false});
+
+  imgEl.addEventListener('touchmove', e=>{
+    if(e.touches.length===1 && dragging){
+      e.preventDefault();
+      const t=e.touches[0];
+      posX=t.clientX-startX; posY=t.clientY-startY; apply();
+    }
+    if(e.touches.length===2){
+      e.preventDefault();
+      const [t1,t2]=e.touches;
+      const dist=Math.hypot(t1.clientX-t2.clientX, t1.clientY-t2.clientY);
+      if(lastDist){
+        scale = Math.max(0.2, Math.min(3, scale*dist/lastDist));
+        apply();
+      }
+      lastDist=dist;
+    }
+  },{passive:false});
+  window.addEventListener('touchend', ()=>{ dragging=false; lastDist=null; });
+}
+
+// enable on both images
+enableDragZoom(beforeImg);
+enableDragZoom(afterImg);
+
+// -------- export poster to PNG -----------------------------
+downloadBtn.onclick = ()=>{
+  html2canvas(posterNode,{backgroundColor:null,scale:2}).then(canvas=>{
+    canvas.toBlob(blob=>{
+      const a=document.createElement('a');
+      a.download='ME-poster.png';
+      a.href=URL.createObjectURL(blob);
+      a.click();
+      URL.revokeObjectURL(a.href);
+    },'image/png');
+  });
+};
+
+// -------- make sure mode switch shows poster UI ------------
+function setMode(selectedMode){
+  mode = selectedMode;
+  document.getElementById('cover-generator').style.display =
+      mode==='cover' ? 'block':'none';
+  document.getElementById('poster-generator').style.display =
+      mode==='poster'? 'block':'none';
+}
+
+
 // Poster logic (unchanged, still minimal)
 /* document.getElementById("poster-image-before").addEventListener("change", function(e) {
   drawPosterCanvas();
