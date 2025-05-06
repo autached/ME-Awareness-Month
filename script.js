@@ -290,12 +290,17 @@ downloadBtn.onclick = ()=>{
 // -----------------------------
 function setMode(selected) {
   mode = selected;                       // keep global var
-  location.hash = mode;                  // reflect in URL
+  location.hash = mode + '-mode';        // reflect in URL
 
-  document.getElementById('cover-generator').style.display  =
-      mode === 'cover'  ? 'block' : 'none';
-  document.getElementById('poster-generator').style.display =
-      mode === 'poster' ? 'block' : 'none';
+document.addEventListener('DOMContentLoaded', () => {
+  const h = location.hash.replace('#','');
+  setMode(h==='poster-mode' ? 'poster' : 'cover');
+});
+
+window.addEventListener('hashchange', () => {
+  const h = location.hash.replace('#','');
+  if(h==='cover-mode' || h==='poster-mode') setMode(h.split('-')[0]);
+});
 
   // button highlight
   document.querySelectorAll('#mode-select button')
