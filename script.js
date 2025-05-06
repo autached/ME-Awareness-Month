@@ -288,19 +288,14 @@ downloadBtn.onclick = ()=>{
 // -----------------------------
 //  Mode switching via #hash
 // -----------------------------
-function setMode(selected) {
-  mode = selected;                       // keep global var
-  location.hash = mode + '-mode';        // reflect in URL
+function setMode(selected){
+  mode = selected;
+  location.hash = mode + '-mode';  // cover-mode | poster-mode
 
-document.addEventListener('DOMContentLoaded', () => {
-  const h = location.hash.replace('#','');
-  setMode(h==='poster-mode' ? 'poster' : 'cover');
-});
-
-window.addEventListener('hashchange', () => {
-  const h = location.hash.replace('#','');
-  if(h==='cover-mode' || h==='poster-mode') setMode(h.split('-')[0]);
-});
+  document.getElementById('cover-generator').style.display  =
+      mode === 'cover'  ? 'block' : 'none';
+  document.getElementById('poster-generator').style.display =
+      mode === 'poster' ? 'block' : 'none';
 
   // button highlight
   document.querySelectorAll('#mode-select button')
@@ -312,16 +307,15 @@ window.addEventListener('hashchange', () => {
 
 // -------- initialise on load ----------
 document.addEventListener('DOMContentLoaded', () => {
-  const hash = location.hash.replace('#', '');     // 'cover' | 'poster' | ''
-  setMode(hash === 'poster' ? 'poster' : 'cover'); // default cover
+  const h = location.hash.replace('#','');    // 'cover' | 'poster' | ''
+  setMode(h==='poster-mode' ? 'poster' : 'cover'); // default cover
 });
 
 // -------- react to manual hash change --
 window.addEventListener('hashchange', () => {
-  const hash = location.hash.replace('#', '');
-  if (hash === 'cover' || hash === 'poster') setMode(hash);
+  const h = location.hash.replace('#','');
+  if(h==='cover-mode' || h==='poster-mode') setMode(h.split('-')[0]);
 });
-
 
 
 // Poster logic (unchanged, still minimal)
