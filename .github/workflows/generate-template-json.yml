@@ -9,31 +9,27 @@ on:
       - '.github/workflows/generate-template-json.yml'
 
 permissions:        # 👈 add this block
-contents: write   #   so the token may commit & push
+  contents: write   #   so the token may commit & push
 
 jobs:
   generate-json:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
-      - name: 🧾 Run Python script
+      - name: Run template generator
         run: python generate_templates.py
 
-      - name: 📤 Commit and push if changed
+      - name: Commit & push if changed
         run: |
-          git config user.name "github-actions"
+          git config user.name  "github-actions"
           git config user.email "github-actions@github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git add assets/templates/cover.json assets/templates/poster.json
-          git diff --cached --quiet || git commit -m "Auto-update cover/poster template list"
+          git diff --cached --quiet || git commit -m "Auto-update template lists"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
