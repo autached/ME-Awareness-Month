@@ -242,11 +242,18 @@ body.legal-page {
   cursor:grab;
   touch-action:none;
 }
+
+.hidden{ display:none; }
+
 .tag{
-  position:absolute; top:-32px; left:0;
-  background:#0057a3; padding:6px 24px;
-  border-radius:999px 999px 0 0;
+  position:absolute;
+  top:12px; left:12px;            /* inside the frame */
+  background:#0057a3;
+  padding:6px 24px;
+  border-radius:14px;
   font-size:40px; font-weight:600;
+  color:#fff;
+  z-index:2;
 }
 
 /* pill for name */
@@ -284,8 +291,10 @@ blockquote{
 
 /* ribbon */
 .ribbon{
-  position:absolute; right:60px; bottom:220px;
-  width:180px; filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));
+position:absolute; right:60px; bottom:220px;
+  width:180px;
+  filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));
+  z-index:5;               /* NEW */
 }
 
 /* credit */
