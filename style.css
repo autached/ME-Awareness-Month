@@ -198,12 +198,9 @@ body.legal-page {
     font-size: 16px;
   }
 
-  .poster-preview {
+  .poster-wrapper {
     transform: scale(calc(100vw / 1080));
-  }
-
-  .box:has(.poster-preview) {
-    height: auto;
+    padding: 8px;
   }
   
 }
@@ -212,19 +209,29 @@ body.legal-page {
    Poster-preview layout (DOM version)
    =========================================================*/
 .poster-preview {
-  position: relative;
   width: 1080px;
   height: 1350px;
-  margin: 0 auto;
   background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
   color: #fff;
   font-family: sans-serif;
   overflow: hidden;
-
-  transform-origin: top center;
-  transform: scale(0.5); /* scales to ~540px wide preview */
+  position: relative;
+  margin: 0;
 }
 
+.poster-wrapper {
+  transform: scale(0.5);              /* shrink the visual size */
+  transform-origin: top center;
+  display: inline-block;
+  padding: 16px;                      /* like other boxes */
+  background-color: #f0f0f0;          /* match other boxes */
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.poster-wrapper button {
+  margin-top: 24px;
+}
 
 /* headline */
 .poster-preview h1{
