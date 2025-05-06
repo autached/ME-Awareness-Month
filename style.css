@@ -56,6 +56,10 @@ button.sticky-active {
  /* transform: scale(0.97); */
 }
 
+#cover-generator {
+  padding-top: 32px;
+}
+
 .canvas-container {
   margin-top: ßpx;
   position: relative;
