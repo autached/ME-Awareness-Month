@@ -354,3 +354,28 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.classList.add("sticky-active");
   }
 });
+
+function loadCoverTemplates() {
+  fetch('assets/templates/cover.json')
+    .then(res => res.json())
+    .then(files => {
+      const box = document.querySelector('.template-selector');
+      box.innerHTML = '';                           // clear old content
+
+      files.forEach(filename => {
+        const img = document.createElement('img');
+        img.src = `assets/templates/profile/${filename}`;
+        img.className = 'template-thumb';
+        img.onclick = () => selectCoverTemplate(filename);
+        box.appendChild(img);
+      });
+
+      // automatically pick the first template
+      if (files.length) selectCoverTemplate(files[0]);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('cover-button')?.classList.add('sticky-active');
+  loadCoverTemplates();          //  👈  new line
+});
