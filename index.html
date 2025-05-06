@@ -65,6 +65,75 @@
     </div>
     <button onclick="downloadImage('poster')">Download</button>
     -->
+
+    <!-- Poster UI  ---------------------------------------------------------->
+    <div class="box">
+      <!-- two file inputs -->
+      <label><strong>Vorher-Foto hochladen:</strong></label><br>
+      <input type="file" id="poster-image-before" accept="image/*"><br><br>
+    
+      <label><strong>Heute-Foto hochladen:</strong></label><br>
+      <input type="file" id="poster-image-after"  accept="image/*">
+    </div>
+    
+    <div class="box">
+      <!-- name / age pill -->
+      <label><strong>Name · Alter · krank seit:</strong></label><br>
+      <input type="text" id="poster-name-info" placeholder="Anna · 34 J. · seit 2014">
+    </div>
+    
+    <div class="box">
+      <!-- multi-line personal note -->
+      <label><strong>Persönliche Notiz:</strong></label><br>
+      <textarea id="poster-note" rows="3"
+                placeholder="Dein Text …"></textarea>
+    </div>
+    
+    <!-- ▶ The live poster preview (DOM instead of <canvas>) -->
+    <div id="poster" class="poster-preview">
+      <!-- headline -->
+      <h1>12. MAI</h1>
+      <h2>ME Awareness Tag</h2>
+    
+      <!-- photos row -->
+      <div class="photos">
+        <div class="photo-frame before">
+          <img id="before-img" draggable="false">
+          <span class="tag">VORHER</span>
+        </div>
+        <div class="photo-frame after">
+          <img id="after-img"  draggable="false">
+          <span class="tag">HEUTE 2024</span>
+        </div>
+      </div>
+    
+      <!-- name pill (content filled by JS) -->
+      <div id="name-pill" class="name-pill"></div>
+    
+      <!-- quote is static -->
+      <blockquote>
+        „ME ist, wenn du verzweifelt versuchst zu leben,<br>
+         aber dein Körper es dir nicht erlaubt.“
+      </blockquote>
+    
+      <!-- personal note (text filled by JS) -->
+      <div id="note-box" class="note-box"></div>
+    
+      <!-- ribbon -->
+      <img class="ribbon" src="assets/ribbon.png" alt="ME-Ribbon">
+    
+      <!-- credit -->
+      <footer>@mecfs.space</footer>
+    </div>
+    
+    <div class="box">
+      <button id="poster-download">Download PNG</button>
+    </div>
+    
+    <!-- html2canvas (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <!-- poster JS is appended inside script.js -->
+
   </div>
 
   <script src="script.js"></script>
