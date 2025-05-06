@@ -108,6 +108,7 @@ canvas {
 /* Optional: etwas mehr Luft nach oben und unten */
 .generator .box + .box {
   margin-top: 24px;
+}
 
 .template-selector {
   margin: 16px auto;
