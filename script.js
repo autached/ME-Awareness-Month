@@ -496,3 +496,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cover-button')?.classList.add('sticky-active');
   loadCoverTemplates();          //  👈  new line
 });
+
+// show pill only when there is text
+nameInput.oninput = () => {
+  namePill.textContent = nameInput.value;
+  namePill.classList.toggle('hidden', nameInput.value.trim()==='');
+};
+// same for note
+noteInput.oninput = () => {
+  noteBox.textContent = noteInput.value;
+  noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
+};
