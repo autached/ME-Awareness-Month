@@ -189,33 +189,24 @@ body.legal-page {
   button {
     font-size: 16px;
   }
-  
-   .poster-preview {
-    transform: scale(calc(100vw / 1080));
-  }
-
-  /* .box is already responsive, but ensure it matches new height */
-  .box:has(.poster-preview) {
-    height: calc(1350px * (100vw / 1080));
-  }
 }
 
 /* =========================================================
    Poster-preview layout (DOM version)
    =========================================================*/
-.poster-preview{
-  position:relative;
-  width:1080px;            /* real export size */
-  height:1350px;
-  margin:0 auto;
-  background:linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
-  color:#fff;
-  font-family:sans-serif;
-  overflow:hidden;         /* hide any overflow while dragging */
-
-  transform-origin:top left;   /* scale from the corner */
-  transform: scale(0.5);        /* 1080 → 540 */  
+.poster-preview {
+  width: 100%;
+  max-width: 540px;
+  height: auto;
+  aspect-ratio: 1080 / 1350; /* Keeps proportions responsive */
+  background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
+  color: #fff;
+  font-family: sans-serif;
+  overflow: hidden;
+  margin: 0 auto;
+  position: relative;
 }
+
 
 /* headline */
 .poster-preview h1{
