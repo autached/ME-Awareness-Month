@@ -8,6 +8,9 @@ on:
       - 'generate_templates.py'
       - '.github/workflows/generate-template-json.yml'
 
+permissions:        # 👈 add this block
+contents: write   #   so the token may commit & push
+
 jobs:
   generate-json:
     runs-on: ubuntu-latest
