@@ -80,11 +80,7 @@ canvas {
   margin-top: 20px;
   margin: 20px auto;
   padding: 20px;
-  /*
-  background-color: transparent;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  */
+
   max-width: 700px;
   width: 100%;
   
@@ -239,7 +235,9 @@ body.legal-page {
 
 /* baseline: desktop & larger — half-size (1080 → 540 px) */
 .poster-wrapper{
-  width:540px;                 /* hard cap */
+  max-width:540px;                 /* hard cap */
+  width:100%;
+  height:auto;
   padding:16px 0;              /* a little breathing room */
   margin:0 auto;               /* centre on wide screens */
 }
