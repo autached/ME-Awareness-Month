@@ -5,12 +5,6 @@ let coverOffsetY = 0;
 let coverDragging = false;
 let lastTouchDistance = null;
 
-function setMode(selectedMode) {
-  mode = selectedMode;
-  document.getElementById('cover-generator').style.display = mode === 'cover' ? 'block' : 'none';
-  document.getElementById('poster-generator').style.display = mode === 'poster' ? 'block' : 'none';
-}
-
 const coverCanvas = document.getElementById("cover-canvas");
 // const posterCanvas = document.getElementById("poster-canvas");
 const coverCtx = coverCanvas.getContext("2d");
