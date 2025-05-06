@@ -33,29 +33,6 @@ body {
   color: #000;
 }
 
-@media (max-width: 600px) {
-  body {
-    font-size: 18px;
-  }
-
-  .generator {
-    padding: 16px;
-    box-sizing: border-box;
-  }
-
-  .template-thumb {
-    width: 80px;
-  }
-
-  input[type="file"],
-  input[type="range"],
-  input[type="text"],
-  textarea,
-  button {
-    font-size: 16px;
-  }
-}
-
 button {
   margin-top: 10px;
   padding: 10px 20px;
@@ -79,8 +56,10 @@ button.sticky-active {
  /* transform: scale(0.97); */
 }
 
+
+
 .canvas-container {
-  margin-top: 20px;
+  margin-top: ßpx;
   position: relative;
   /* display: inline-block; */
   display: flex;
@@ -99,12 +78,34 @@ canvas {
   margin-top: 20px;
   margin: 20px auto;
   padding: 20px;
-  background-color: #f0f0f0;
+  /*
+  background-color: transparent;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  */
   max-width: 700px;
   width: 100%;
+  
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0;
+  max-width: unset;
 }
+
+/* Neue "Karten"-Boxen für Unterelemente */
+.generator .box {
+  background-color: #f0f0f0;
+  padding: 16px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  margin: 16px auto;
+  width: fit-content;
+  text-align: center;
+}
+
+/* Optional: etwas mehr Luft nach oben und unten */
+.generator .box + .box {
+  margin-top: 24px;
 
 .template-selector {
   margin: 16px auto;
@@ -156,7 +157,6 @@ body.legal-page {
   margin: 0 auto;
   padding-left: 1.5em;
   padding-right: 1.5em;
-  
   /* sticky header */
   position: sticky;
   top: 0;
@@ -165,4 +165,27 @@ body.legal-page {
   padding-bottom: .2em;
   padding-top: .2em;
   /* box-shadow: 0 2px 6px rgba(0,0,0,.25); */
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 18px;
+  }
+
+  .generator {
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  .template-thumb {
+    width: 80px;
+  }
+
+  input[type="file"],
+  input[type="range"],
+  input[type="text"],
+  textarea,
+  button {
+    font-size: 16px;
+  }
 }
