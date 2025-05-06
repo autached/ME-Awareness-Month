@@ -1,0 +1,33 @@
+name: Auto-generate template JSON (Python)
+
+on:
+  push:
+    paths:
+      - 'assets/templates/profile/**'
+      - 'assets/templates/poster/**'
+      - 'generate_templates.py'
+      - '.github/workflows/generate-template-json.yml'
+
+jobs:
+  generate-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: 🧾 Run Python script
+        run: python generate_templates.py
+
+      - name: 📤 Commit and push if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add assets/templates/cover.json assets/templates/poster.json
+          git diff --cached --quiet || git commit -m "Auto-update cover/poster template list"
+          git push
