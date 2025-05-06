@@ -285,14 +285,38 @@ downloadBtn.onclick = ()=>{
   });
 };
 
-// -------- make sure mode switch shows poster UI ------------
-function setMode(selectedMode){
-  mode = selectedMode;
-  document.getElementById('cover-generator').style.display =
-      mode==='cover' ? 'block':'none';
+// -----------------------------
+//  Mode switching via #hash
+// -----------------------------
+function setMode(selected) {
+  mode = selected;                       // keep global var
+  location.hash = mode;                  // reflect in URL
+
+  document.getElementById('cover-generator').style.display  =
+      mode === 'cover'  ? 'block' : 'none';
   document.getElementById('poster-generator').style.display =
-      mode==='poster'? 'block':'none';
+      mode === 'poster' ? 'block' : 'none';
+
+  // button highlight
+  document.querySelectorAll('#mode-select button')
+          .forEach(btn => btn.classList.toggle(
+            'sticky-active',
+            btn.id === (mode + '-button')
+          ));
 }
+
+// -------- initialise on load ----------
+document.addEventListener('DOMContentLoaded', () => {
+  const hash = location.hash.replace('#', '');     // 'cover' | 'poster' | ''
+  setMode(hash === 'poster' ? 'poster' : 'cover'); // default cover
+});
+
+// -------- react to manual hash change --
+window.addEventListener('hashchange', () => {
+  const hash = location.hash.replace('#', '');
+  if (hash === 'cover' || hash === 'poster') setMode(hash);
+});
+
 
 
 // Poster logic (unchanged, still minimal)
