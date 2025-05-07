@@ -309,7 +309,7 @@ blockquote {
 
 /* note box */
 .note-box {
-  width: 65vw;              /* ADJUSTED */
+  width: 55vw;              /* ADJUSTED */
   height: 18vw;  /*added hight restrictions back in */
   margin: 0 auto;
   background: #ffffff;
@@ -333,7 +333,7 @@ blockquote {
   position: absolute;
   right: 3vw;               /* ADJUSTED */
   bottom: 18vw;              /* ADJUSTED */
-  width: 15vw;              /* ADJUSTED */
+  width: 25vw;              /* ADJUSTED */
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
   z-index: 5;
   /* NEW */
@@ -415,7 +415,7 @@ blockquote {
     }
 
     .name-pill {
-        width: 300px;  /* Fixed size */
+        width: 330px;  /* Fixed size */
         height: 36px;   /* Fixed size */
         transform: translateY(-18px); /* Fixed size */
         font-size: 21px;  /* Fixed size */
