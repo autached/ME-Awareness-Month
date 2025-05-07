@@ -227,30 +227,6 @@ body.legal-page {
    Poster-preview layout (DOM version)
    =========================================================*/
 /* old code:
-.poster-preview {
-  width: 1080px;
-  height: 1350px;
-  background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
-  color: #fff;
-  font-family: sans-serif;
-  overflow: hidden;
-  position: relative;
-  margin: 0;
-} */
-
-.poster-preview {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 1080 / 1350;
-  font-size: 1em; /* ✅ Base font size is clean and scalable */
-  background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
-  color: #fff;
-  font-family: sans-serif;
-  overflow: hidden;
-  position: relative;
-  margin: 0;
-}
-
 /* .poster-wrapper {
   transform: scale(0.5);              /* shrink the visual size */
 /*  transform-origin: top center; */
@@ -279,6 +255,31 @@ body.legal-page {
   margin: 0 auto 24px;
 }
 
+/* .poster-preview {
+  width: 1080px;
+  height: 1350px;
+  background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
+  color: #fff;
+  font-family: sans-serif;
+  overflow: hidden;
+  position: relative;
+  margin: 0;
+} */
+
+.poster-preview {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1080 / 1350;
+  font-size: 1em; /* ✅ Base font size is clean and scalable */
+  background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
+  color: #fff;
+  font-family: sans-serif;
+  overflow: hidden;
+  position: relative;
+  margin: 0;
+}
+
+
 /* headline */
 .poster-preview h1{
   margin: 2.5em 0 0; /* 40px */
@@ -299,8 +300,8 @@ body.legal-page {
   gap: 1.25em; /* 20px */
 }
 .photo-frame{
- width: 22.5em;  /* 360px */
-  height: 22.5em; /* 360px */
+  width: 33.3%; /* 360px of 1080 */
+  height: 26.7%; /* 360px of 1350 */
   border-radius: 0; /* 0px */
   overflow:hidden;         /* mask img */
   background:#eee;
@@ -359,11 +360,10 @@ blockquote{
 
 /* note box */
 .note-box{
-  width: 55em;            /* instead of width:880px; */
-  height: 13.75em;        /* instead of height:220px; */
+  width: 81.5%; /* 880px of 1080 */
+  height: 16.3%; /* 220px of 1350 */
   padding: 1.25em 2.5em;  /* instead of padding:20px 40px; */
-  
-  margin: 0 auto 2.5em; /* improve footer spacing */   /* margin: 0 auto; */
+  margin: 1em auto; /* improve footer spacing */   /* margin: 0 auto; */
   background:#ffffff;
   border-radius: 2.5em; /* 40px ÷ 16 */
   color:#334;
@@ -375,9 +375,9 @@ blockquote{
 
 /* ribbon */
 .ribbon{
-  right: 3.75em;          /* 60px */
-  bottom: 5em; /* visually aligned with note box bottom */   /* bottom: 13.75em; */
-  width: 11.25em;         /* 180px */
+  right: 5.5%; /* 60px of 1080 */
+  bottom: 16.3%; /* 220px of 1350 */
+  width: 16.7%; /* 180px of 1080 */
   filter: drop-shadow(0 0.25em 0.375em rgba(0,0,0,.4)); /* instead of filter:drop-shadow(0 4px 6px rgba(0,0,0,.4)); */
   position:absolute;
   z-index:5;             
@@ -385,7 +385,7 @@ blockquote{
 
 /* credit */
 .poster-preview footer{
-  bottom: 3.75em;         /* 60px */
+  bottom: 4.45%; /* 60px of 1350 */
   position:absolute; width:100%;
   text-align:center; 
   font-size: 2.5em;  /* instead of 40px */
