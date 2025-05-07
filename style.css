@@ -239,9 +239,9 @@ body.legal-page {
 
 .photo-frame {
   position: relative;
-  width: 33vw;              /* ADJUSTED */
-  height: 33vw;             /* ADJUSTED */
-  border-radius: 2vw;  /* ADJUSTED 40px > 4vw - scalable */
+  width: 30vw;              /* ADJUSTED */
+  height: 30vw;             /* ADJUSTED */
+  border-radius: 0vw;  /* ADJUSTED 40px > 4vw - scalable */
   overflow: hidden;
   /* mask img */
   background: #eee;
@@ -309,7 +309,7 @@ blockquote {
 
 /* note box */
 .note-box {
-  width: 65vw;              /* ADJUSTED */
+  width: 75vw;              /* ADJUSTED */
   height: 18vw;  /*added hight restrictions back in */
   margin: 0 auto;
   background: #ffffff;
@@ -320,7 +320,7 @@ blockquote {
   align-items: center;
   justify-content: center;
   text-align: left;
-  padding-right: 4vw;             /* ADJUSTED - let padding control height */
+  padding-right: 7vw;             /* ADJUSTED - let padding control height */
   padding-top: 1.5vw;
   padding-left: 2vw;
   padding-bottom: 1.5vw;
@@ -402,8 +402,8 @@ blockquote {
     }
 
     .photo-frame {
-        width: 210px;   /* Fixed size */
-        height: 210px;  /* Fixed size */
+        width: 180px;   /* Fixed size */
+        height: 180px;  /* Fixed size */
         border-radius: 12px;
     }
 
@@ -429,14 +429,14 @@ blockquote {
     }
 
     .note-box {
-        width: 390px; /* Fixed size */
+        width: 450px; /* Fixed size */
         height: 108px;  /* Fixed size */
         border-radius: 12px; /* Fixed size */
         font-size: 13.8px;  /* Fixed size */
         padding: 18px;   /* Fixed size */
         min-height: 72px;  /* Fixed size */
         margin: 0 63 0;
-        padding-right: 24px;             /* ADJUSTED - let padding control height */
+        padding-right: 42px;             /* ADJUSTED - let padding control height */
         padding-top: 9px;
         padding-left: 12px;
         padding-bottom: 9px;
@@ -444,8 +444,8 @@ blockquote {
 
     .ribbon {
         right: 18px;  /* Fixed size */
-        bottom: 107px; /* Fixed size */
-        width: 90px;  /* Fixed size */
+        bottom: 54px; /* Fixed size */
+        width: 120px;  /* Fixed size */
     }
 
     .poster-preview footer {
