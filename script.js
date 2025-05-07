@@ -188,7 +188,7 @@ const namePill     = document.getElementById('name-pill');
 const noteBox      = document.getElementById('note-box');
 
 const posterNode   = document.getElementById('poster');   // whole poster div
-const 
+const downloadBtn  = document.getElementById('poster-download'); // ADD THIS LINE
 
 Btn  = document.getElementById('poster-download');
 
