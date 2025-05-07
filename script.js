@@ -18,6 +18,7 @@ let coverDrawnImage = {
   height: 0
 };
 
+
 document.getElementById("cover-image-upload").addEventListener("change", function(e) {
   const file = e.target.files[0];
   if (file) {
