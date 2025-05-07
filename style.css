@@ -117,7 +117,7 @@ canvas {
 }
 
 .box.form-row label {
-  flex: 0 0 30%;             /* Label occupies 30% of the width */
+  flex: 1 0 30%;             /* Label occupies 30% of the width */
   max-width: 30%;          /* Limit the label's width */
   padding-right: 10px;       /* Add some spacing between label and input */
   text-align: left;         /* Align label text to the left */
@@ -127,7 +127,7 @@ canvas {
 
 .box.form-row input,
 .box.form-row textarea {
-  flex: 0 0 70%;              /* Input/textarea occupies 70% of the width */
+  flex: 1 0 70%;              /* Input/textarea occupies 70% of the width */
   width: 100%;             /* ensure textarea takes full width */
   box-sizing: border-box;    /* Include padding and border in width */
 }
