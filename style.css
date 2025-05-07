@@ -173,6 +173,12 @@ canvas {
   max-width: 540px;    /* But never exceed 540px */
   padding: 5 5 0 0;
 }
+
+.generator .box:has(.template-selector){
+  margin: 0px;
+  padding: 0px;
+}
+
 .template-thumb {
   width: 100px;
   margin: 3px;
