@@ -120,10 +120,6 @@ function enableDragZoom(imgEl){
   window.addEventListener('touchend', ()=>{ dragging=false; lastDist=null; });
 }
 
-// enable on both images
-enableDragZoom(beforeImg);
-enableDragZoom(afterImg);
-
 /**
  * Waits for an image to load.
  */ 
@@ -200,6 +196,9 @@ const downloadBtn  = document.getElementById('poster-download'); // ADD THIS LIN
 
 Btn  = document.getElementById('poster-download');
 
+// enable DragZoom on both images
+enableDragZoom(beforeImg);
+enableDragZoom(afterImg);
 // ===========================================================
 // 6. Utility Functions (General Purpose)
 // ===========================================================
