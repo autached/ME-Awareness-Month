@@ -239,8 +239,8 @@ body.legal-page {
 
 .photo-frame {
   position: relative;
-  width: 35vw;              /* ADJUSTED */
-  height: 35vw;             /* ADJUSTED */
+  width: 33vw;              /* ADJUSTED */
+  height: 33vw;             /* ADJUSTED */
   border-radius: 2vw;  /* ADJUSTED 40px > 4vw - scalable */
   overflow: hidden;
   /* mask img */
@@ -276,7 +276,7 @@ body.legal-page {
 
 /* pill for name */
 .name-pill {
-  width: 65vw;              /* ADJUSTED */
+  width: 55vw;              /* ADJUSTED */
   /* narrower than before */
   height: 6vw;               /* ADJUSTED */
   margin: 0 auto;
@@ -309,7 +309,7 @@ blockquote {
 
 /* note box */
 .note-box {
-  width: 55vw;              /* ADJUSTED */
+  width: 65vw;              /* ADJUSTED */
   height: 18vw;  /*added hight restrictions back in */
   margin: 0 auto;
   background: #ffffff;
