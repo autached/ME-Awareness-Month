@@ -332,8 +332,8 @@ blockquote {
 .ribbon {
   position: absolute;
   right: 3vw;               /* ADJUSTED */
-  bottom: 18vw;              /* ADJUSTED */
-  width: 25vw;              /* ADJUSTED */
+  bottom: 14vw;              /* ADJUSTED */
+  width: 20vw;              /* ADJUSTED */
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
   z-index: 5;
   /* NEW */
