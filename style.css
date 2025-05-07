@@ -56,6 +56,15 @@ button.sticky-active {
  /* transform: scale(0.97); */
 }
 
+#poster-note {
+  width: 90%; /* Adjust the percentage as needed */
+  max-width: 540px; /* Optional: Set a maximum width */
+  padding: 8px;
+  box-sizing: border-box;
+  resize: vertical;
+ /* font-size: 1em;        /* Ensure font matches the rest of the design */
+}
+
 #cover-generator {
   padding-top: 32px;
 }
