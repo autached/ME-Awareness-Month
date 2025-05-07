@@ -289,7 +289,7 @@ enableDragZoom(afterImg);
 
 downloadBtn.onclick = () => {
   const scaleFactor = 1; //Original value from html2canvas
-  //const wrapperScale = 0.5; //The CSS scale applied to .poster-wrapper
+  const wrapperScale = 1; //The CSS scale applied to .poster-wrapper
   
   html2canvas(posterNode, {
     backgroundColor: null,
