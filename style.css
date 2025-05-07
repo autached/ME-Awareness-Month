@@ -30,7 +30,7 @@ body {
   text-align: center;
  /* margin: 20px; */
   background-color: #557b7c;
-  color: #000;
+  color: #fff;
 }
 
 button {
@@ -95,7 +95,7 @@ canvas {
   background-color: transparent;
   padding: 16px 20px;
   border-radius: 10px;
-  border: 2px solid white;
+  border: 1px solid #f0f0f0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   margin: 16px auto;
   width: fit-content;
