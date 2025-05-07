@@ -274,6 +274,30 @@ function enableDragZoom(imgEl){
 enableDragZoom(beforeImg);
 enableDragZoom(afterImg);
 
+// -------- export poster to PNG -----------------------------
+/* downloadBtn.onclick = ()=>{
+  html2canvas(posterNode,{backgroundColor:null,scale:2}).then(canvas=>{
+    canvas.toBlob(blob=>{
+      const a=document.createElement('a');
+      a.download='ME-poster.png';
+      a.href=URL.createObjectURL(blob);
+      a.click();
+      URL.revokeObjectURL(a.href);
+    },'image/png');
+  });
+};*/
+
+// Helper function to wait for an image to load
+function waitForImageLoad(imgElement) {
+    return new Promise((resolve, reject) => {
+        imgElement.onload = () => resolve();
+        imgElement.onerror = () => reject(`Failed to load image at ${imgElement.src}`);
+        if(imgElement.complete) { //In case the image is already in cache
+            resolve();
+        }
+    });
+}
+
 function updatePoster() {
   const beforeInput = document.getElementById('poster-image-before');
   const afterInput = document.getElementById('poster-image-after');
@@ -305,25 +329,11 @@ function updatePoster() {
   }
   namePill.textContent = nameInput.value;
   noteBox.textContent = noteInput.value;
-}
     
   // show pill only when there is text
- // namePill.classList.toggle('hidden', nameInput.value.trim()==='');
- // noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
-//}
-
-// -------- export poster to PNG -----------------------------
-/* downloadBtn.onclick = ()=>{
-  html2canvas(posterNode,{backgroundColor:null,scale:2}).then(canvas=>{
-    canvas.toBlob(blob=>{
-      const a=document.createElement('a');
-      a.download='ME-poster.png';
-      a.href=URL.createObjectURL(blob);
-      a.click();
-      URL.revokeObjectURL(a.href);
-    },'image/png');
-  });
-};*/
+  namePill.classList.toggle('hidden', nameInput.value.trim()==='');
+  noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
+}
 
 downloadBtn.onclick = async () => {
     updatePoster();
@@ -398,217 +408,3 @@ window.addEventListener('hashchange', () => {
   const h = location.hash.replace('#','');
   if(h==='cover-mode' || h==='poster-mode') setMode(h.split('-')[0]);
 });
-
-
-// Poster logic (unchanged, still minimal)
-/* document.getElementById("poster-image-before").addEventListener("change", function(e) {
-  drawPosterCanvas();
-});
-document.getElementById("poster-image-now").addEventListener("change", function(e) {
-  drawPosterCanvas();
-});
-document.getElementById("poster-name-info").addEventListener("input", function() {
-  drawPosterCanvas();
-});
-document.getElementById("poster-note").addEventListener("input", function() {
-  drawPosterCanvas();
-});
-
-function drawPosterCanvas() {
-  posterCtx.clearRect(0, 0, 1080, 1350);
-  const overlay = new Image();
-  overlay.src = "assets/templates/poster-template.png";
-  overlay.onload = function() {
-    posterCtx.drawImage(overlay, 0, 0, 1080, 1350);
-    posterCtx.fillStyle = "#000";
-    posterCtx.font = "28px sans-serif";
-    posterCtx.fillText(document.getElementById("poster-name-info").value, 300, 750);
-    posterCtx.font = "24px sans-serif";
-    wrapText(posterCtx, document.getElementById("poster-note").value, 100, 1300, 880, 28);
-
-    const beforeFile = document.getElementById("poster-image-before").files[0];
-    const nowFile = document.getElementById("poster-image-now").files[0];
-    if (beforeFile) {
-      const beforeImg = new Image();
-      beforeImg.onload = function() {
-        posterCtx.drawImage(beforeImg, 100, 320, 300, 300);
-      };
-      beforeImg.src = URL.createObjectURL(beforeFile);
-    }
-    if (nowFile) {
-      const nowImg = new Image();
-      nowImg.onload = function() {
-        posterCtx.drawImage(nowImg, 650, 320, 300, 300);
-      };
-      nowImg.src = URL.createObjectURL(nowFile);
-    }
-  };
-}
-*/
-
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(' ');
-  let line = '';
-  for(let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + ' ';
-    const metrics = ctx.measureText(testLine);
-    const testWidth = metrics.width;
-    if (testWidth > maxWidth && n > 0) {
-      ctx.fillText(line, x, y);
-      line = words[n] + ' ';
-      y += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-  ctx.fillText(line, x, y);
-}
-
-// Zoom functionality
-let zoomFactor = 1;
-coverCanvas.addEventListener("wheel", function(e) {
-  e.preventDefault();
-  const scaleAmount = 0.05;
-  if (e.deltaY < 0) {
-    zoomFactor += scaleAmount;
-  } else {
-    zoomFactor = Math.max(0.1, zoomFactor - scaleAmount);
-  }
-
-  // Adjust size and center position
-  if (coverImage) {
-    const newWidth = coverImage.width * (1080 / Math.min(coverImage.width, coverImage.height)) * zoomFactor;
-    const newHeight = coverImage.height * (1080 / Math.min(coverImage.width, coverImage.height)) * zoomFactor;
-    coverDrawnImage.width = newWidth;
-    coverDrawnImage.height = newHeight;
-
-    // Optional: keep the image centered
-    const centerX = coverDrawnImage.x + coverDrawnImage.width / 2;
-    const centerY = coverDrawnImage.y + coverDrawnImage.height / 2;
-    coverDrawnImage.x = centerX - newWidth / 2;
-    coverDrawnImage.y = centerY - newHeight / 2;
-
-    drawCoverCanvas();
-  }
-}, { passive: false });
-
-
-let selectedTemplate = "profile-monat2-de";
-
-function selectCoverTemplate(templateFile) {
-  selectedTemplate = templateFile;
-  if (overlayImage.src.indexOf(templateFile) === -1) {
-    overlayImage.src = "assets/templates/profile/" + templateFile;
-  } else {
-    drawCoverCanvas();
-  }
-}
-
-document.getElementById("zoom-slider").addEventListener("input", function(e) {
-  zoomFactor = parseFloat(e.target.value);
-
-  if (coverImage) {
-    const newWidth = coverImage.width * (1080 / Math.min(coverImage.width, coverImage.height)) * zoomFactor;
-    const newHeight = coverImage.height * (1080 / Math.min(coverImage.width, coverImage.height)) * zoomFactor;
-    const centerX = coverDrawnImage.x + coverDrawnImage.width / 2;
-    const centerY = coverDrawnImage.y + coverDrawnImage.height / 2;
-    coverDrawnImage.width = newWidth;
-    coverDrawnImage.height = newHeight;
-    coverDrawnImage.x = centerX - newWidth / 2;
-    coverDrawnImage.y = centerY - newHeight / 2;
-    drawCoverCanvas();
-  }
-});
-
-// Improved download fallback
-function downloadImage(type) {
-  const canvas = type === 'cover' ? document.getElementById("cover-canvas") : document.getElementById("poster-canvas");
-  const link = document.createElement("a");
-
-  let filename = "ME-profile-image.png"; // fallback
-
-  if (type === 'cover' && typeof selectedTemplate !== 'undefined') {
-    const baseName = selectedTemplate.split("/").pop().replace(/\.[^/.]+$/, ""); // remove extension
-    filename = "ME-" + baseName + ".png";
-  } else if (type === 'poster') {
-    filename = "ME-poster.png";
-  }
-
-  link.download = filename;
-
-  // Prefer toBlob if available
-  if (canvas.toBlob) {
-    canvas.toBlob(function(blob) {
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.click();
-      URL.revokeObjectURL(url);
-        /* +++ NEU: nur für Cover das CountAPI-Hit auslösen + Text aktualisieren +++ */
-      if (type === 'cover') {
-        fetch('https://api.countapi.xyz/hit/memonat.mecfs.space/cover-generator')
-          .then(res => res.json())
-          .then(data => {
-            const el = document.getElementById('cover-download-count');
-            if (el) el.textContent =
-              `Es wurden ${data.value} Profilbilder insgesamt bereits heruntergeladen.`;
-          });
-      }
-    }, "image/png");
-  } else {
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  }
-}
-
-document.querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    // Remove from all buttons first (optional, for exclusive selection)
-    document.querySelectorAll('button').forEach(b => b.classList.remove('sticky-active'));
-
-    // Then add to clicked one
-    btn.classList.add('sticky-active');
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("cover-button");
-  if (btn) {
-    btn.classList.add("sticky-active");
-  }
-});
-
-function loadCoverTemplates() {
-  fetch('assets/templates/cover.json')
-    .then(res => res.json())
-    .then(files => {
-      const box = document.querySelector('.template-selector');
-      box.innerHTML = '';                           // clear old content
-
-      files.forEach(filename => {
-        const img = document.createElement('img');
-        img.src = `assets/templates/profile/${filename}`;
-        img.className = 'template-thumb';
-        img.onclick = () => selectCoverTemplate(filename);
-        box.appendChild(img);
-      });
-
-      // automatically pick the first template
-      if (files.length) selectCoverTemplate(files[0]);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('cover-button')?.classList.add('sticky-active');
-  loadCoverTemplates();          //  👈  new line
-});
-
-// show pill only when there is text
-nameInput.oninput = () => {
-  namePill.textContent = nameInput.value;
-  namePill.classList.toggle('hidden', nameInput.value.trim()==='');
-};
-// same for note
-noteInput.oninput = () => {
-  noteBox.textContent = noteInput.value;
-  noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
-};
