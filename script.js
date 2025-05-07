@@ -333,6 +333,15 @@ function updatePoster() {
   // show pill only when there is text
   namePill.classList.toggle('hidden', nameInput.value.trim()==='');
   noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
+
+   // Check for a file before creating the URL
+  if (beforeInput.files && beforeInput.files[0]) {
+    beforeImg.src = URL.createObjectURL(beforeInput.files[0]);
+    console.log("Before image updated"); // Add this
+  } else {
+    beforeImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="; // Clear the source, or set to a placeholder
+    console.log("Before image cleared");
+  }
 }
 
 downloadBtn.onclick = async () => {
