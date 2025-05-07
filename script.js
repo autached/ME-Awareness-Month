@@ -1,3 +1,43 @@
+// Improved download fallback
+function downloadImage(type) {
+  const canvas = type === 'cover' ? document.getElementById("cover-canvas") : document.getElementById("poster-canvas");
+  const link = document.createElement("a");
+
+  let filename = "ME-profile-image.png"; // fallback
+
+  if (type === 'cover' && typeof selectedTemplate !== 'undefined') {
+    const baseName = selectedTemplate.split("/").pop().replace(/\.[^/.]+$/, ""); // remove extension
+    filename = "ME-" + baseName + ".png";
+  } else if (type === 'poster') {
+    filename = "ME-poster.png";
+  }
+
+  link.download = filename;
+
+  // Prefer toBlob if available
+  if (canvas.toBlob) {
+    canvas.toBlob(function(blob) {
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+        /* +++ NEU: nur für Cover das CountAPI-Hit auslösen + Text aktualisieren +++ */
+      if (type === 'cover') {
+        fetch('https://api.countapi.xyz/hit/memonat.mecfs.space/cover-generator')
+          .then(res => res.json())
+          .then(data => {
+            const el = document.getElementById('cover-download-count');
+            if (el) el.textContent =
+              `Es wurden ${data.value} Profilbilder insgesamt bereits heruntergeladen.`;
+          });
+      }
+    }, "image/png");
+  } else {
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
+}
+
 let mode = 'cover';
 let coverImage = null;
 let coverOffsetX = 0;
@@ -417,3 +457,43 @@ window.addEventListener('hashchange', () => {
   const h = location.hash.replace('#','');
   if(h==='cover-mode' || h==='poster-mode') setMode(h.split('-')[0]);
 });
+
+// Improved download fallback
+function downloadImage(type) {
+  const canvas = type === 'cover' ? document.getElementById("cover-canvas") : document.getElementById("poster-canvas");
+  const link = document.createElement("a");
+
+  let filename = "ME-profile-image.png"; // fallback
+
+  if (type === 'cover' && typeof selectedTemplate !== 'undefined') {
+    const baseName = selectedTemplate.split("/").pop().replace(/\.[^/.]+$/, ""); // remove extension
+    filename = "ME-" + baseName + ".png";
+  } else if (type === 'poster') {
+    filename = "ME-poster.png";
+  }
+
+  link.download = filename;
+
+  // Prefer toBlob if available
+  if (canvas.toBlob) {
+    canvas.toBlob(function(blob) {
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+        /* +++ NEU: nur für Cover das CountAPI-Hit auslösen + Text aktualisieren +++ */
+      if (type === 'cover') {
+        fetch('https://api.countapi.xyz/hit/memonat.mecfs.space/cover-generator')
+          .then(res => res.json())
+          .then(data => {
+            const el = document.getElementById('cover-download-count');
+            if (el) el.textContent =
+              `Es wurden ${data.value} Profilbilder insgesamt bereits heruntergeladen.`;
+          });
+      }
+    }, "image/png");
+  } else {
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
+}
