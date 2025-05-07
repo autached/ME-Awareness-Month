@@ -281,20 +281,14 @@ body.legal-page {
 
 /* headline */
 .poster-preview h1{
-  margin:40px 0 0;
-  
-  /* font-size: 160px; */
-  font-size: 10em;
-  
+  margin: 2.5em 0 0; /* 40px */
+  font-size: 10em;  /* font-size: 160px; */
   line-height:1;
   text-align:center;
 }
 .poster-preview h2{
-  margin:0 0 60px;
-
-  /* font-size: 72px; */
-  font-size: 4.5em;
-  
+  margin: 0 0 3.75em; /* 60px */
+  font-size: 4.5em;  /* font-size: 72px; */
   text-align:center;
 }
 
@@ -343,7 +337,7 @@ body.legal-page {
   border-radius: 2.5em;   /* 40px */ 
   box-shadow: 0 0.25em 0.5em rgba(0,0,0,0.12); /* instead of box-shadow:0 4px 8px rgba(0,0,0,0.12); */
   
-  margin:0 auto;            /* remove top margin */
+  margin: -1.25em auto 1.5em; /* adjust for photo overlap and spacing */   /* margin: 0 auto; */
   background:#fff;
   color:#334;
   display:flex; align-items:center; justify-content:center;
@@ -355,7 +349,8 @@ body.legal-page {
 
 /* quote */
 blockquote{
-  width:70%; margin:0 auto 40px;
+  width:70%; 
+  margin: 0 auto 2.5em; /* 40px */
   font-size: 2.9em;  /* instead of 46px */
   line-height:1.25;
   text-align:center;
@@ -368,7 +363,7 @@ blockquote{
   height: 13.75em;        /* instead of height:220px; */
   padding: 1.25em 2.5em;  /* instead of padding:20px 40px; */
   
-  margin:0 auto;
+  margin: 0 auto 2.5em; /* improve footer spacing */   /* margin: 0 auto; */
   background:#ffffff;
   border-radius: 2.5em; /* 40px ÷ 16 */
   color:#334;
@@ -381,7 +376,7 @@ blockquote{
 /* ribbon */
 .ribbon{
   right: 3.75em;          /* 60px */
-  bottom: 13.75em;        /* 220px */
+  bottom: 5em; /* visually aligned with note box bottom */   /* bottom: 13.75em; */
   width: 11.25em;         /* 180px */
   filter: drop-shadow(0 0.25em 0.375em rgba(0,0,0,.4)); /* instead of filter:drop-shadow(0 4px 6px rgba(0,0,0,.4)); */
   position:absolute;
