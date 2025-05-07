@@ -262,7 +262,8 @@ body.legal-page {
 /* } */
 
 .poster-wrapper {
-  --scale: calc(100vw / 1080); /* scale based on available screen width */
+  --scale: min(calc(100vw / 1080), 0.3);  /* never smaller than 30% */
+ /* scale based on available screen width */
 
   /* width: min(90vw, 270px); */
   width: 100%;
@@ -330,7 +331,8 @@ body.legal-page {
   background:#0057a3;
   padding:6px 24px;
   border-radius:14px;
-  font-size:25px; font-weight:600;
+  font-size: 1.6em;  /* instead of 25px */
+  font-weight:600;
   color:#fff;
   z-index:2;
 }
@@ -357,7 +359,8 @@ body.legal-page {
 /* quote */
 blockquote{
   width:70%; margin:0 auto 40px;
-  font-size:46px; line-height:1.25;
+  font-size: 2.9em;  /* instead of 46px */
+  line-height:1.25;
   text-align:center;
   font-weight:600;
 }
@@ -369,7 +372,7 @@ blockquote{
   background:#ffffff;
   border-radius:40px;
   color:#334;
-  font-size:48px;
+  font-size: 3em;  /* instead of 48px */
   display:flex; align-items:center; justify-content:center;
   text-align:center;
   padding:20px 40px;
@@ -387,5 +390,7 @@ position:absolute; right:60px; bottom:220px;
 /* credit */
 .poster-preview footer{
   position:absolute; bottom:60px; width:100%;
-  text-align:center; font-size:40px; color:#fff;
+  text-align:center; 
+  font-size: 2.5em;  /* instead of 40px */
+  color:#fff;
 }
