@@ -285,22 +285,32 @@ function updatePoster() {
   const namePill = document.getElementById('name-pill');
   const noteBox = document.getElementById('note-box');
 
-  // Update image sources
+  console.log("updatePoster() called"); // Add this
+
+  // Check for a file before creating the URL
   if (beforeInput.files && beforeInput.files[0]) {
     beforeImg.src = URL.createObjectURL(beforeInput.files[0]);
-  }
-  if (afterInput.files && afterInput.files[0]) {
-    afterImg.src = URL.createObjectURL(afterInput.files[0]);
+    console.log("Before image updated"); // Add this
+  } else {
+    beforeImg.src = ""; // Clear the source, or set to a placeholder
+    console.log("Before image cleared");
   }
 
-  // Update text content
+  if (afterInput.files && afterInput.files[0]) {
+    afterImg.src = URL.createObjectURL(afterInput.files[0]);
+    console.log("After image updated"); // Add this
+  } else {
+    afterImg.src = ""; // Clear the source, or set to a placeholder
+    console.log("After image cleared");
+  }
   namePill.textContent = nameInput.value;
   noteBox.textContent = noteInput.value;
+}
     
   // show pill only when there is text
-  namePill.classList.toggle('hidden', nameInput.value.trim()==='');
-  noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
-}
+ // namePill.classList.toggle('hidden', nameInput.value.trim()==='');
+ // noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
+//}
 
 // -------- export poster to PNG -----------------------------
 /* downloadBtn.onclick = ()=>{
@@ -315,27 +325,46 @@ function updatePoster() {
   });
 };*/
 
-downloadBtn.onclick = () => {
-  updatePoster();
+downloadBtn.onclick = async () => {
+    updatePoster();
 
-  const targetWidth = 1080;  // Desired width
-  const targetHeight = 1350; // Desired height
-  
-  html2canvas(posterNode, {
-    backgroundColor: null,
-    width: targetWidth,      // Set the width
-    height: targetHeight,    // Set the height
-    scale: 1,               // Ensure the base scale is 1 (no additional scaling)
-    // scale: scaleFactor / wrapperScale
-  }).then(canvas => {
-    canvas.toBlob(blob => {
-      const a = document.createElement('a');
-      a.download = 'ME-poster.png';
-      a.href = URL.createObjectURL(blob);
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }, 'image/png');
-  });
+    const beforeImg = document.getElementById('before-img');
+    const afterImg = document.getElementById('after-img');
+
+    let promises = [];
+
+    if(beforeImg.src) {
+        promises.push(waitForImageLoad(beforeImg));
+    }
+
+    if(afterImg.src) {
+        promises.push(waitForImageLoad(afterImg));
+    }
+
+    try {
+        await Promise.all(promises);
+
+        const targetWidth = 1080;  // Desired width
+        const targetHeight = 1350; // Desired height
+
+        html2canvas(posterNode, {
+            backgroundColor: null,
+            width: targetWidth,
+            height: targetHeight,
+            scale: 1
+        }).then(canvas => {
+            canvas.toBlob(blob => {
+                const a = document.createElement('a');
+                a.download = 'ME-poster.png';
+                a.href = URL.createObjectURL(blob);
+                a.click();
+                URL.revokeObjectURL(a.href);
+            }, 'image/png');
+        });
+    } catch (error) {
+        console.error("Image loading error:", error);
+        alert("Failed to load one or more images. Please check the console for details.");
+    }
 };
 
 // -----------------------------
