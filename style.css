@@ -114,6 +114,15 @@ canvas {
   width: fit-content;
 }
 
+.box:has(#poster-note) {
+  width: 90%; /* Adjust the percentage as needed */
+  max-width: 540px; /* Optional: Set a maximum width */
+  padding: 8px;
+  box-sizing: border-box;
+  resize: vertical;
+ /* font-size: 1em;        /* Ensure font matches the rest of the design */
+}
+
 .template-selector {
   margin: 16px auto;
   display: flex;
@@ -181,14 +190,6 @@ body.legal-page {
 /* =========================================================
    Poster-preview layout (DOM version)
    =========================================================*/
-#poster-note {
-  width: 90%; /* Adjust the percentage as needed */
-  max-width: 540px; /* Optional: Set a maximum width */
-  padding: 8px;
-  box-sizing: border-box;
-  resize: vertical;
- /* font-size: 1em;        /* Ensure font matches the rest of the design */
-}
 
 .poster-preview {
   width: 100%;
