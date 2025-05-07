@@ -288,12 +288,17 @@ enableDragZoom(afterImg);
 };*/
 
 downloadBtn.onclick = () => {
-  const scaleFactor = 1; //Original value from html2canvas
-  const wrapperScale = 1; //The CSS scale applied to .poster-wrapper
+ // const scaleFactor = 1; //Original value from html2canvas
+//  const wrapperScale = 1; //The CSS scale applied to .poster-wrapper
+  const targetWidth = 1080;  // Desired width
+  const targetHeight = 1350; // Desired height
   
   html2canvas(posterNode, {
     backgroundColor: null,
-    scale: scaleFactor / wrapperScale
+    width: targetWidth,      // Set the width
+    height: targetHeight,    // Set the height
+    scale: 1,               // Ensure the base scale is 1 (no additional scaling)
+    // scale: scaleFactor / wrapperScale
   }).then(canvas => {
     canvas.toBlob(blob => {
       const a = document.createElement('a');
