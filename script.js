@@ -18,7 +18,6 @@ let coverDrawnImage = {
   height: 0
 };
 
-
 document.getElementById("cover-image-upload").addEventListener("change", function(e) {
   const file = e.target.files[0];
   if (file) {
@@ -189,7 +188,9 @@ const namePill     = document.getElementById('name-pill');
 const noteBox      = document.getElementById('note-box');
 
 const posterNode   = document.getElementById('poster');   // whole poster div
-const downloadBtn  = document.getElementById('poster-download');
+const 
+
+Btn  = document.getElementById('poster-download');
 
 // -------- simple helpers -----------------------------------
 function setSrc(imgEl, file){
@@ -274,9 +275,7 @@ enableDragZoom(beforeImg);
 enableDragZoom(afterImg);
 
 // -------- export poster to PNG -----------------------------
-// OLD VERSION (commented out for reference)
-/*
-downloadBtn.onclick = ()=>{
+/* downloadBtn.onclick = ()=>{
   html2canvas(posterNode,{backgroundColor:null,scale:2}).then(canvas=>{
     canvas.toBlob(blob=>{
       const a=document.createElement('a');
@@ -286,43 +285,25 @@ downloadBtn.onclick = ()=>{
       URL.revokeObjectURL(a.href);
     },'image/png');
   });
-};
-*/
+};*/
 
-// NEW VERSION: temporarily resize to full size for export
 downloadBtn.onclick = () => {
-  const wrapper = document.querySelector('.poster-wrapper');
-  const poster = document.querySelector('.poster-preview');
-
-  const oldWrapperStyle = wrapper.getAttribute('style') || '';
-  const oldPosterStyle = poster.getAttribute('style') || '';
-
-  wrapper.style.width = '1080px';
-  wrapper.style.height = '1350px';
-  wrapper.style.fontSize = '1em';
-  poster.style.fontSize = '1em';
-
-  setTimeout(() => {
-    html2canvas(poster, {
-      backgroundColor: null,
-      scale: 1,
-      width: 1080,
-      height: 1350
-    }).then(canvas => {
-      canvas.toBlob(blob => {
-        const a = document.createElement('a');
-        a.download = 'ME-poster.png';
-        a.href = URL.createObjectURL(blob);
-        a.click();
-        URL.revokeObjectURL(a.href);
-
-        wrapper.setAttribute('style', oldWrapperStyle);
-        poster.setAttribute('style', oldPosterStyle);
-      }, 'image/png');
-    });
-  }, 50);
+  const scaleFactor = 1; //Original value from html2canvas
+  //const wrapperScale = 0.5; //The CSS scale applied to .poster-wrapper
+  
+  html2canvas(posterNode, {
+    backgroundColor: null,
+    scale: scaleFactor / wrapperScale
+  }).then(canvas => {
+    canvas.toBlob(blob => {
+      const a = document.createElement('a');
+      a.download = 'ME-poster.png';
+      a.href = URL.createObjectURL(blob);
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }, 'image/png');
+  });
 };
-
 
 // -----------------------------
 //  Mode switching via #hash
@@ -344,36 +325,64 @@ function setMode(selected){
           ));
 }
 
-function updateScaleDisplay() {
-  const wrapper = document.querySelector('.poster-wrapper');
-  const scaleValueSpan = document.getElementById('scale-value');
-
-  if (wrapper && scaleValueSpan) {
-    // Get the actual width in pixels
-    const wrapperWidth = wrapper.offsetWidth;
-    const scale = wrapperWidth / 1080;
-    wrapper.style.setProperty('--scale', scale);
-
-    // Show it rounded to 2 decimals
-    scaleValueSpan.textContent = scale.toFixed(2);
-  }
-}
-
-// Main initialization
+// -------- initialise on load ----------
 document.addEventListener('DOMContentLoaded', () => {
-  const h = location.hash.replace('#', '');
-  setMode(h === 'poster-mode' ? 'poster' : 'cover');
-  updateScaleDisplay();  // Initial call
+  const h = location.hash.replace('#','');    // 'cover' | 'poster' | ''
+  setMode(h==='poster-mode' ? 'poster' : 'cover'); // default cover
 });
-
-// Listen for resize globally
-window.addEventListener('resize', updateScaleDisplay);
 
 // -------- react to manual hash change --
 window.addEventListener('hashchange', () => {
   const h = location.hash.replace('#','');
   if(h==='cover-mode' || h==='poster-mode') setMode(h.split('-')[0]);
 });
+
+
+// Poster logic (unchanged, still minimal)
+/* document.getElementById("poster-image-before").addEventListener("change", function(e) {
+  drawPosterCanvas();
+});
+document.getElementById("poster-image-now").addEventListener("change", function(e) {
+  drawPosterCanvas();
+});
+document.getElementById("poster-name-info").addEventListener("input", function() {
+  drawPosterCanvas();
+});
+document.getElementById("poster-note").addEventListener("input", function() {
+  drawPosterCanvas();
+});
+
+function drawPosterCanvas() {
+  posterCtx.clearRect(0, 0, 1080, 1350);
+  const overlay = new Image();
+  overlay.src = "assets/templates/poster-template.png";
+  overlay.onload = function() {
+    posterCtx.drawImage(overlay, 0, 0, 1080, 1350);
+    posterCtx.fillStyle = "#000";
+    posterCtx.font = "28px sans-serif";
+    posterCtx.fillText(document.getElementById("poster-name-info").value, 300, 750);
+    posterCtx.font = "24px sans-serif";
+    wrapText(posterCtx, document.getElementById("poster-note").value, 100, 1300, 880, 28);
+
+    const beforeFile = document.getElementById("poster-image-before").files[0];
+    const nowFile = document.getElementById("poster-image-now").files[0];
+    if (beforeFile) {
+      const beforeImg = new Image();
+      beforeImg.onload = function() {
+        posterCtx.drawImage(beforeImg, 100, 320, 300, 300);
+      };
+      beforeImg.src = URL.createObjectURL(beforeFile);
+    }
+    if (nowFile) {
+      const nowImg = new Image();
+      nowImg.onload = function() {
+        posterCtx.drawImage(nowImg, 650, 320, 300, 300);
+      };
+      nowImg.src = URL.createObjectURL(nowFile);
+    }
+  };
+}
+*/
 
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   const words = text.split(' ');
