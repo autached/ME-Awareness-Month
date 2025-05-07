@@ -34,9 +34,7 @@ let coverDrawnImage = {   // coverDrawnImage //
   width: 0,
   height: 0
 };
-
-// selectedTemplate //Should go here
-
+let selectedTemplate = null; //Should go here
 
 // ===========================================================
 // 3. Cover Image Generator Functions
@@ -73,8 +71,7 @@ function loadCoverTemplates() {
       
     // automatically pick the first template
     //   if (files.length) selectCoverTemplate(files[0]);
-    // });
-    }
+    });
 }
 
 function selectCoverTemplate(templateFile) {
@@ -490,6 +487,12 @@ downloadBtn.onclick = async () => {
 document.addEventListener('DOMContentLoaded', () => {
   const h = location.hash.replace('#','');    // 'cover' | 'poster' | ''
   setMode(h==='poster-mode' ? 'poster' : 'cover'); // default cover
+
+  loadCoverTemplates();
+
+  overlayImage.onload = function() {
+    drawCoverCanvas(); // trigger initial draw when overlay is ready
+  };
 });
 // ===========================================================
 // 10. React to Manual Hash Change
