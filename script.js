@@ -2,20 +2,10 @@
 // 1. Global Constants
 // ===========================================================
 // Constants that define fixed values
-
-// coverCanvas  // Should go here
 const coverCanvas = document.getElementById("cover-canvas");
-// const posterCanvas = document.getElementById("poster-canvas");
-
-// coverCtx    // Should go here
 const coverCtx = coverCanvas.getContext("2d");
 let overlayImage = new Image();
-overlayImage.src = "assets/templates/profile/profile-monat2-de.png";
-
-//The following were to go to section 3 - but it is obsolete, isnt't?
-//overlayImage.onload = function() {
-//  drawCoverCanvas(); // trigger initial draw when overlay is ready
-//};
+overlayImage.src = null;
 
 // ===========================================================
 // 2. Global Variables
@@ -34,6 +24,7 @@ let coverDrawnImage = {   // coverDrawnImage //
   width: 0,
   height: 0
 };
+
 let selectedTemplate = null; //Should go here
 
 // ===========================================================
@@ -43,7 +34,6 @@ let selectedTemplate = null; //Should go here
 /**
  * Draws the cover image on the canvas.
  */
-// drawCoverCanvas()
 function drawCoverCanvas() {
   coverCtx.clearRect(0, 0, 1080, 1080);
   if (coverDrawnImage.img) {
@@ -155,7 +145,7 @@ function enableDragZoom(imgEl){
 /**
  * Waits for an image to load.
  */ 
-// Helper function to wait for an image to load // waitForImageLoad()
+// Helper function to wait for an image to load 
 function waitForImageLoad(imgElement) {
     return new Promise((resolve, reject) => {
         imgElement.onload = () => resolve();
@@ -168,7 +158,6 @@ function waitForImageLoad(imgElement) {
 /**
  * Updates the poster content based on user input.
  */
-// updatePoster()  
 function updatePoster() {
   const beforeInput = document.getElementById('poster-image-before');
   const afterInput = document.getElementById('poster-image-after');
@@ -252,8 +241,7 @@ function setMode(selected){
 /**
  * Downloads an image from the canvas.
  */
-// downloadImage(type)
-// Improved download fallback 11
+// Improved download fallback
 function downloadImage(type) {
   const canvas = type === 'cover' ? document.getElementById("cover-canvas") : document.getElementById("poster-canvas");
   const link = document.createElement("a");
@@ -287,7 +275,6 @@ function downloadImage(type) {
 // 7. Event Listeners - Cover Generator
 // ===========================================================
 // Event listeners for cover image related elements
-// Dragging functionality MOUSE //coverCanvas.addEventListener("mousedown", function(e) { ... });
 coverCanvas.addEventListener("mousedown", function(e) {
   const rect = coverCanvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
@@ -301,7 +288,7 @@ coverCanvas.addEventListener("mousedown", function(e) {
     coverOffsetY = y - coverDrawnImage.y;
   }
 });
-// coverCanvas.addEventListener("mousemove", function(e) { ... }); 
+
 coverCanvas.addEventListener("mousemove", function(e) {
   if (coverDragging) {
     const rect = coverCanvas.getBoundingClientRect();
@@ -312,15 +299,15 @@ coverCanvas.addEventListener("mousemove", function(e) {
     drawCoverCanvas();
   }
 });
-// coverCanvas.addEventListener("mouseup", function() { ... });
+
 coverCanvas.addEventListener("mouseup", function() {
   coverDragging = false;
 });
-// coverCanvas.addEventListener("mouseleave", function() { ... });
+
 coverCanvas.addEventListener("mouseleave", function() {
   coverDragging = false;
 });
-// Touch drag start // coverCanvas.addEventListener("touchstart", function(e) { ... }); 
+// Touch drag start
 coverCanvas.addEventListener("touchstart", function(e) {
   const rect = coverCanvas.getBoundingClientRect();
   const touch = e.touches[0];
@@ -346,7 +333,7 @@ coverCanvas.addEventListener("touchstart", function(e) {
     }
   }
 });
-// Touch move // coverCanvas.addEventListener("touchmove", function(e) { ... }); 
+// Touch move
 coverCanvas.addEventListener("touchmove", function(e) {
   if (e.touches.length === 1 && coverDragging) {
     e.preventDefault();
@@ -381,12 +368,12 @@ coverCanvas.addEventListener("touchmove", function(e) {
     lastTouchDistance = distance;
   }
 }, { passive: false });
-// Touch end // coverCanvas.addEventListener("touchend", function() { ... });  
+
 coverCanvas.addEventListener("touchend", function() {
   coverDragging = false;
   lastTouchDistance = null;
 });
-// document.getElementById("cover-image-upload").addEventListener("change", function(e) { ... });
+
 document.getElementById("cover-image-upload").addEventListener("change", function(e) {
   const file = e.target.files[0];
   if (file) {
@@ -425,65 +412,51 @@ afterInput.onchange  = e => {
   if(file) setSrc(afterImg, file);
 };
 // -------- live text binding --------------------------------
-// nameInput.oninput = () => namePill.textContent = nameInput.value; 
+
 nameInput.oninput = () => namePill.textContent = nameInput.value;
-// noteInput.oninput = () => noteBox.textContent = noteInput.value; 
+
 noteInput.oninput = () => noteBox.textContent = noteInput.value;
 
-// downloadBtn.onclick = async () => { ... }; 
+
 downloadBtn.onclick = async () => {
-    updatePoster();
-    const beforeImg = document.getElementById('before-img');
-    const afterImg = document.getElementById('after-img');
-    let promises = [];
-    if(beforeImg.src) {
-        promises.push(waitForImageLoad(beforeImg));
-    }
-    if(afterImg.src) {
-        promises.push(waitForImageLoad(afterImg));
-    }
-    try {
-        await Promise.all(promises);
-        const targetWidth = 1080;  // Desired width
-        const targetHeight = 1350; // Desired height
-        html2canvas(posterNode, {
-            backgroundColor: null,
-            width: targetWidth,
-            height: targetHeight,
-            scale: 1
-        }).then(canvas => {
-            canvas.toBlob(blob => {
-                const a = document.createElement('a');
-                a.download = 'ME-poster.png';
-                a.href = URL.createObjectURL(blob);
-                a.click();
-                URL.revokeObjectURL(a.href);
-            }, 'image/png');
-        });
-    } catch (error) {
-        console.error("Image loading error:", error);
-        alert("Failed to load one or more images. Please check the console for details.");
-    }
+ updatePoster();
+ let promises = [];
+ if(beforeImg.src) {
+     promises.push(waitForImageLoad(beforeImg));
+ }
+ if(afterImg.src) {
+     promises.push(waitForImageLoad(afterImg));
+ }
+ try {
+     await Promise.all(promises);
+     const targetWidth = 1080;  // Desired width
+     const targetHeight = 1350; // Desired height
+     html2canvas(posterNode, {
+         backgroundColor: null,
+         width: targetWidth,
+         height: targetHeight,
+         scale: 1
+     }).then(canvas => {
+         canvas.toBlob(blob => {
+             const a = document.createElement('a');
+             a.download = 'ME-poster.png';
+             a.href = URL.createObjectURL(blob);
+             a.click();
+             URL.revokeObjectURL(a.href);
+         }, 'image/png');
+     });
+ } catch (error) {
+     console.error("Image loading error:", error);
+     alert("Failed to load one or more images. Please check the console for details.");
+ }
 };
-// -------- export poster to PNG -----------------------------
-/* downloadBtn.onclick = ()=>{
-  html2canvas(posterNode,{backgroundColor:null,scale:2}).then(canvas=>{
-    canvas.toBlob(blob=>{
-      const a=document.createElement('a');
-      a.download='ME-poster.png';
-      a.href=URL.createObjectURL(blob);
-      a.click();
-      URL.revokeObjectURL(a.href);
-    },'image/png');
-  });
-};*/
 
 // ===========================================================
 // 9. Initialization (DOM Ready)
 // ===========================================
 // Code that runs when the DOM is fully loaded
 // -------- initialise on load ----------
-// document.addEventListener('DOMContentLoaded', () => { ... }); 
+
 document.addEventListener('DOMContentLoaded', () => {
   const h = location.hash.replace('#','');    // 'cover' | 'poster' | ''
   setMode(h==='poster-mode' ? 'poster' : 'cover'); // default cover
@@ -498,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 10. React to Manual Hash Change
 // ===========================================================
 // -------- react to manual hash change --
-// window.addEventListener('hashchange', () => { ... }); //
+
 window.addEventListener('hashchange', () => {
   const h = location.hash.replace('#','');
   if(h==='cover-mode' || h==='poster-mode') setMode(h.split('-')[0]);
