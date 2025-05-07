@@ -92,9 +92,10 @@ canvas {
 
 /* Neue "Karten"-Boxen für Unterelemente */
 .generator .box {
-  background-color: #f0f0f0;
+  background-color: transparent;
   padding: 16px 20px;
   border-radius: 10px;
+  border: 2px solid white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   margin: 16px auto;
   width: fit-content;
@@ -158,6 +159,7 @@ canvas {
 }
 
 .template-selector {
+  background-color: transparent;
   margin: 16px auto;
   display: flex;
   justify-content: center;
@@ -168,9 +170,9 @@ canvas {
 }
 .template-thumb {
   width: 100px;
-  margin: 5px;
+  margin: 3px;
   cursor: pointer;
-  border: 2px solid transparent;
+  border: 2px solid white;
 }
 .template-thumb:hover {
   border: 2px solid #333;
