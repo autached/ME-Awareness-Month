@@ -273,6 +273,8 @@ enableDragZoom(beforeImg);
 enableDragZoom(afterImg);
 
 // -------- export poster to PNG -----------------------------
+// OLD VERSION (commented out for reference)
+/*
 downloadBtn.onclick = ()=>{
   html2canvas(posterNode,{backgroundColor:null,scale:2}).then(canvas=>{
     canvas.toBlob(blob=>{
@@ -282,6 +284,38 @@ downloadBtn.onclick = ()=>{
       a.click();
       URL.revokeObjectURL(a.href);
     },'image/png');
+  });
+};
+*/
+
+// NEW VERSION: temporarily resize to full size for export
+downloadBtn.onclick = () => {
+  const wrapper = document.querySelector('.poster-wrapper');
+  const poster  = document.querySelector('.poster-preview');
+
+  // Save original inline styles
+  const oldWrapperStyle = wrapper.getAttribute('style') || '';
+  const oldPosterStyle  = poster.getAttribute('style') || '';
+
+  // Temporarily enlarge for export
+  wrapper.style.width = '1080px';
+  wrapper.style.height = '1350px';
+  poster.style.fontSize = '1em'; // restore full scale
+
+  requestAnimationFrame(() => {
+    html2canvas(poster, { backgroundColor: null, scale: 2 }).then(canvas => {
+      canvas.toBlob(blob => {
+        const a = document.createElement('a');
+        a.download = 'ME-poster.png';
+        a.href = URL.createObjectURL(blob);
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        // Revert back to original layout styles
+        wrapper.setAttribute('style', oldWrapperStyle);
+        poster.setAttribute('style', oldPosterStyle);
+      }, 'image/png');
+    });
   });
 };
 
