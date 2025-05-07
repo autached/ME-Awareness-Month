@@ -175,7 +175,7 @@ canvas {
   border: 1px solid #ccc;
 }
 .template-thumb:hover {
-  border: 2px solid #333;
+  border: 1px solid #333;
 }
 
 body.legal-page {
