@@ -33,7 +33,6 @@ function downloadImage(type) {
     link.click();
   }
 }
-}
 
 let mode = 'cover';
 let coverImage = null;
