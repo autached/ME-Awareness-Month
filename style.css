@@ -320,13 +320,13 @@ blockquote {
 
 /* note box */
 .note-box {
-  width: 70vw;              /* ADJUSTED */
-  /* height: 18vw;  REMOVED height restriction! */
+  width: 65vw;              /* ADJUSTED */
+  height: 18vw;  /*added hight restrictions back in */
   margin: 0 auto;
   background: #ffffff;
-  border-radius: 40px;
+  border-radius: 4vw;  /* ADJUSTED 40px > 4vw - scalable */
   color: #334;
-  font-size: 4vw;             /* ADJUSTED */
+  font-size: 2vw;             /* ADJUSTED 4 > 2*/
   display: flex;
   align-items: center;
   justify-content: center;
