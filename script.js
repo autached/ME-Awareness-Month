@@ -274,6 +274,34 @@ function enableDragZoom(imgEl){
 enableDragZoom(beforeImg);
 enableDragZoom(afterImg);
 
+function updatePoster() {
+  const beforeInput = document.getElementById('poster-image-before');
+  const afterInput = document.getElementById('poster-image-after');
+  const beforeImg = document.getElementById('before-img');
+  const afterImg = document.getElementById('after-img');
+
+  const nameInput = document.getElementById('poster-name-info');
+  const noteInput = document.getElementById('poster-note');
+  const namePill = document.getElementById('name-pill');
+  const noteBox = document.getElementById('note-box');
+
+  // Update image sources
+  if (beforeInput.files && beforeInput.files[0]) {
+    beforeImg.src = URL.createObjectURL(beforeInput.files[0]);
+  }
+  if (afterInput.files && afterInput.files[0]) {
+    afterImg.src = URL.createObjectURL(afterInput.files[0]);
+  }
+
+  // Update text content
+  namePill.textContent = nameInput.value;
+  noteBox.textContent = noteInput.value;
+    
+  // show pill only when there is text
+  namePill.classList.toggle('hidden', nameInput.value.trim()==='');
+  noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
+}
+
 // -------- export poster to PNG -----------------------------
 /* downloadBtn.onclick = ()=>{
   html2canvas(posterNode,{backgroundColor:null,scale:2}).then(canvas=>{
@@ -288,8 +316,8 @@ enableDragZoom(afterImg);
 };*/
 
 downloadBtn.onclick = () => {
- // const scaleFactor = 1; //Original value from html2canvas
-//  const wrapperScale = 1; //The CSS scale applied to .poster-wrapper
+  updatePoster();
+
   const targetWidth = 1080;  // Desired width
   const targetHeight = 1350; // Desired height
   
