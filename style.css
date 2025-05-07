@@ -262,8 +262,8 @@ body.legal-page {
 /* } */
 
 .poster-wrapper {
-  --scale: min(calc(100vw / 1080), 0.3);  /* never smaller than 30% */
- /* scale based on available screen width */
+ /*  --scale: min(calc(100vw / 1080), 0.3);  /* never smaller than 30% */
+  --scale: min(calc(100vw / 1080)); /* scale based on available screen width */
 
   /* width: min(90vw, 270px); */
   width: 100%;
