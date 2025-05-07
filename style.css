@@ -176,19 +176,6 @@ body.legal-page {
   /* box-shadow: 0 2px 6px rgba(0,0,0,.25); */
 }
 
-/* Media query for smaller screens (max-width: 768px) */
-@media (max-width: 768px) {
-      #poster-generator > .poster-wrapper {
-    width: 90vw; /* Use 90% of viewport width */
-    height: calc(50vw * (1350 / 1080)); /* Maintain aspect ratio */
-  }
-
-  #poster {
-      transform: scale(calc(50vw / 1080)); /* Calculate scale based on viewport width */
-    transform-origin: top left;
-  }
-}
-
 
 
 /* =========================================================
@@ -210,12 +197,13 @@ body.legal-page {
 #poster-generator > .poster-wrapper {
   display: block;
   padding: 0;
-  margin: 0 auto;
+  margin: 0 auto; /* Center the wrapper */
   overflow: hidden;
   width: 90vw; /* Make it fill 90% on default browser size. */
   height: calc(90vw * (1350 / 1080)); /* setting aspect ratio */
   position: relative;
   box-sizing: border-box;   /* ADDED */
+  max-width: 720px; /* ADDED:  Limit the maximum width */
 }
 
 #poster {
@@ -224,6 +212,7 @@ body.legal-page {
   left: 0;
   width: 100%; /* Make it fill wrapper */
   height: 100%; /* Make it fill wrapper */
+    transform-origin: top left; /* Ensure scaling from top-left */
 }
 
 /* Sizes inside of #poster */
@@ -252,7 +241,7 @@ body.legal-page {
   position: relative;
   width: 35vw;              /* ADJUSTED */
   height: 35vw;             /* ADJUSTED */
-  border-radius: 0px;
+  border-radius: 2vw;  /* ADJUSTED 40px > 4vw - scalable */
   overflow: hidden;
   /* mask img */
   background: #eee;
@@ -287,7 +276,7 @@ body.legal-page {
 
 /* pill for name */
 .name-pill {
-  width: 50vw;              /* ADJUSTED */
+  width: 65vw;              /* ADJUSTED */
   /* narrower than before */
   height: 6vw;               /* ADJUSTED */
   margin: 0 auto;
@@ -310,11 +299,11 @@ body.legal-page {
 /* quote */
 blockquote {
   width: 70vw;             /* Relative width! */
-  margin: 0 auto 3vw;         /* Relative margins */
-  font-size: 3.5vw;           /* Relative font size */
+  margin: 2vw auto 4vw ;         /* Relative margins */
+  font-size: 4vw;           /* Relative font size */
   line-height: 1.25;
   text-align: center;
-  font-weight: 600;
+  font-weight: 500;
   overflow-wrap: break-word; /* For long words */
 }
 
@@ -324,14 +313,17 @@ blockquote {
   height: 18vw;  /*added hight restrictions back in */
   margin: 0 auto;
   background: #ffffff;
-  border-radius: 4vw;  /* ADJUSTED 40px > 4vw - scalable */
+  border-radius: 2vw;  /* ADJUSTED 40px > 4vw - scalable */
   color: #334;
-  font-size: 2vw;             /* ADJUSTED 4 > 2*/
+  font-size: 2.3vw;             /* ADJUSTED 4 > 2*/
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 3vw;             /* ADJUSTED - let padding control height */
+  text-align: left;
+  padding-right: 4vw;             /* ADJUSTED - let padding control height */
+  padding-top: 1.5vw;
+  padding-left: 2vw;
+  padding-bottom: 1.5vw;
   box-sizing: border-box;
   min-height: 12vw;         /* ADDED - Ensure a minimum height */
 }
@@ -356,4 +348,110 @@ blockquote {
   text-align: center;
   font-size: 3vw;             /* ADJUSTED */
   color: #fff;
+}
+
+/* Media query for smaller screens (max-width: 600px) */
+@media (max-width: 600px) {
+  #poster-generator > .poster-wrapper {
+    width: 90vw; /* Use 90% of viewport width */
+    height: calc(90vw * (1350 / 1080)); /* Maintain aspect ratio */
+  }
+
+  #poster {
+      transform: scale(calc(90vw / 1080)); /* Calculate scale based on viewport width */
+    transform-origin: top left;
+  }
+
+  .poster-preview h1 {
+      font-size: 9vw; /* Reduce font size for smaller screens */
+  }
+
+   .poster-preview h2 {
+      font-size: 4.5vw; /* Reduce font size for smaller screens */
+  }
+}
+
+/* Media Query for larger screens (min-width: 600px) - FIXED SIZES */
+@media (min-width: 600px) {
+  .poster-preview {
+    padding: 12px;          /* ADDED */
+  }  
+  
+  #poster-generator > .poster-wrapper {
+        width: 540px; /* Fixed width for large screens */
+        height: 675px; /* Maintain aspect ratio */
+    }
+
+    #poster {
+        transform: scale(1); /* Scale down the entire poster */
+    }
+
+    /* Fixed sizes for sub-elements */
+    .poster-preview h1 {
+        font-size: 54px; /* Fixed size */
+        margin: 12px 0 0;  /* Fixed size */
+    }
+
+    .poster-preview h2 {
+        font-size: 27px; /* Fixed size */
+        margin: 0 0 18px; /* Fixed size */
+    }
+
+    .photos {
+        gap: 12px;  /* Fixed size */
+    }
+
+    .photo-frame {
+        width: 210px;   /* Fixed size */
+        height: 210px;  /* Fixed size */
+        border-radius: 12px;
+    }
+
+    .tag {
+        top: 7.2px;     /* Fixed size */
+        left: 7.2px;    /* Fixed size */
+        padding: 3.6px 12px;  /* Fixed size */
+        font-size: 9px;   /* Fixed size */
+    }
+
+    .name-pill {
+        width: 300px;  /* Fixed size */
+        height: 36px;   /* Fixed size */
+        transform: translateY(-18px); /* Fixed size */
+        font-size: 21px;  /* Fixed size */
+    }
+
+    blockquote {
+        width: 420px; /* Fixed size */
+        margin: 12px auto 24px; /* Fixed size */
+        font-size: 24px;  /* Fixed size */
+        font-weight: 500;
+    }
+
+    .note-box {
+        width: 390px; /* Fixed size */
+        height: 108px;  /* Fixed size */
+        border-radius: 12px; /* Fixed size */
+        font-size: 13.8px;  /* Fixed size */
+        padding: 18px;   /* Fixed size */
+        min-height: 72px;  /* Fixed size */
+        margin: 0 63 0;
+        padding-right: 24px;             /* ADJUSTED - let padding control height */
+        padding-top: 9px;
+        padding-left: 12px;
+        padding-bottom: 9px;
+    }
+
+    .ribbon {
+        right: 18px;  /* Fixed size */
+        bottom: 107px; /* Fixed size */
+        width: 90px;  /* Fixed size */
+    }
+
+    .poster-preview footer {
+        font-size: 18px;  /* Fixed size */
+        bottom: 18px;  /* Fixed size */
+    }
+  
+  
 }
