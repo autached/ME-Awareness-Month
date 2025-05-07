@@ -121,7 +121,7 @@ canvas {
   flex: 1 0 30%;             /* Label occupies 30% of the width */
   max-width: 30%;          /* Limit the label's width */
   padding-right: 10px;       /* Add some spacing between label and input */
-  text-align: left;         /* Align label text to the left */
+  text-align: right;         /* Align label text to the left */
   box-sizing: border-box;    /* Include padding in width */
   margin-bottom: 0;           /* Remove default bottom margin */
 }
@@ -133,7 +133,7 @@ canvas {
   box-sizing: border-box;    /* Include padding and border in width */
 }
 
-/*.box:has(.poster-preview) {
+/box:has(.poster-preview) {
   padding: 16px;
   background-color: transparent;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
@@ -141,7 +141,7 @@ canvas {
   width: fit-content;
 }
 
-.box:has(#poster-note) {
+/*.box:has(#poster-note) {
   width: 100%; /* Adjust the percentage as needed */
 /* max-width: 540px; /* Optional: Set a maximum width */
 /*  box-sizing: border-box;
@@ -172,7 +172,7 @@ canvas {
   width: 100px;
   margin: 3px;
   cursor: pointer;
-  border: 2px solid white;
+  border: 1px solid #ccc;
 }
 .template-thumb:hover {
   border: 2px solid #333;
