@@ -106,7 +106,33 @@ canvas {
   margin-top: 24px;
 }
 
-.box:has(.poster-preview) {
+.box.form-row {
+  display: flex;                /* Enable flexbox */
+  flex-wrap: wrap;            /* Allow items to wrap on smaller screens */
+  align-items: baseline;       /*remove auto-height*/
+  text-align: left;             /* Override the general center alignment */
+  width: 90%;               /* Expand the box - overwrite*/
+  max-width: 540px;          /* expand the box - overwrite */
+  padding: 10px 20px;
+}
+
+.box.form-row label {
+  flex: 0 0 30%;             /* Label occupies 30% of the width */
+  max-width: 30%;          /* Limit the label's width */
+  padding-right: 10px;       /* Add some spacing between label and input */
+  text-align: left;         /* Align label text to the left */
+  box-sizing: border-box;    /* Include padding in width */
+  margin-bottom: 0;           /* Remove default bottom margin */
+}
+
+.box.form-row input,
+.box.form-row textarea {
+  flex: 0 0 70%;              /* Input/textarea occupies 70% of the width */
+  width: 100%;             /* ensure textarea takes full width */
+  box-sizing: border-box;    /* Include padding and border in width */
+}
+
+/*.box:has(.poster-preview) {
   padding: 16px;
   background-color: transparent;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
@@ -115,6 +141,14 @@ canvas {
 }
 
 .box:has(#poster-note) {
+  width: 100%; /* Adjust the percentage as needed */
+/* max-width: 540px; /* Optional: Set a maximum width */
+/*  box-sizing: border-box;
+/*  resize: vertical;
+/* font-size: 1em;        /* Ensure font matches the rest of the design */
+/* } */
+
+#poster-note) {
   width: 90%; /* Adjust the percentage as needed */
   max-width: 540px; /* Optional: Set a maximum width */
   padding: 8px;
