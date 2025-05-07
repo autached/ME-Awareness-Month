@@ -320,28 +320,14 @@ function updatePoster() {
     console.log("Before image cleared");
   }
 
-  if (afterInput.files && afterInput.files[0]) {
-    afterImg.src = URL.createObjectURL(afterInput.files[0]);
-    console.log("After image updated"); // Add this
-  } else {
-    afterImg.src = ""; // Clear the source, or set to a placeholder
-    console.log("After image cleared");
-  }
-  namePill.textContent = nameInput.value;
-  noteBox.textContent = noteInput.value;
-    
-  // show pill only when there is text
-  namePill.classList.toggle('hidden', nameInput.value.trim()==='');
-  noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
-
-   // Check for a file before creating the URL
-  if (beforeInput.files && beforeInput.files[0]) {
-    beforeImg.src = URL.createObjectURL(beforeInput.files[0]);
+   if (afterInput.files && afterInput.files[0]) {
+    afterImg.src = URL.createObjectURL(afterInput.files[0] + '?' + Math.random());
     console.log("Before image updated"); // Add this
   } else {
-    beforeImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="; // Clear the source, or set to a placeholder
+    afterImg.src = ""; // Clear the source, or set to a placeholder
     console.log("Before image cleared");
   }
+
 }
 
 downloadBtn.onclick = async () => {
