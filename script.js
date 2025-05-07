@@ -48,6 +48,9 @@ function loadCoverTemplates() {
   fetch('assets/templates/cover.json')
     .then(res => res.json())
     .then(files => {
+      // Sort the file names alphabetically
+      files.sort();
+      
       const box = document.querySelector('.template-selector');
       box.innerHTML = '';                           // clear old content
 
