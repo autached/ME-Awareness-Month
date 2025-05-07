@@ -61,7 +61,7 @@ button.sticky-active {
 }
 
 .canvas-container {
-  margin-top: ßpx;
+  margin-top: 8px;
   position: relative;
   /* display: inline-block; */
   display: flex;
@@ -87,7 +87,7 @@ canvas {
   background-color: transparent;
   box-shadow: none;
   padding: 0;
-  max-width: unset;
+  /* max-width: unset;  double */
 }
 
 /* Neue "Karten"-Boxen für Unterelemente */
@@ -106,12 +106,12 @@ canvas {
   margin-top: 24px;
 }
 
-.box:has(.poster-preview) {
-  padding: 16px;
+.box:has(.poster-wrapper) {
+  display: flex;
+  justify-content: center;
   background-color: transparent;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  margin: 0 auto;
-  width: fit-content;
+  padding: 0;
+  box-shadow: none;
 }
 
 .template-selector {
@@ -262,13 +262,16 @@ body.legal-page {
 /* } */
 
 .poster-wrapper {
-  width: min(90vw, 270px);           /* DOM width-based scaling */
+  width: min(90vw, 270px);
   aspect-ratio: 1080 / 1350;
   position: relative;
   overflow: hidden;
   background-color: #f0f0f0;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+  display: block;            /* ✅ participate in layout */
+  margin: 0 auto 24px;       /* ✅ center horizontally */
 }
 
 
