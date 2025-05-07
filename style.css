@@ -293,12 +293,6 @@ body.legal-page {
   font-weight: 600;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);   /* subtle lift */
-
-   /* Dynamic font-size scaling */
-  font-size: clamp(1.5vw, 3.5vw, 5vw); /*Min, Ideal, Max */
-  white-space: nowrap; /* Prevent text from wrapping */
-  overflow: hidden;      /* Hide overflowing text */
-  text-overflow: ellipsis; /*Show ... if cut */
 }
 
 /* quote */
