@@ -309,25 +309,39 @@ function updatePoster() {
   const namePill = document.getElementById('name-pill');
   const noteBox = document.getElementById('note-box');
 
-  console.log("updatePoster() called"); // Add this
+  console.log("updatePoster() called");
 
-  // Check for a file before creating the URL
+  // Check for a file before creating the URL and create URL
   if (beforeInput.files && beforeInput.files[0]) {
-    beforeImg.src = URL.createObjectURL(beforeInput.files[0]);
-    console.log("Before image updated"); // Add this
+    const url = URL.createObjectURL(beforeInput.files[0]);
+    beforeImg.src = url;
+    console.log("Before image updated");
+
+    //Deallocate the URL right after use.
+    URL.revokeObjectURL(url);
   } else {
-    beforeImg.src = ""; // Clear the source, or set to a placeholder
+    beforeImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="; // Clear the source, or set to a placeholder
     console.log("Before image cleared");
   }
 
-   if (afterInput.files && afterInput.files[0]) {
-    afterImg.src = URL.createObjectURL(afterInput.files[0] + '?' + Math.random());
-    console.log("Before image updated"); // Add this
+  if (afterInput.files && afterInput.files[0]) {
+     const url = URL.createObjectURL(afterInput.files[0]);
+    afterImg.src = url + '?' + Math.random();
+    console.log("After image updated");
+      //Deallocate the URL right after use.
+    URL.revokeObjectURL(url);
+
   } else {
-    afterImg.src = ""; // Clear the source, or set to a placeholder
-    console.log("Before image cleared");
+    afterImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="; // Clear the source, or set to a placeholder
+    console.log("After image cleared");
   }
 
+  namePill.textContent = nameInput.value;
+  noteBox.textContent = noteInput.value;
+    
+  // show pill only when there is text
+  namePill.classList.toggle('hidden', nameInput.value.trim()==='');
+  noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
 }
 
 downloadBtn.onclick = async () => {
