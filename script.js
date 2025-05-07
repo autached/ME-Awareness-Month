@@ -11,9 +11,11 @@ const coverCanvas = document.getElementById("cover-canvas");
 const coverCtx = coverCanvas.getContext("2d");
 let overlayImage = new Image();
 overlayImage.src = "assets/templates/profile/profile-monat2-de.png";
-overlayImage.onload = function() {
-  drawCoverCanvas(); // trigger initial draw when overlay is ready
-};
+
+//The following were to go to section 3 - but it is obsolete, isnt't?
+//overlayImage.onload = function() {
+//  drawCoverCanvas(); // trigger initial draw when overlay is ready
+//};
 
 // ===========================================================
 // 2. Global Variables
@@ -32,7 +34,9 @@ let coverDrawnImage = {   // coverDrawnImage //
   width: 0,
   height: 0
 };
+
 // selectedTemplate //Should go here
+
 
 // ===========================================================
 // 3. Cover Image Generator Functions
@@ -51,6 +55,37 @@ function drawCoverCanvas() {
     coverCtx.drawImage(overlayImage, 0, 0, 1080, 1080);
   }
 }
+
+function loadCoverTemplates() {
+  fetch('assets/templates/cover.json')
+    .then(res => res.json())
+    .then(files => {
+      const box = document.querySelector('.template-selector');
+      box.innerHTML = '';                           // clear old content
+
+      files.forEach(filename => {
+        const img = document.createElement('img');
+        img.src = `assets/templates/profile/${filename}`;
+        img.className = 'template-thumb';
+        img.onclick = () => selectCoverTemplate(filename);
+        box.appendChild(img);
+      });
+      
+    // automatically pick the first template
+    //   if (files.length) selectCoverTemplate(files[0]);
+    // });
+    }
+}
+
+function selectCoverTemplate(templateFile) {
+  selectedTemplate = templateFile;
+  if (overlayImage.src.indexOf(templateFile) === -1) {
+    overlayImage.src = "assets/templates/profile/" + templateFile;
+  } else {
+    drawCoverCanvas();
+  }
+}          
+
 // ===========================================================
 // 4. Poster Generator Functions
 // ===========================================================
