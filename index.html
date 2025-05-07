@@ -52,27 +52,8 @@
   <div id="poster-generator" class="generator">
     <h2>Poster Generator</h2>
     <p> In Bearbeitung. Schau in den nächsten Tagen wieder vorbei! </p>
-   <!--
-    <label>Before Illness:</label>
-    <input type="file" id="poster-image-before" accept="image/png, image/jpeg"><br>
-    <label>Now:</label>
-    <input type="file" id="poster-image-now" accept="image/png, image/jpeg"><br>
-    <label>Name, Age, Sick Since:</label>
-    <input type="text" id="poster-name-info"><br>
-    <label>Personal Note:</label>
-    <textarea id="poster-note"></textarea><br>
-    <div class="canvas-container">
-      <canvas id="poster-canvas" width="1080" height="1350"></canvas>
-    </div>
-    <button onclick="downloadImage('poster')">Download</button>
-    -->
-
+  
     <!-- Poster UI  ---------------------------------------------------------->
-
-    <p id="scale-indicator" style="margin-bottom: 8px; font-size: 14px; color: #fff;">
-      Vorschau-Skalierung: <span id="scale-value">–</span>
-    </p>
-    
     <div class="box">
       <!-- two file inputs -->
       <label><strong>Vorher-Foto hochladen:</strong></label><br>
@@ -95,47 +76,44 @@
                 placeholder="Dein Text …"></textarea>
     </div>
 
-    <div class="box">
-      <!-- around the existing #poster -->
-      <div class="poster-wrapper">
+    <!-- around the existing #poster -->
+    <div class="poster-wrapper">
+    
+      <!-- ▶ The live poster preview (DOM instead of <canvas>) -->
+      <div id="poster" class="poster-preview">
+        <!-- headline -->
+        <h1>12. MAI</h1>
+        <h2>ME Awareness Tag</h2>
       
-        <!-- ▶ The live poster preview (DOM instead of <canvas>) -->
-        <div id="poster" class="poster-preview">
-          <!-- headline -->
-          <h1>12. MAI</h1>
-          <h2>ME Awareness Tag</h2>
-        
-          <!-- photos row -->
-          <div class="photos">
-            <div class="photo-frame before">
-              <img id="before-img" draggable="false">
-              <span class="tag">VORHER</span>
-            </div>
-            <div class="photo-frame after">
-              <img id="after-img"  draggable="false">
-              <span class="tag">HEUTE 2025</span>
-            </div>
+        <!-- photos row -->
+        <div class="photos">
+          <div class="photo-frame before">
+            <img id="before-img" draggable="false">
+            <span class="tag">VORHER</span>
           </div>
-        
-          <!-- name pill (content filled by JS) -->
-          <div id="name-pill" class="name-pill hidden"></div>
-        
-          <!-- quote is static -->
-          <blockquote>
-            „ME ist, wenn du verzweifelt versuchst zu leben, aber<br>
-            dein Körper es dir nicht erlaubt.“
-          </blockquote>
-        
-          <!-- personal note (text filled by JS) -->
-          <div id="note-box" class="note-box hidden"></div>
-        
-          <!-- ribbon -->
-          <img class="ribbon" src="assets/ribbon.png" alt="ME-Ribbon">
-        
-          <!-- credit -->
-          <footer>@mecfs.space</footer>
+          <div class="photo-frame after">
+            <img id="after-img"  draggable="false">
+            <span class="tag">HEUTE 2025</span>
+          </div>
         </div>
-  
+      
+        <!-- name pill (content filled by JS) -->
+        <div id="name-pill" class="name-pill hidden"></div>
+      
+        <!-- quote is static -->
+        <blockquote>
+          „ME ist, wenn du verzweifelt versuchst zu leben, aber<br>
+          dein Körper es dir nicht erlaubt.“
+        </blockquote>
+      
+        <!-- personal note (text filled by JS) -->
+        <div id="note-box" class="note-box hidden"></div>
+      
+        <!-- ribbon -->
+        <img class="ribbon" src="assets/ribbon.png" alt="ME-Ribbon">
+      
+        <!-- credit -->
+        <footer>@mecfs.space</footer>
       </div>
 
     </div>
