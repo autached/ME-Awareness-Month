@@ -340,11 +340,30 @@ function setMode(selected){
           ));
 }
 
-// -------- initialise on load ----------
+function updateScaleDisplay() {
+  const wrapper = document.querySelector('.poster-wrapper');
+  const scaleValueSpan = document.getElementById('scale-value');
+
+  if (wrapper && scaleValueSpan) {
+    // Get the actual width in pixels
+    const wrapperWidth = wrapper.offsetWidth;
+    const scale = wrapperWidth / 1080;
+    wrapper.style.setProperty('--scale', scale);
+
+    // Show it rounded to 2 decimals
+    scaleValueSpan.textContent = scale.toFixed(2);
+  }
+}
+
+// Main initialization
 document.addEventListener('DOMContentLoaded', () => {
-  const h = location.hash.replace('#','');    // 'cover' | 'poster' | ''
-  setMode(h==='poster-mode' ? 'poster' : 'cover'); // default cover
+  const h = location.hash.replace('#', '');
+  setMode(h === 'poster-mode' ? 'poster' : 'cover');
+  updateScaleDisplay();  // Initial call
 });
+
+// Listen for resize globally
+window.addEventListener('resize', updateScaleDisplay);
 
 // -------- react to manual hash change --
 window.addEventListener('hashchange', () => {
