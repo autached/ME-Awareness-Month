@@ -5,7 +5,7 @@
 const coverCanvas = document.getElementById("cover-canvas");
 const coverCtx = coverCanvas.getContext("2d");
 let overlayImage = new Image();
-overlayImage.src = null;
+// overlayImage.src = null;
 
 // ===========================================================
 // 2. Global Variables
