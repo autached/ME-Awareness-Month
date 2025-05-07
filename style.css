@@ -177,6 +177,10 @@ canvas {
 .generator .box:has(.template-selector){
   margin: 0px;
   padding: 0px;
+  justify-content: center;
+  width: 100%;         /* Fill container width */
+  max-width: 540px;    /* But never exceed 540px */
+
 }
 
 .template-thumb {
