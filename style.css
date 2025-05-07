@@ -227,6 +227,9 @@ body.legal-page {
 /* =========================================================
    Poster-preview layout (DOM version)
    =========================================================*/
+#poster-generator {
+  padding-top: 32px;
+}
 
 .poster-preview {
   width: 100%;
