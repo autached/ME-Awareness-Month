@@ -292,19 +292,23 @@ downloadBtn.onclick = ()=>{
 // NEW VERSION: temporarily resize to full size for export
 downloadBtn.onclick = () => {
   const wrapper = document.querySelector('.poster-wrapper');
-  const poster  = document.querySelector('.poster-preview');
+  const poster = document.querySelector('.poster-preview');
 
-  // Save original inline styles
   const oldWrapperStyle = wrapper.getAttribute('style') || '';
-  const oldPosterStyle  = poster.getAttribute('style') || '';
+  const oldPosterStyle = poster.getAttribute('style') || '';
 
-  // Temporarily enlarge for export
   wrapper.style.width = '1080px';
   wrapper.style.height = '1350px';
-  poster.style.fontSize = '1em'; // restore full scale
+  wrapper.style.fontSize = '1em';
+  poster.style.fontSize = '1em';
 
-  requestAnimationFrame(() => {
-    html2canvas(poster, { backgroundColor: null, scale: 2 }).then(canvas => {
+  setTimeout(() => {
+    html2canvas(poster, {
+      backgroundColor: null,
+      scale: 1,
+      width: 1080,
+      height: 1350
+    }).then(canvas => {
       canvas.toBlob(blob => {
         const a = document.createElement('a');
         a.download = 'ME-poster.png';
@@ -312,13 +316,13 @@ downloadBtn.onclick = () => {
         a.click();
         URL.revokeObjectURL(a.href);
 
-        // Revert back to original layout styles
         wrapper.setAttribute('style', oldWrapperStyle);
         poster.setAttribute('style', oldPosterStyle);
       }, 'image/png');
     });
-  });
+  }, 50);
 };
+
 
 // -----------------------------
 //  Mode switching via #hash
@@ -370,53 +374,6 @@ window.addEventListener('hashchange', () => {
   const h = location.hash.replace('#','');
   if(h==='cover-mode' || h==='poster-mode') setMode(h.split('-')[0]);
 });
-
-
-// Poster logic (unchanged, still minimal)
-/* document.getElementById("poster-image-before").addEventListener("change", function(e) {
-  drawPosterCanvas();
-});
-document.getElementById("poster-image-now").addEventListener("change", function(e) {
-  drawPosterCanvas();
-});
-document.getElementById("poster-name-info").addEventListener("input", function() {
-  drawPosterCanvas();
-});
-document.getElementById("poster-note").addEventListener("input", function() {
-  drawPosterCanvas();
-});
-
-function drawPosterCanvas() {
-  posterCtx.clearRect(0, 0, 1080, 1350);
-  const overlay = new Image();
-  overlay.src = "assets/templates/poster-template.png";
-  overlay.onload = function() {
-    posterCtx.drawImage(overlay, 0, 0, 1080, 1350);
-    posterCtx.fillStyle = "#000";
-    posterCtx.font = "28px sans-serif";
-    posterCtx.fillText(document.getElementById("poster-name-info").value, 300, 750);
-    posterCtx.font = "24px sans-serif";
-    wrapText(posterCtx, document.getElementById("poster-note").value, 100, 1300, 880, 28);
-
-    const beforeFile = document.getElementById("poster-image-before").files[0];
-    const nowFile = document.getElementById("poster-image-now").files[0];
-    if (beforeFile) {
-      const beforeImg = new Image();
-      beforeImg.onload = function() {
-        posterCtx.drawImage(beforeImg, 100, 320, 300, 300);
-      };
-      beforeImg.src = URL.createObjectURL(beforeFile);
-    }
-    if (nowFile) {
-      const nowImg = new Image();
-      nowImg.onload = function() {
-        posterCtx.drawImage(nowImg, 650, 320, 300, 300);
-      };
-      nowImg.src = URL.createObjectURL(nowFile);
-    }
-  };
-}
-*/
 
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   const words = text.split(' ');
