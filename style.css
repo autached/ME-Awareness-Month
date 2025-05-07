@@ -331,8 +331,8 @@ body.legal-page {
 
 /* pill for name */
 .name-pill{
-  width: 41.25em;         /* 660px */
-  height: 5em;            /* 80px */
+  width: 61.1%; /* 660 / 1080 */
+  height: 5.9%;  /* 80 / 1350 */
   transform: translateY(-2.5em); /* -40px */ /* pull upward 40 px to overlap photos */
   border-radius: 2.5em;   /* 40px */ 
   box-shadow: 0 0.25em 0.5em rgba(0,0,0,0.12); /* instead of box-shadow:0 4px 8px rgba(0,0,0,0.12); */
