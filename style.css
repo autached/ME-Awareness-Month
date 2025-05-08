@@ -1,27 +1,54 @@
+:root {
+  --bg: #111;
+  --fg: #eee;
+  --accent: #66ccff;
+  --font-size: 1.1em;
+  --header-bg: #080f19;
+  --nav-bg: #1e2733;
+  --button-active: #5dade2;
+}
+
 html {
   scrollbar-gutter: stable;
 }
-header h1, header h2, header h3,
-header h4, header h5, header h6 {
-  color: #e8b4a0;
+
+header {
+  background-color: var(--header-bg);
+  padding: 20px;
+  text-align: center;
+  /* Remove the margin between header and navbar */
+  margin-bottom: 0;
 }
 
-header p, footer p {
-  color: #f0f0f0;
+header h1,
+header h2,
+header h3,
+header h4,
+header h5,
+header h6 {
+  color: var(--accent);
 }
 
-header a:link, footer:link a {
-  color: #f48c74;
+header p,
+footer p {
+  color: var(--fg);
+}
+
+header a:link,
+footer:link a {
+  color: var(--accent);
   text-decoration: none;
 }
 
-header a:hover, footer a:hover {
+header a:hover,
+footer a:hover {
   text-decoration: underline;
   color: #f2d7c9;
 }
 
-header a:visited, footer a:visited {
-  color: #e8b4a0; /* or any color you prefer */
+header a:visited,
+footer a:visited {
+  color: var(--accent);
 }
 
 footer {
@@ -30,34 +57,51 @@ footer {
 
 body {
   font-family: sans-serif;
-  font-size: 16px;
+  font-size: var(--font-size);
   text-align: center;
- /* margin: 20px; */
-  background-color: #557b7c;
-  color: #fff;
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+nav {
+  background-color: var(--nav-bg);
+  padding: 10px;
+  text-align: center;
+  border-radius: 0; /* Reset border-radius */
+  margin: 0;
+  /* Make navbar stretch across whole page */
+  max-width: none;
+}
+
+#mode-select {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 button {
-  margin: 15px;
+  margin: 0;
   padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 999px; /* ← this creates the round/pill look */
-  border-color: white;
-  box-shadow: none;        /* removes any drop shadow */
-  outline: none;           /* removes dotted keyboard focus outline (if unwanted) */
-  cursor: pointer;
-  background-color: #e8b4a0;
-  color: #24514d;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 2px solid var(--accent);
+  background-color: transparent;
+  color: var(--accent);
   font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
 button:hover {
-  background-color: #f2d7c9;
+  background-color: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
 }
 
 button.sticky-active {
-  background-color: #f2d7c9;
- /* transform: scale(0.97); */
+  background-color: var(--button-active);
+  color: var(--bg);
+  border-color: var(--button-active);
 }
 
 #cover-generator {
@@ -65,126 +109,102 @@ button.sticky-active {
 }
 
 .canvas-container {
-  margin-top: ßpx;
+  margin-top: 8px;
   position: relative;
-  /* display: inline-block; */
   display: flex;
   max-width: 100%;
   width: auto;
   justify-content: center;
 }
+
 canvas {
   border: 1px solid #ccc;
-  width: 100%;         /* Fill container width */
-  max-width: 540px;    /* But never exceed 540px */
+  width: 100%;
+  max-width: 540px;
   height: auto;
-  touch-action: none; /* allow dragging manually */
+  touch-action: none;
 }
+
 .generator {
   margin-top: 20px;
   margin: 20px auto;
   padding: 20px;
-
   max-width: 700px;
   width: 100%;
-  
   background-color: transparent;
   box-shadow: none;
   padding: 0;
   max-width: unset;
 }
 
-/* Neue "Karten"-Boxen für Unterelemente */
 .generator .box {
-  background-color: transparent;
+  background-color: #222;
   padding: 16px 20px;
   border-radius: 10px;
-  /* border: 1px solid #f0f0f0; 
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);*/
   margin: 16px auto;
-  width: fit-content;
+  /* Width is now max-width for larger screens */
+  max-width: 540px;
   text-align: center;
 }
 
-.box {
-  background-color:
-}
-
-/* Optional: etwas mehr Luft nach oben und unten */
 .generator .box + .box {
   margin-top: 24px;
 }
 
-.box.form-row {
-  display: flex;                /* Enable flexbox */
-  flex-wrap: wrap;            /* Allow items to wrap on smaller screens */
-  align-items: baseline;       /*remove auto-height*/
-  text-align: left;             /* Override the general center alignment */
-  width: 90%;               /* Expand the box - overwrite*/
-  max-width: 540px;          /* expand the box - overwrite */
+/* Form Styling for stacked labels and inputs */
+/* Apply form styling directly to .box */
+.box {
+  display: block;
+  /* Width is now max-width for larger screens */
+  max-width: 540px;
   padding: 10px 20px;
+  text-align: left;
 }
 
-.box.form-row label {
-  flex: 1 0 30%;             /* Label occupies 30% of the width */
-  max-width: 30%;          /* Limit the label's width */
-  padding-right: 10px;       /* Add some spacing between label and input */
-  text-align: right;         /* Align label text to the left */
-  box-sizing: border-box;    /* Include padding in width */
-  margin-bottom: 0;           /* Remove default bottom margin */
+/* Style for labels */
+.box label {
+  display: block;
+  text-align: left;
+  max-width: 100%;
+  flex: none;
+  padding-right: 0;
+  box-sizing: border-box;
 }
 
-.box.form-row input,
-.box.form-row textarea {
-  flex: 1 0 70%;              /* Input/textarea occupies 70% of the width */
-  width: 100%;             /* ensure textarea takes full width */
-  box-sizing: border-box;    /* Include padding and border in width */
+/* Style for label descriptions */
+.label-description {
+  font-size: 0.8em;      /* Smaller font size */
+  font-weight: normal; /* Not bold */
+  color: #ccc;           /* Slightly lighter color */
+  display: block;          /* Ensure it's on a new line */
+  margin-top: 3px;       /* Add a little space */
+}
+
+/* Style for input and textarea */
+.box input,
+.box textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #333;
+  color: var(--fg);
+  border: 1px solid #555;
+  padding: 8px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  margin-top: 7px;
+  flex: none;
+}
+
+.box textarea {
+  height: 100px;
 }
 
 .box:has(.poster-preview) {
   padding: 16px;
-  background-color: transparent;
+  background-color: #222;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   margin: 0 auto;
   width: fit-content;
-}
-
-/*.box:has(#poster-note) {
-  width: 100%; /* Adjust the percentage as needed */
-/* max-width: 540px; /* Optional: Set a maximum width */
-/*  box-sizing: border-box;
-/*  resize: vertical;
-/* font-size: 1em;        /* Ensure font matches the rest of the design */
-/* } */
-
-#poster-note{
-  width: 90%; /* Adjust the percentage as needed */
-  max-width: 540px; /* Optional: Set a maximum width */
-  padding: 8px;
-  box-sizing: border-box;
-  resize: vertical;
- /* font-size: 1em;        /* Ensure font matches the rest of the design */
-}
-
-.template-selector {
-  background-color: transparent;
-  margin: 16px auto;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  width: 100%;         /* Fill container width */
-  max-width: 540px;    /* But never exceed 540px */
-  padding: 5px 0px;
-}
-
-.generator .box:has(.template-selector){
-  margin: 0px auto;
-  padding: 0px;
-  justify-content: center;
-  width: 100%;         /* Fill container width */
-  max-width: 540px;    /* But never exceed 540px */
-
 }
 
 .template-thumb {
@@ -193,6 +213,7 @@ canvas {
   cursor: pointer;
   border: 1px solid #ccc;
 }
+
 .template-thumb:hover {
   border: 1px solid #333;
 }
@@ -211,18 +232,18 @@ body.legal-page {
   margin: 2em auto;
   padding: 2em 1.5em;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 /* RECHTLICHES.HTML ======================================= */
 .legal-main {
-  background-color: #f2f2f2;      /* helles Grau für Lesebereich */
+  background-color: #f2f2f2;
   max-width: 720px;
   margin: 2em auto;
   padding: 2em 1.5em;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,.2);
-  text-align: left;               /* sicher linksbündig */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: left;
 }
 
 .legal-header {
@@ -230,17 +251,13 @@ body.legal-page {
   margin: 0 auto;
   padding-left: 1.5em;
   padding-right: 1.5em;
-  /* sticky header */
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: #557b7c;   /* ← use the page-wide background colour */
-  padding-bottom: .2em;
-  padding-top: .2em;
-  /* box-shadow: 0 2px 6px rgba(0,0,0,.25); */
+  background: var(--bg);
+  padding-bottom: 0.2em;
+  padding-top: 0.2em;
 }
-
-
 
 /* =========================================================
    Poster-preview layout (DOM version)
@@ -250,201 +267,187 @@ body.legal-page {
 }
 
 .poster-preview {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
-  color: #fff;
-  font-family: sans-serif;
-  overflow: hidden;
-  position: relative;
-  margin: 0;
-  box-sizing: border-box; /* ADDED */
-  padding: 2vw;          /* ADDED */
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
+    color: #fff;
+    font-family: sans-serif;
+    overflow: hidden;
+    position: relative;
+    margin: 0;
+    box-sizing: border-box; /* ADDED */
+    padding: 2vw;          /* ADDED */
 }
 
 #poster-generator > .poster-wrapper {
-  display: block;
-  padding: 0;
-  margin: 0 auto; /* Center the wrapper */
-  overflow: hidden;
-  width: 90vw; /* Make it fill 90% on default browser size. */
-  height: calc(90vw * (1350 / 1080)); /* setting aspect ratio */
-  position: relative;
-  box-sizing: border-box;   /* ADDED */
-  max-width: 720px; /* ADDED:  Limit the maximum width */
+    display: block;
+    padding: 0;
+    margin: 0 auto; /* Center the wrapper */
+    overflow: hidden;
+    width: 90vw; /* Make it fill 90% on default browser size. */
+    height: calc(90vw * (1350 / 1080)); /* setting aspect ratio */
+    position: relative;
+    box-sizing: border-box;   /* ADDED */
+    max-width: 720px; /* ADDED:  Limit the maximum width */
 }
 
 #poster {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%; /* Make it fill wrapper */
-  height: 100%; /* Make it fill wrapper */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Make it fill wrapper */
+    height: 100%; /* Make it fill wrapper */
     transform-origin: top left; /* Ensure scaling from top-left */
 }
 
 /* Sizes inside of #poster */
 /* headline */
 .poster-preview h1 {
-  margin: 2vw 0 0;         /* ADJUSTED */
-  font-size: 10vw;
-  line-height: 1;
-  text-align: center;
+    margin: 2vw 0 0;         /* ADJUSTED */
+    font-size: 10vw;
+    line-height: 1;
+    text-align: center;
 }
 
 .poster-preview h2 {
-  margin: 0 0 3vw;         /* ADJUSTED */
-  font-size: 5vw;           /* ADJUSTED */
-  text-align: center;
+    margin: 0 0 3vw;         /* ADJUSTED */
+    font-size: 5vw;           /* ADJUSTED */
+    text-align: center;
 }
 
 /* photo frames */
 .photos {
-  display: flex;
-  justify-content: center;
-  gap: 2vw;                /* ADJUSTED */
+    display: flex;
+    justify-content: center;
+    gap: 2vw;                /* ADJUSTED */
 }
 
 .photo-frame {
-  position: relative;
-  width: 30vw;              /* ADJUSTED */
-  height: 30vw;             /* ADJUSTED */
-  border-radius: 0vw;  /* ADJUSTED 40px > 4vw - scalable */
-  overflow: hidden;
-  /* mask img */
-  background: #eee;
+    position: relative;
+    width: 30vw;              /* ADJUSTED */
+    height: 30vw;             /* ADJUSTED */
+    border-radius: 0vw;  /* ADJUSTED 40px > 4vw - scalable */
+    overflow: hidden;
+    /* mask img */
+    background: #eee;
 }
 
 .photo-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* transform will be set by JS for zoom/drag */
-  cursor: grab;
-  touch-action: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* transform will be set by JS for zoom/drag */
+    cursor: grab;
+    touch-action: none;
 }
 
 .hidden {
-  display: none;
+    display: none;
 }
 
 .tag {
-  position: absolute;
-  top: 1.2vw;             /* ADJUSTED */
-  left: 1.2vw;            /* ADJUSTED */
-  /* inside the frame */
-  background: #0057a3;
-  padding: 0.6vw 2vw;        /* ADJUSTED */
-  border-radius: 999px;
-  font-size: 1.5vw;         /* ADJUSTED */
-  font-weight: 600;
-  color: #fff;
-  z-index: 2;
+    position: absolute;
+    top: 1.2vw;             /* ADJUSTED */
+    left: 1.2vw;            /* ADJUSTED */
+    /* inside the frame */
+    background: #0057a3;
+    padding: 0.6vw 2vw;        /* ADJUSTED */
+    border-radius: 999px;
+    font-size: 1.5vw;         /* ADJUSTED */
+    font-weight: 600;
+    color: #fff;
+    z-index: 2;
 }
 
 /* pill for name */
 .name-pill {
-  width: 55vw;              /* ADJUSTED */
-  /* narrower than before */
-  height: 6vw;               /* ADJUSTED */
-  margin: 0 auto;
-  /* remove top margin */
-  transform: translateY(-3vw);   /* ADJUSTED */
-  /* pull upward 40 px to overlap photos */
-  background: #fff;
-  color: #334;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3.5vw;           /* ADJUSTED */
-  font-weight: 600;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);   /* subtle lift */
+    width: 55vw;              /* ADJUSTED */
+    /* narrower than before */
+    height: 6vw;               /* ADJUSTED */
+    margin: 0 auto;
+    /* remove top margin */
+    transform: translateY(-3vw);   /* ADJUSTED */
+    /* pull upward 40 px to overlap photos */
+    background: #fff;
+    color: #334;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5vw;           /* ADJUSTED */
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);   /* subtle lift */
 }
 
 /* quote */
 blockquote {
-  width: 70vw;             /* Relative width! */
-  margin: 2vw auto 4vw ;         /* Relative margins */
-  font-size: 4vw;           /* Relative font size */
-  line-height: 1.25;
-  text-align: center;
-  font-weight: 500;
-  overflow-wrap: break-word; /* For long words */
+    width: 70vw;             /* Relative width! */
+    margin: 2vw auto 4vw ;         /* Relative margins */
+    font-size: 4vw;           /* Relative font size */
+    line-height: 1.25;
+    text-align: center;
+    font-weight: 500;
+    overflow-wrap: break-word; /* For long words */
 }
 
 /* note box */
 .note-box {
-  width: 75vw;              /* ADJUSTED */
-  height: 18vw;  /*added hight restrictions back in */
-  margin: 0 auto;
-  background: #ffffff;
-  border-radius: 2vw;  /* ADJUSTED 40px > 4vw - scalable */
-  color: #334;
-  font-size: 2.3vw;             /* ADJUSTED 4 > 2*/
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: left;
-  padding-right: 7vw;             /* ADJUSTED - let padding control height */
-  padding-top: 1.5vw;
-  padding-left: 2vw;
-  padding-bottom: 1.5vw;
-  box-sizing: border-box;
-  min-height: 12vw;         /* ADDED - Ensure a minimum height */
+    width: 75vw;              /* ADJUSTED */
+    height: 18vw;  /*added hight restrictions back in */
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 2vw;  /* ADJUSTED 40px > 4vw - scalable */
+    color: #334;
+    font-size: 2.3vw;             /* ADJUSTED 4 > 2*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    padding-right: 7vw;             /* ADJUSTED - let padding control height */
+    padding-top: 1.5vw;
+    padding-left: 2vw;
+    padding-bottom: 1.5vw;
+    box-sizing: border-box;
+    min-height: 12vw;         /* ADDED - Ensure a minimum height */
 }
 
 /* ribbon */
 .ribbon {
-  position: absolute;
-  right: 3vw;               /* ADJUSTED */
-  bottom: 9vw;              /* ADJUSTED */
-  width: 20vw;              /* ADJUSTED */
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
-  z-index: 5;
-  /* NEW */
+    position: absolute;
+    right: 3vw;               /* ADJUSTED */
+    bottom: 9vw;              /* ADJUSTED */
+    width: 20vw;              /* ADJUSTED */
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+    z-index: 5;
+    /* NEW */
 }
 
 /* credit */
 .poster-preview footer {
-  position: absolute;
-  bottom: 3vw;               /* ADJUSTED */
- /* Relative bottom position */
-  width: 100%;
-  text-align: center;
-  font-size: 3vw;             /* ADJUSTED */
-  color: #fff;
+    position: absolute;
+    bottom: 3vw;               /* ADJUSTED */
+    /* Relative bottom position */
+    width: 100%;
+    text-align: center;
+    font-size: 3vw;             /* ADJUSTED */
+    color: #fff;
 }
 
-/* Media query for smaller screens (max-width: 600px) */
 @media (max-width: 600px) {
-  #poster-generator > .poster-wrapper {
-    width: 90vw; /* Use 90% of viewport width */
-    height: calc(90vw * (1350 / 1080)); /* Maintain aspect ratio */
-  }
-
-  #poster {
-      transform: scale(calc(90vw / 1080)); /* Calculate scale based on viewport width */
-    transform-origin: top left;
-  }
-
-  .poster-preview h1 {
-      font-size: 9vw; /* Reduce font size for smaller screens */
-  }
-
-   .poster-preview h2 {
-      font-size: 4.5vw; /* Reduce font size for smaller screens */
-  }
+/*  .box {
+    width: 90%;   Use 90% of the viewport width for mobile
+    max-width: none;  Remove the maximum width
+  } */
+    #poster-generator > .poster-wrapper {
+        width: 90vw; /* Use 90% of viewport width */
+        height: calc(90vw * (1350 / 1080)); /* Maintain aspect ratio */
+    }
 }
 
 /* Media Query for larger screens (min-width: 600px) - FIXED SIZES */
 @media (min-width: 600px) {
-  .poster-preview {
-    padding: 12px;          /* ADDED */
-  }  
-  
-  #poster-generator > .poster-wrapper {
+    #poster-generator > .poster-wrapper {
         width: 540px; /* Fixed width for large screens */
         height: 675px; /* Maintain aspect ratio */
     }
@@ -519,6 +522,6 @@ blockquote {
         font-size: 18px;  /* Fixed size */
         bottom: 18px;  /* Fixed size */
     }
-  
-  
+
+
 }
