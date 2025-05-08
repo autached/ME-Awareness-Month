@@ -15,24 +15,27 @@
     <h1>ME Awareness Monat - Bild Generator</h1>
     <p> von der Initiative <a href="https://link.mecfs.space">@mecfs.space</a></p>
   </header>
-  <div id="mode-select">
-    <button id="cover-button" onclick="setMode('cover')">Profilbild Generator</button>
-    <button id="poster-button" onclick="setMode('poster')">Poster Generator</button>
-   <!--old:  <button onclick="setMode('poster')">Poster Generator</button> --> 
-  </div>
+  <nav>
+    <div id="mode-select">
+      <button id="cover-button" onclick="setMode('cover')">Profilbild Generator</button>
+      <button id="poster-button" onclick="setMode('poster')">Poster Generator</button>
+    </div>
+  </nav>
 
   <div id="cover-generator" class="generator">
     <!-- <h2>Profilbild Generator</h2> -->
-    
-    <div class="box form-row"> 
-      <label for="cover-image-upload"><strong>Foto:</strong></label><br>
+
+    <div class="box">
+      <label for="cover-image-upload"><strong>Foto:</strong><br>
+       <span class="label-description">Wähle ein Foto von deinem Gerät, das dein Profilbild werden soll.</span>
+      </label>
       <input type="file" id="cover-image-upload" accept="image/png, image/jpeg">
     </div>
-    
-    <div class="box"> 
+
+    <div class="box">
       <div class="template-selector">
         <!--
-        <img src="https://memonat.mecfs.space/assets/templates/profile/profile-lightup1.2-de.png" class="template-thumb" onclick="selectCoverTemplate('profile-lightup1.2-de')">
+        <img src="https://memonat.mecfs.space/assets/templates/profile/profile-lightup1.2-de.png" class="template-thumb" onclick="selectCoverTemplate('profile-lightup1.2-de.png')">
         <img src="https://memonat.mecfs.space/assets/templates/profile/Profile-lightup2.1-de.png" class="template-thumb" onclick="selectCoverTemplate('Profile-lightup2.1-de.png')">
         <img src="https://memonat.mecfs.space/assets/templates/profile/profile-monat2.1-de.png" class="template-thumb" onclick="selectCoverTemplate('profile-monat2.1-de.png')">
         <img src="https://memonat.mecfs.space/assets/templates/profile/profile-monat2-en.png" class="template-thumb" onclick="selectCoverTemplate('profile-monat2-en.png')">
@@ -42,58 +45,71 @@
       </div>
     </div>
 
+        <button onclick="downloadImage('cover')">Download</button>
+
   <!--
-    <div class="box"> 
+    <div class="box">
       <label>Zoom:</label>
       <input type="range" id="zoom-slider" min="0.1" max="3" step="0.05" value="1"><br>
     </div>
 -->
-    
-    <div class="box"> 
+
+
+    <div class="box">
       <div class="canvas-container">
         <canvas id="cover-canvas" width="1080" height="1080"></canvas>
       </div>
     </div>
-    <button onclick="downloadImage('cover')">Download</button>
-    
+
+
+
   </div>
 
   <div id="poster-generator" class="generator">
     <!-- <h2>Poster Generator</h2> -->
-    <!-- <p> In Bearbeitung. Schau in den nächsten Tagen wieder vorbei! </p> --> 
-  
+    <!-- <p> In Bearbeitung. Schau in den nächsten Tagen wieder vorbei! </p> -->
+
     <!-- Poster UI  ---------------------------------------------------------->
-    <div class="box form-row">
+    <div class="box">
       <!-- two file inputs -->
-      <label><strong>Vorher-Foto:</strong></label><br>
-      <input type="file" id="poster-image-before" accept="image/*"><br><br>
-    
-      <label><strong>Heute-Foto:</strong></label><br>
+      <label><strong>Vorher-Foto:</strong><br>
+       <span class="label-description">Ein Foto von dir, bevor ME dein Leben stark beeinflusst hat.</span>
+      </label>
+      <input type="file" id="poster-image-before" accept="image/*">
+
+      <label><strong>Heute-Foto:</strong><br>
+       <span class="label-description">Ein aktuelles Foto, das deinen Zustand heute zeigt.</span>
+      </label>
       <input type="file" id="poster-image-after"  accept="image/*">
     </div>
-    
-    <div class="box form-row">
+
+    <div class="box">
       <!-- name / age pill -->
-      <label><strong>Vorname, Alter, ME seit:</strong></label><br>
+      <label><strong>Vorname, Alter, ME seit:</strong><br>
+       <span class="label-description">Füge die Infos ein, die du teilen möchtest. Vorname, Alter, ME seit sind ein Vorschlag.</span>
+      </label>
       <input type="text" id="poster-name-info" placeholder="Anna, 32 J., ME seit 2016">
     </div>
-    
-    <div class="box form-row">
+
+    <div class="box">
       <!-- multi-line personal note -->
-      <label><strong>Platz für deinen Input:</strong></label><br>
+      <label><strong>Platz für deinen Input:</strong><br>
+        <span class="label-description">Eine persönliche Notiz, ein Zitat oder eine Botschaft, die du teilen möchtest.</span>
+      </label>
       <textarea id="poster-note" rows="3"
                 placeholder="Dein Text …"></textarea>
     </div>
+       <button id="poster-download">Download</button>
 
     <!-- around the existing #poster -->
     <div class="poster-wrapper">
-    
+
       <!-- ▶ The live poster preview (DOM instead of <canvas>) -->
       <div id="poster" class="poster-preview">
         <!-- headline -->
         <h1>12. MAI</h1>
         <h2>ME Awareness Tag</h2>
-      
+
         <!-- photos row -->
         <div class="photos">
           <div class="photo-frame before">
@@ -105,31 +121,31 @@
             <span class="tag">HEUTE 2025</span>
           </div>
         </div>
-      
+
         <!-- name pill (content filled by JS) -->
         <div id="name-pill" class="name-pill hidden"></div>
-      
+
         <!-- quote is static -->
         <blockquote>
-          „ME ist, wenn du verzweifelt<br> 
+          „ME ist, wenn du verzweifelt<br>
           versuchst zu leben, aber<br>
           dein Körper es dir nicht erlaubt.“
         </blockquote>
-      
+
         <!-- personal note (text filled by JS) -->
         <div id="note-box" class="note-box hidden"></div>
-      
+
         <!-- ribbon -->
         <img class="ribbon" src="assets/ribbon.png" alt="ME-Ribbon">
-      
+
         <!-- credit -->
         <footer>@mecfs.space</footer>
       </div>
 
     </div>
 
-    <button id="poster-download">Download</button>
-    
+
+
     <!-- html2canvas (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <!-- poster JS is appended inside script.js -->
@@ -138,7 +154,7 @@
 
   <script src="script.js"></script>
 </body>
-  
+
 <footer>
   <p>
     Erstellt mit ❤️ von <a href="https://link.mecfs.space">@mecfs.space</a> für die ME Community·
@@ -149,5 +165,5 @@
   </p>
 </footer>
 
-  
+
 </html>
