@@ -323,6 +323,7 @@ canvas {
     /* No margin-right needed here if label has margin-left */
     flex-shrink: 0;
     order: 1; /* Make input the first item visually */
+    appearance: none; /* Standard property */
     border: 0px; 
     background-color: transparent;  
 }
