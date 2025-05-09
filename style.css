@@ -295,30 +295,37 @@ canvas {
 /* Advanced Mode Color Picker Row Styling */
 #advanced-mode.color-options .color-picker-row {
     display: flex;
-    justify-content: space-between;
+    /* Use flex-start if you want label right next to input.
+       The 'order' property will place the input first visually. */
+    justify-content: flex-start;
     align-items: center;
-    margin-bottom: 8px; /* Space between each row */
+    margin-top: 8px;
 }
 
+
 #advanced-mode.color-options .color-picker-row label {
-    margin-bottom: 0; /* Reset bottom margin from general .box label */
-    font-weight: normal; /* Individual labels are normal weight */
-    margin-right: 10px; /* Space between label text and color input */
-    flex-shrink: 0; /* Prevent label from shrinking if text is long */
+    margin-bottom: 0;
+    font-weight: normal;
+    /* margin-right: 10px; -- REMOVED */
+    margin-left: 10px; /* Space AFTER the (visually) first element (the input) */
+    flex-shrink: 0;
+    order: 2; /* Make label the second item visually */
 }
 
 #advanced-mode.color-options .color-picker-row input[type="color"] {
-    width: 50px;  /* Compact width for the color swatch */
-    height: 28px; /* Compact height */
-    padding: 1px; /* Minimal padding */
+    width: 50px;
+    height: 28px;
+    padding: 1px;
     border-radius: 4px;
-    /* Reset inherited margins from general .box input[type="color"] */
     margin-top: 0;
     margin-bottom: 0;
-    margin-left: auto; /* Pushes input to the right if there's space */
-    flex-shrink: 0; /* Prevent input from shrinking */
+    /* margin-left: auto; -- REMOVED */
+    /* No margin-right needed here if label has margin-left */
+    flex-shrink: 0;
+    order: 1; /* Make input the first item visually */
+    border: 0px; 
+    background-color: transparent;  
 }
-
 
 #poster-download {
   width: 100%;
