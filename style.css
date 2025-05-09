@@ -354,8 +354,11 @@ canvas {
     background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
     color: #fff;
     font-family: sans-serif;
-    overflow: hidden; position: relative; margin: 0;
-    box-sizing: border-box; padding: 2vw;
+    overflow: hidden;
+    position: relative; /* Crucial for absolute positioning of .credit and .ribbon */
+    margin: 0;
+    box-sizing: border-box;
+    padding: 2vw;       /* Default padding for the poster frame */
 }
 
 .poster-preview h1 { margin: 2vw 0 0; font-size: 10vw; line-height: 1; text-align: center; }
@@ -403,6 +406,8 @@ overflow: hidden; /* This is the key property */
 }
 
 @media (min-width: 600px) { /* Fixed sizes for poster *content* when poster-wrapper is ~540px */
+    .poster-preview {
+      padding: 12px;  }  /* Fixed padding for the poster frame at this breakpoint */    
     .poster-preview h1 { font-size: 60px; margin: 12px 0 0; }
     .poster-preview h2 { font-size: 30px; margin: 0 0 18px; }
     .photos { gap: 12px; }
