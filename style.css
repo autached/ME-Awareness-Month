@@ -388,9 +388,9 @@ blockquote { width: 70vw; margin: 2vw auto 4vw ; font-size: 4vw; line-height: 1.
 .note-box {
     width: 75vw; height: 19vw; margin: 0 auto 0vw;
     background: #ffffff; border-radius: 2vw; color: #334;
-    font-size: 2.3vw;
+    font-size: 2.5vw; line-height: 1.2;
     display: flex; align-items: center; justify-content: flex-start; text-align: left;
-     padding-top: 2vw; padding-right: 8vw; padding-bottom: 1.5vw; padding-left: 2vw; box-sizing: border-box;
+     padding-top: 2vw; padding-right: 9vw; padding-bottom: 1.5vw; padding-left: 2vw; box-sizing: border-box;
     overflow-wrap: break-word; word-break: break-word;
 overflow: hidden; /* This is the key property */
 
@@ -439,8 +439,8 @@ overflow: hidden; /* This is the key property */
 
     .note-box {
         width: 450px; height: 113px;
-        border-radius: 12px; font-size: 13.8px;
-        padding-top: 12px; padding-right: 48px; padding-bottom: 12px; padding-left: 12px;
+        border-radius: 12px; font-size: 15px; 
+        padding-top: 12px; padding-right: 54px; padding-bottom: 9px; padding-left: 12px;
         margin: 0 auto 30px;
     }
 
