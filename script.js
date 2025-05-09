@@ -1,12 +1,12 @@
 // ===========================================================
-// 1. Global Constants
+// 1. Global Constants (Keep as is)
 // ===========================================================
 const coverCanvas = document.getElementById("cover-canvas");
 const coverCtx = coverCanvas ? coverCanvas.getContext("2d") : null;
 let overlayImage = new Image();
 
 // ===========================================================
-// 2. Global Variables
+// 2. Global Variables (Keep as is)
 // ===========================================================
 let mode = 'cover';
 let currentPosterColorMode = 'simple';
@@ -27,7 +27,7 @@ let beforeImg, afterImg, namePill, noteBox, posterNode;
 let lastAppliedPresetColors = null; // Use this to remember colors when switching modes
 
 // ===========================================================
-// 3. Cover Image Generator Functions
+// 3. Cover Image Generator Functions (loadCoverTemplates modified)
 // ===========================================================
 function drawCoverCanvas() {
     if (!coverCtx) return;
@@ -55,74 +55,121 @@ overlayImage.onload = function() { drawCoverCanvas(); };
 overlayImage.onerror = function() { console.error("Failed to load overlay image: " + overlayImage.src); drawCoverCanvas(); };
 
 function loadCoverTemplates() {
+    console.log("Attempting to load cover templates from cover.json"); // Log start of function
+    const box = document.querySelector('.template-selector'); // Get the container early
+    if (!box) { console.error("Cover Templates: .template-selector div not found."); return; }
+    box.innerHTML = '<p>Lade Vorlagen...</p>'; // Show loading indicator
+
     // Fetch the JSON file containing template filenames
     fetch('assets/templates/cover.json')
         .then(res => {
-            // Check for HTTP errors
-            if (!res.ok) { console.error(`Cover Templates: HTTP error! status: ${res.status} for URL: ${res.url}`); throw new Error(`HTTP error! status: ${res.status}`); }
+            console.log("Fetch responded with status:", res.status); // Log response status
+            if (!res.ok) {
+                // Log HTTP error and show a user-friendly message in the box
+                const errorMsg = `HTTP error! Status: ${res.status}. Could not load cover.json.`;
+                console.error(`Cover Templates: ${errorMsg}`);
+                box.innerHTML = `<p style="color: red;">Fehler: ${errorMsg}</p>`;
+                throw new Error(`HTTP error! status: ${res.status}`); // Propagate error to catch block
+            }
             return res.json(); // Parse the JSON response
         })
         .then(filenames => {
+             console.log("JSON data received:", filenames); // Log received data
             // Validate that the response is an array of strings
             if (!Array.isArray(filenames)) {
-                console.error("Cover Templates: Data from cover.json is not an array of filenames.", filenames);
-                const box = document.querySelector('.template-selector');
-                if (box) box.innerHTML = "<p>Error: Template data format incorrect.</p>";
+                // Log validation error and show a user-friendly message
+                const errorMsg = "Data from cover.json is not an array of filenames.";
+                console.error(`Cover Templates: ${errorMsg}`, filenames);
+                box.innerHTML = `<p style="color: red;">Fehler: Vorlagendatenformat in cover.json ist falsch.</p>`;
                 return; // Stop execution
             }
+             console.log("Number of template filenames found:", filenames.length); // Log count
+
             // Sort filenames alphabetically for consistent display
             filenames.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
-            // Get the container element for templates
-            const box = document.querySelector('.template-selector');
-            if (!box) { console.error("Cover Templates: .template-selector div not found."); return; }
-            box.innerHTML = ''; // Clear existing content
+            box.innerHTML = ''; // Clear loading indicator and prepare for thumbnails
 
             // Create and append image elements for each template thumbnail
-            filenames.forEach(filename => {
-                // Basic validation for each filename
-                if (typeof filename !== 'string' || filename.trim() === '') { console.warn("Cover Templates: Skipping invalid filename:", filename); return; }
-
-                const img = document.createElement('img');
-                img.src = `assets/templates/profile/${filename}`; // Construct the full path
-                img.className = 'template-thumb'; // Apply CSS class
-                // Create informative alt text
-                img.alt = `Vorlage: ${filename.substring(0, filename.lastIndexOf('.')) || filename}`;
-                // Add click handler to select this template
-                img.onclick = () => selectCoverTemplate(filename);
-                // Handle image loading errors
-                img.onerror = () => { console.error(`Cover Templates: Failed to load: ${img.src}`); img.style.border = "2px dashed red"; }; // Add visual error indicator
-                box.appendChild(img); // Add thumbnail to the container
-            });
-
-            // Select the first template initially, or re-select the previously selected one if it still exists
-            if (filenames.length > 0) {
-                const isCurrentSelectedStillValid = selectedTemplate && filenames.includes(selectedTemplate);
-                if (!selectedTemplate || !isCurrentSelectedStillValid) {
-                    selectCoverTemplate(filenames[0]); // Select the first one if none selected or current is invalid
-                } else {
-                   // Re-selecting the current template reloads the overlay and redraws
-                   selectCoverTemplate(selectedTemplate);
-                }
-            } else {
-                 // Handle case where no templates were found in the JSON
-                 box.innerHTML = '<p>No cover templates found.</p>';
+            if (filenames.length === 0) {
+                 // Handle case where the array is empty
+                 box.innerHTML = '<p>Keine Cover-Vorlagen gefunden.</p>';
+                 console.log("No template filenames found in JSON.");
                  // Also ensure no overlay is drawn
                  overlayImage.src = ''; // Clear source
                  drawCoverCanvas(); // Redraw without overlay
                  selectedTemplate = null; // Clear selected template state
+                 return; // Exit function
             }
+
+            // If filenames exist, process them
+            filenames.forEach(filename => {
+                 // Basic validation for each filename
+                 if (typeof filename !== 'string' || filename.trim() === '') {
+                     console.warn("Cover Templates: Skipping invalid filename:", filename);
+                     return; // Skip this filename
+                 }
+
+                 const img = document.createElement('img');
+                 img.src = `assets/templates/profile/${filename}`; // Construct the full path
+                 img.className = 'template-thumb'; // Apply CSS class
+                 // Create informative alt text
+                 img.alt = `Vorlage: ${filename.substring(0, filename.lastIndexOf('.')) || filename}`;
+                 // Add click handler to select this template
+                 img.onclick = () => selectCoverTemplate(filename);
+                 // Handle image loading errors - This should also show in console Network tab if 404
+                 img.onerror = () => {
+                     console.error(`Cover Templates: Failed to load thumbnail: ${img.src}`);
+                     img.style.border = "2px dashed red"; // Add visual error indicator
+                     img.title = `Fehler beim Laden der Vorlage: ${filename}`; // Add title for tooltip
+                 };
+                 box.appendChild(img); // Add thumbnail to the container
+             });
+
+
+            // Select the first template initially, or re-select the previously selected one if it still exists
+            console.log("Selecting initial template..."); // Added log
+            const isCurrentSelectedStillValid = selectedTemplate && filenames.includes(selectedTemplate);
+            if (!selectedTemplate || !isCurrentSelectedStillValid) {
+                 console.log("No valid template selected or previous template not found, selecting the first:", filenames[0]);
+                selectCoverTemplate(filenames[0]); // Select the first one if none selected or current is invalid
+            } else {
+               console.log("Re-selecting previously selected template:", selectedTemplate);
+               // Re-selecting the current template reloads the overlay and redraws
+               selectCoverTemplate(selectedTemplate);
+            }
+
         })
         .catch(error => {
-            // Handle errors during fetch or JSON parsing
-            console.error("Cover Templates: Failed to load/process cover.json:", error);
-            const box = document.querySelector('.template-selector');
-            if (box) box.innerHTML = "<p>Error loading cover templates. Check console.</p>";
+            // Handle errors during fetch or JSON parsing that weren't caught earlier
+            console.error("Cover Templates: General error during fetch or processing:", error); // Log general error
+            // Show a general error message in the box if a more specific one wasn't shown
+            if (box.innerHTML.includes('Lade Vorlagen...')) {
+                 box.innerHTML = '<p style="color: red;">Fehler beim Laden der Cover-Vorlagen.</p>';
+            }
             // Also ensure no overlay is drawn on error
             overlayImage.src = ''; // Clear source
             drawCoverCanvas(); // Redraw without overlay
             selectedTemplate = null; // Clear selected template state
         });
+}
+
+function selectCoverTemplate(templateFile) {
+    if (!templateFile || typeof templateFile !== 'string') { console.error("selectCoverTemplate: Invalid filename.", templateFile); return; }
+    console.log("Selecting template:", templateFile); // Log selection
+    selectedTemplate = templateFile; // Store the selected filename
+
+    const newSrc = `assets/templates/profile/${templateFile}`; // Construct the path for the full overlay image
+
+    // Update overlay image source only if it's different or hasn't loaded yet
+    if (overlayImage.src !== newSrc || !overlayImage.complete) {
+         console.log("Loading new overlay image:", newSrc); // Log loading
+        overlayImage.src = newSrc; // Setting src triggers the onload/onerror handlers
+    } else {
+        // If source is the same and loaded, just redraw to be safe
+        console.log("Overlay image already loaded, redrawing."); // Log redraw
+        drawCoverCanvas();
+    }
 }
 
 // Function to get mouse/touch position relative to canvas, scaled to canvas pixels
@@ -150,7 +197,7 @@ function getCanvasCoords(clientX, clientY, canvasRect) {
 
 
 // ===========================================================
-// 4. Poster Generator Functions
+// 4. Poster Generator Functions (Keep as is)
 // ===========================================================
 function setSrc(imgEl, file) {
     if(!imgEl) return;
@@ -168,9 +215,9 @@ function setSrc(imgEl, file) {
 function enableDragZoom(imgEl) {
     if (!imgEl) return;
     let scale = 1, posX = 0, posY = 0; // Current transform values
-    let startX = 0, startY = 0, dragging = false; // Variables for mouse drag start position
+    let startX = 0, startY = 0, dragging = false; // Variables for mouse drag start position relative to element's 0,0
     let lastDist = null; // For pinch zoom distance
-    let lastTouchX = null, lastTouchY = null; // For single-touch delta drag
+    let lastTouchX = null, lastTouchY = null; // For single-touch delta drag (in parent coords)
 
     // Apply transform style to the image element
     const applyTransform = () => {
@@ -184,10 +231,10 @@ function enableDragZoom(imgEl) {
 
     // --- Mouse events ---
     imgEl.addEventListener('mousedown', e => {
-        e.preventDefault(); // Prevent default drag behavior by the browser
+        e.preventDefault(); // Prevent default browser drag behavior
 
-        // Only start drag if it's a single touch/mouse click
-        if (e.buttons === 1 || (e.touches && e.touches.length === 1)) {
+        // Only start drag if it's the primary mouse button (usually left)
+        if (e.button === 0) {
              dragging = true;
              lastTouchDistance = null; // Reset pinch state
 
@@ -358,11 +405,10 @@ function updatePoster() {
     if (beforeImg) {
         if (beforeInput && beforeInput.files && beforeInput.files[0]) setSrc(beforeImg, beforeInput.files[0]);
         // Use a transparent pixel placeholder if no image is set (or if an error occurred)
-        // Check both empty src and our specific placeholder data URL
+        // Check both empty src and our specific placeholder data URL (starts with "data:,")
         else if (!beforeImg.src || beforeImg.src === window.location.href + '#' || beforeImg.src.startsWith("data:,")) {
              beforeImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-             // Also reset transform if returning to placeholder, or keep last one?
-             // Let's reset to default state (no transform)
+             // Also reset transform if returning to placeholder, so it's not zoomed/panned
              beforeImg.style.transform = '';
              beforeImg.style.transformOrigin = '';
         }
@@ -380,7 +426,7 @@ function updatePoster() {
     }
 
     // Update text content for name pill and note box
-    // Use optional chaining (`?.`) for safety in case elements aren't found
+    // Use optional chaining (`?.`) for safety in case elements aren't found or inputs are null
     if (namePill && nameInput) namePill.textContent = nameInput.value.trim(); // Trim whitespace
     if (noteBox && noteInput) noteBox.textContent = noteInput.value.trim(); // Trim whitespace
 
@@ -409,10 +455,12 @@ function setMode(selectedAppMode) {
         coverGen.style.display = 'block';
         // Load templates if they haven't been loaded yet or if the selector is empty
         const tsBox = document.querySelector('#cover-generator .template-selector');
-        if (tsBox && (tsBox.children.length === 0 || !selectedTemplate)) {
+        // Check if box exists and if it has no children OR if a template was selected but isn't represented
+        // (e.g., navigating back after an error clearing the box)
+        if (tsBox && (tsBox.children.length === 0 || !tsBox.querySelector(`.template-thumb[src$="${selectedTemplate}"]`))) {
              loadCoverTemplates();
         } else if (selectedTemplate) {
-             // Re-select the current template to ensure the overlay is loaded and drawn
+             // If templates were loaded and a template is selected, ensure overlay is loaded and drawn
              selectCoverTemplate(selectedTemplate);
         }
          // Ensure cover canvas cursor is correct based on whether an image is loaded
@@ -574,7 +622,7 @@ function triggerDownload(canvas, filename) {
                 link.href = url; // Set the link's href to the blob URL
                 link.click(); // Programmatically click the link to trigger download
                 // Clean up the object URL after the browser has initiated the download.
-                // Use a short timeout to ensure the click event completes before revoking.
+                // Use a short timeout to ensure the click event completes
                 setTimeout(() => URL.revokeObjectURL(url), 100);
             } else {
                 console.error("Canvas toBlob returned null.");
@@ -778,7 +826,11 @@ if (coverCanvas) {
 
             const [t1, t2] = e.touches;
             const distance = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY); // Current distance (screen coords)
-            if (distance === 0) return; // Avoid division by zero
+            if (distance === 0) {
+                // If fingers haven't moved, update lastTouchDistance and return
+                lastTouchDistance = distance;
+                return;
+            }
 
             // Calculate ideal zoom factor based on distance change ratio
             const idealZoomFactor = distance / lastTouchDistance;
@@ -797,9 +849,9 @@ if (coverCanvas) {
              // Calculate the actual zoom factor applied based on the clamped scale change
              const actualZoomFactor = clampedNewScaleRelativeToFit / currentScaleRelativeToFit;
 
-             // If actualZoomFactor is 1, no zoom is needed
-             if (actualZoomFactor === 1) {
-                 lastTouchDistance = distance; // Still update last distance even if no zoom occurred (helps stabilize)
+             // If actualZoomFactor is effectively 1 (due to clamping), don't redraw or update position
+             if (Math.abs(actualZoomFactor - 1) < 0.001) { // Use a small threshold for floating point comparisons
+                 lastTouchDistance = distance; // Still update last distance
                  return;
              }
 
@@ -814,6 +866,7 @@ if (coverCanvas) {
             // Apply the actual zoom factor to dimensions
             coverDrawnImage.width *= actualZoomFactor;
             coverDrawnImage.height *= actualZoomFactor;
+
 
             drawCoverCanvas(); // Redraw with scaled and repositioned image
             lastTouchDistance = distance; // Update last distance for next move event
@@ -896,7 +949,7 @@ if (coverCanvas) {
             img.onerror = () => {
                 alert("Error loading image.");
                 coverImage = null; // Clear the image state
-                // Reset the drawn image state to empty
+                // Reset the drawn image state to empty/default
                 coverDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
                  coverCanvas.style.cursor = 'default'; // Reset cursor
                 drawCoverCanvas(); // Redraw, which will show only the overlay (or blank if no overlay)
