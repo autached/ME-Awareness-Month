@@ -203,12 +203,6 @@ if (coverCanvas) {
 // UPDATED colorPresets ARRAY
 const colorPresets = [
   {
-    name: "Klassisch Blau",
-    background1: "#0068b5", background2: "#3b86c4", text: "#FFFFFF",
-    noteBg: "#FFFFFF", noteText: "#333344",
-    namePillBg: "#FFFFFF", namePillText: "#333344"
-  },
-  {
     name: "Tiefes Mitternachtsblau",
     background1: "#1A237E", background2: "#283593", text: "#E8EAF6",
     noteBg: "#3949AB", noteText: "#FFFFFF",
@@ -219,6 +213,12 @@ const colorPresets = [
     background1: "#263238", background2: "#37474F", text: "#CFD8DC",
     noteBg: "#455A64", noteText: "#FFFFFF",
     namePillBg: "#B0BEC5", namePillText: "#263238"
+  },
+  {
+    name: "Klassisch Blau",
+    background1: "#0068b5", background2: "#3b86c4", text: "#FFFFFF",
+    noteBg: "#FFFFFF", noteText: "#333344",
+    namePillBg: "#FFFFFF", namePillText: "#333344"
   },
   {
     name: "Sanftes Salbei",
