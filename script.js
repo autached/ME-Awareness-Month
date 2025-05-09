@@ -203,6 +203,12 @@ if (coverCanvas) {
 // UPDATED colorPresets ARRAY
 const colorPresets = [
   {
+    name: "Klassisch Blau",
+    background1: "#0068b5", background2: "#3b86c4", text: "#FFFFFF",
+    noteBg: "#FFFFFF", noteText: "#333344",
+    namePillBg: "#FFFFFF", namePillText: "#333344"
+  },
+  {
     name: "Tiefes Mitternachtsblau",
     background1: "#1A237E", background2: "#283593", text: "#E8EAF6",
     noteBg: "#3949AB", noteText: "#FFFFFF",
@@ -214,13 +220,6 @@ const colorPresets = [
     noteBg: "#455A64", noteText: "#FFFFFF",
     namePillBg: "#B0BEC5", namePillText: "#263238"
   },
-  {
-    name: "Klassisch Blau",
-    background1: "#0068b5", background2: "#3b86c4", text: "#FFFFFF",
-    noteBg: "#FFFFFF", noteText: "#333344",
-    namePillBg: "#FFFFFF", namePillText: "#333344"
-  },
-
   {
     name: "Sanftes Salbei",
     background1: "#A5D6A7", background2: "#C8E6C9", text: "#2E7D32",
@@ -243,22 +242,25 @@ function populatePresets() {
         return;
     }
 
-    // Try to preserve the main label "Farbkombinationen:"
-    // This assumes the first child label is the one to keep.
-    const mainLabelHTML = simpleModeDiv.querySelector('label:first-of-type')?.outerHTML || '<label><strong>Farbkombinationen:</strong></label>';
-    
-    simpleModeDiv.innerHTML = mainLabelHTML; // Set the main label back
+    // Clear the entire content of the simple-mode div
+    simpleModeDiv.innerHTML = ''; 
 
-    let presetHtml = "";
+    let presetHtml = ""; // This will hold the HTML for the new radio buttons
     colorPresets.forEach((preset, i) => {
-        // Corrected: Removed erroneous class="style.css"
         presetHtml += `<label><input type="radio" name="color-preset" value="${i}" ${i === 0 ? 'checked' : ''}> ${preset.name}</label><br>`;
     });
+    
+    // Append the new radio buttons
     simpleModeDiv.insertAdjacentHTML('beforeend', presetHtml);
 
+    // Apply the default preset (first one) if we are currently in simple mode
     if (colorPresets.length > 0 && currentPosterColorMode === 'simple') {
+        // Ensure the first radio button is indeed checked before applying
+        // (it should be by default from the HTML string, but this is an extra check)
         const firstRadio = simpleModeDiv.querySelector('input[name="color-preset"][value="0"]');
-        if (firstRadio) firstRadio.checked = true;
+        if (firstRadio) {
+            firstRadio.checked = true;
+        }
         applyPreset(colorPresets[0]);
     }
 }
