@@ -204,7 +204,7 @@ if (coverCanvas) {
 const colorPresets = [
   {
     name: "Tiefes Mitternachtsblau",
-    background1: "#1A237E", background2: "#283593", text: "#E8EAF6",
+    background1: "#1A237E", background2: "#1D2025", text: "#E8EAF6",
     noteBg: "#3949AB", noteText: "#FFFFFF",
     namePillBg: "#C5CAE9", namePillText: "#1A237E"
   },
