@@ -391,8 +391,7 @@ overflow: hidden; /* This is the key property */
 
 .ribbon { position: absolute; right: 3vw; bottom: 9vw; width: 20vw; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); z-index: 5; }
 
-.poster-preview credit {bottom: 1vw; width: 100%; text-align: center; font-size: 3vw; color: #fff}
-
+.credit { position: absolute; bottom: 4vw; width: 100%; text-align: center; font-size: 3vw; color: #fff}
 
 @media (min-width: 960px) { /* Two-column layout */
     #poster-interactive-area { flex-direction: row; align-items: flex-start; }
@@ -426,5 +425,5 @@ overflow: hidden; /* This is the key property */
 
     .ribbon { right: 18px; bottom: 54px; width: 120px; }
   
-    .poster-preview credit { font-size: 18px; bottom: 18px; }
+    .credit { font-size: 18px; bottom: 24px; }
 }
