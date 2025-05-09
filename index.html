@@ -13,6 +13,7 @@
 <body>
   <header>
     <h1>ME Awareness Monat - Bild Generator</h1>
+    <p> von der Initiative <a href="https://link.mecfs.space">@mecfs.space</a></p>
   </header>
   <nav>
     <div id="mode-select">
@@ -22,8 +23,6 @@
   </nav>
 
   <div id="cover-generator" class="generator">
-    <!-- <h2>Profilbild Generator</h2> -->
-
     <div class="box">
       <label for="cover-image-upload"><strong>Foto:</strong><br>
        <span class="label-description">Wähle ein Foto von deinem Gerät, das dein Profilbild werden soll.</span>
@@ -33,122 +32,126 @@
 
     <div class="box">
       <div class="template-selector">
-        <!--
-        <img src="https://memonat.mecfs.space/assets/templates/profile/profile-lightup1.2-de.png" class="template-thumb" onclick="selectCoverTemplate('profile-lightup1.2-de.png')">
-        <img src="https://memonat.mecfs.space/assets/templates/profile/Profile-lightup2.1-de.png" class="template-thumb" onclick="selectCoverTemplate('Profile-lightup2.1-de.png')">
-        <img src="https://memonat.mecfs.space/assets/templates/profile/profile-monat2.1-de.png" class="template-thumb" onclick="selectCoverTemplate('profile-monat2.1-de.png')">
-        <img src="https://memonat.mecfs.space/assets/templates/profile/profile-monat2-en.png" class="template-thumb" onclick="selectCoverTemplate('profile-monat2-en.png')">
-        <img src="https://memonat.mecfs.space/assets/templates/profile/profile-monat3.0-de.png" class="template-thumb" onclick="selectCoverTemplate('profile-monat3.0-de.png')">
-        <img src="https://memonat.mecfs.space/assets/templates/profile/profile-Monat3.1-de.png" class="template-thumb" onclick="selectCoverTemplate('profile-Monat3.1-de.png')">
-        -->
+        <!-- Thumbnails will be loaded by JS -->
       </div>
     </div>
 
-        <button onclick="downloadImage('cover')">Download</button>
-
-  <!--
-    <div class="box">
-      <label>Zoom:</label>
-      <input type="range" id="zoom-slider" min="0.1" max="3" step="0.05" value="1"><br>
-    </div>
--->
-
+    <button onclick="downloadImage('cover')">Download</button>
 
     <div class="box">
       <div class="canvas-container">
         <canvas id="cover-canvas" width="1080" height="1080"></canvas>
       </div>
     </div>
-
-
-
   </div>
 
   <div id="poster-generator" class="generator">
-    <!-- <h2>Poster Generator</h2> -->
-    <!-- <p> In Bearbeitung. Schau in den nächsten Tagen wieder vorbei! </p> -->
-
-    <!-- Poster UI  ---------------------------------------------------------->
     <div class="box">
-      <!-- two file inputs -->
-      <label><strong>Vorher-Foto:</strong><br>
+      <label for="poster-image-before"><strong>Vorher-Foto:</strong><br>
        <span class="label-description">Ein Foto von dir, bevor ME dein Leben stark beeinflusst hat.</span>
       </label>
       <input type="file" id="poster-image-before" accept="image/*">
 
-      <label><strong>Heute-Foto:</strong><br>
+      <label for="poster-image-after"><strong>Heute-Foto:</strong><br>
        <span class="label-description">Ein aktuelles Foto, das deinen Zustand heute zeigt.</span>
       </label>
       <input type="file" id="poster-image-after"  accept="image/*">
     </div>
 
     <div class="box">
-      <!-- name / age pill -->
-      <label><strong>Vorname, Alter, ME seit:</strong><br>
+      <label for="poster-name-info"><strong>Vorname, Alter, ME seit:</strong><br>
        <span class="label-description">Füge die Infos ein, die du teilen möchtest. Vorname, Alter, ME seit sind ein Vorschlag.</span>
       </label>
       <input type="text" id="poster-name-info" placeholder="Anna, 32 J., ME seit 2016">
     </div>
 
     <div class="box">
-      <!-- multi-line personal note -->
-      <label><strong>Platz für deinen Input:</strong><br>
+      <label for="poster-note"><strong>Platz für deinen Input:</strong><br>
         <span class="label-description">Eine persönliche Notiz, ein Zitat oder eine Botschaft, die du teilen möchtest.</span>
       </label>
-      <textarea id="poster-note" rows="3"
-                placeholder="Dein Text …"></textarea>
+      <textarea id="poster-note" rows="3" placeholder="Dein Text …"></textarea>
     </div>
-       <button id="poster-download">Download</button>
 
-    <!-- around the existing #poster -->
-    <div class="poster-wrapper">
+    <div class="box">
+      <label><strong>Farbmodus:</strong></label>
+      <div id="color-mode-buttons" class="button-group">
+        <button id="color-mode-simple-btn" data-mode="simple">Einfach</button>
+        <button id="color-mode-advanced-btn" data-mode="advanced">Erweitert</button>
+      </div>
+    </div>
 
-      <!-- ▶ The live poster preview (DOM instead of <canvas>) -->
-      <div id="poster" class="poster-preview">
-        <!-- headline -->
-        <h1>12. MAI</h1>
-        <h2>ME Awareness Tag</h2>
+    <div id="poster-interactive-area">
+        <div class="poster-controls-column">
+            <div id="simple-mode" class="color-options"> <!-- No 'hidden' class initially, JS will manage -->
+              <label><strong>Farbkombinationen:</strong></label>
+              <!-- Radio buttons will be populated by JS -->
+            </div>
 
-        <!-- photos row -->
-        <div class="photos">
-          <div class="photo-frame before">
-            <img id="before-img" draggable="false">
-            <span class="tag">VORHER</span>
-          </div>
-          <div class="photo-frame after">
-            <img id="after-img"  draggable="false">
-            <span class="tag">HEUTE 2025</span>
-          </div>
+            <div id="advanced-mode" class="color-options hidden"> <!-- Start advanced mode hidden -->
+              <div class="color-picker-row">
+                  <label for="bg-color1">Hintergrund Farbe 1:</label>
+                  <input type="color" id="bg-color1">
+              </div>
+              <div class="color-picker-row">
+                  <label for="bg-color2">Hintergrund Farbe 2:</label>
+                  <input type="color" id="bg-color2">
+              </div>
+              <div class="color-picker-row">
+                  <label for="text-color">Überschriften Farbe:</label> <!-- Changed from "Text Farbe" -->
+                  <input type="color" id="text-color">
+              </div>
+              <!-- --- REORDERED AND RENAMED BELOW --- -->
+              <div class="color-picker-row">
+                  <label for="name-pill-bg-color">Namensfeld Hintergrund:</label> <!-- Changed from "Name Pill Hintergrund" -->
+                  <input type="color" id="name-pill-bg-color">
+              </div>
+              <div class="color-picker-row">
+                  <label for="name-pill-text-color">Namensfeld Textfarbe:</label> <!-- Changed from "Name Pill Textfarbe" -->
+                  <input type="color" id="name-pill-text-color">
+              </div>
+              <div class="color-picker-row">
+                  <label for="note-bg-color">Notizfeld Hintergrund:</label> <!-- Changed from "Notiz Feld Hintergrund" -->
+                  <input type="color" id="note-bg-color">
+              </div>
+              <div class="color-picker-row">
+                  <label for="note-text-color">Notizfeld Textfarbe:</label> <!-- Changed from "Notiz Feld Textfarbe" -->
+                  <input type="color" id="note-text-color">
+              </div>
+            </div>
+
+            <button id="poster-download">Download</button>
         </div>
 
-        <!-- name pill (content filled by JS) -->
-        <div id="name-pill" class="name-pill hidden"></div>
-
-        <!-- quote is static -->
-        <blockquote>
-          „ME ist, wenn du verzweifelt<br>
-          versuchst zu leben, aber<br>
-          dein Körper es dir nicht erlaubt.“
-        </blockquote>
-
-        <!-- personal note (text filled by JS) -->
-        <div id="note-box" class="note-box hidden"></div>
-
-        <!-- ribbon -->
-        <img class="ribbon" src="assets/ribbon.png" alt="ME-Ribbon">
-
-        <!-- credit -->
-        <footer>@mecfs.space</footer>
-      </div>
-
+        <div class="poster-preview-column">
+            <div class="poster-wrapper">
+              <div id="poster" class="poster-preview">
+                <h1>12. MAI</h1>
+                <h2>ME Awareness Tag</h2>
+                <div class="photos">
+                  <div class="photo-frame before">
+                    <img id="before-img" draggable="false" alt="Vorher Bild Platzhalter">
+                    <span class="tag">VORHER</span>
+                  </div>
+                  <div class="photo-frame after">
+                    <img id="after-img"  draggable="false" alt="Heute Bild Platzhalter">
+                    <span class="tag">HEUTE 2025</span>
+                  </div>
+                </div>
+                <div id="name-pill" class="name-pill"></div>
+                <blockquote>
+                  „ME ist, wenn du verzweifelt<br>
+                  versuchst zu leben, aber<br>
+                  dein Körper es dir nicht erlaubt.“
+                </blockquote>
+                <div id="note-box" class="note-box"></div>
+                <img class="ribbon" src="assets/ribbon.png" alt="ME-Ribbon">
+                <footer>@mecfs.space</footer>
+              </div>
+            </div>
+        </div>
     </div>
 
-
-
-    <!-- html2canvas (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <!-- poster JS is appended inside script.js -->
-
   </div>
 
   <script src="script.js"></script>
@@ -163,6 +166,4 @@
     <a href="rechtliches.html#datenschutz">Datenschutz</a>
   </p>
 </footer>
-
-
 </html>
