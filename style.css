@@ -1,11 +1,11 @@
 :root {
   --bg: #111;
   --fg: #eee;
-  --accent: #66ccff;
+  --accent: #a3e4c9;
   --font-size: 1.1em;
   --header-bg: #080f19;
   --nav-bg: #1e2733;
-  --button-active: #66ccff; /* Defined for sticky-active */
+  --button-active: #a3e4c9; /* Defined for sticky-active */
 }
 
 html {
@@ -163,6 +163,7 @@ canvas {
   text-align: left;
   max-width: 100%;
   font-weight: bold;
+  color: var(--accent);
 }
 
 .label-description {
@@ -268,29 +269,27 @@ canvas {
   box-sizing: border-box;
 }
 
-/* Label for the entire simple/advanced section */
-#simple-mode.color-options > label:first-of-type,
-#advanced-mode.color-options > label:first-of-type { /* e.g. "Farbkombinationen:" or if you add a heading to advanced */
-  display: block;
-  text-align: left;
-  margin-bottom: 15px; /* Space before the list of options */
-  font-weight: bold;
-}
-
 
 /* Simple Mode Radio Button Styling */
-#simple-mode.color-options label:not(:first-of-type) {
+#simple-mode.color-options label {
   display: block;
   margin-top: 8px;
-  font-weight: normal;
+  font-weight: normal; /* All preset labels will now have normal weight */
   cursor: pointer;
+  color: var(--fg); /* Ensure labels have a readable color, inheriting from body */
 }
 
-#simple-mode.color-options label:not(:first-of-type) input[type="radio"] {
+/* Corrected selector: space instead of colon after label */
+#simple-mode.color-options label input[type="radio"] {
   width: auto;
   margin-right: 8px;
   vertical-align: middle;
-  padding: 0; border: none; background: none; margin-bottom: 0; margin-top: 0;
+  /* Resetting specific styles that might be inherited from .box input */
+  padding: 0; 
+  border: none; 
+  background: none; 
+  margin-bottom: 0;
+  margin-top: 0; /* margin-top is handled by the label's margin-top */
 }
 
 /* Advanced Mode Color Picker Row Styling */
@@ -354,11 +353,8 @@ canvas {
     background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
     color: #fff;
     font-family: sans-serif;
-    overflow: hidden;
-    position: relative; /* Crucial for absolute positioning of .credit and .ribbon */
-    margin: 0;
-    box-sizing: border-box;
-    padding: 2vw;       /* Default padding for the poster frame */
+    overflow: hidden; position: relative; margin: 0;
+    box-sizing: border-box; padding: 2vw;
 }
 
 .poster-preview h1 { margin: 2vw 0 0; font-size: 10vw; line-height: 1; text-align: center; }
@@ -382,7 +378,7 @@ canvas {
 blockquote { width: 70vw; margin: 2vw auto 4vw ; font-size: 4vw; line-height: 1.25; text-align: center; font-weight: 500; overflow-wrap: break-word; }
 
 .note-box {
-    width: 75vw; height: 19vw; margin: 0 auto 5vw;
+    width: 75vw; height: 19vw; margin: 0 auto 0vw;
     background: #ffffff; border-radius: 2vw; color: #334;
     font-size: 2.3vw;
     display: flex; align-items: center; justify-content: flex-start; text-align: left;
@@ -394,7 +390,18 @@ overflow: hidden; /* This is the key property */
 
 .ribbon { position: absolute; right: 3vw; bottom: 9vw; width: 20vw; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); z-index: 5; }
 
-.credit { position: absolute; bottom: 4vw; width: 100%; text-align: center; font-size: 3vw; color: #fff}
+/* --- CREDIT STYLING (General VW) --- */
+.credit {
+    position: absolute;
+    bottom: 5vw;     /* Adjust this value if 4vw was too high up */
+    left: 2vw;       /* Match parent's left padding */
+    right: 2vw;      /* Match parent's right padding */
+    /* width is implicitly set by left/right constraints */
+    text-align: center;
+    font-size: 3vw;
+    color: #fff;
+}
+
 
 @media (min-width: 960px) { /* Two-column layout */
     #poster-interactive-area { flex-direction: row; align-items: flex-start; }
@@ -406,8 +413,9 @@ overflow: hidden; /* This is the key property */
 }
 
 @media (min-width: 600px) { /* Fixed sizes for poster *content* when poster-wrapper is ~540px */
-    .poster-preview {
-      padding: 12px;  }  /* Fixed padding for the poster frame at this breakpoint */    
+      .poster-preview {
+        padding: 12px;  }  /* Fixed padding for the poster frame at this breakpoint */
+ 
     .poster-preview h1 { font-size: 60px; margin: 12px 0 0; }
     .poster-preview h2 { font-size: 30px; margin: 0 0 18px; }
     .photos { gap: 12px; }
@@ -430,5 +438,11 @@ overflow: hidden; /* This is the key property */
 
     .ribbon { right: 18px; bottom: 54px; width: 120px; }
   
-    .credit { font-size: 18px; bottom: 24px; }
+    .credit {
+        font-size: 18px;
+        bottom: 30px;    /* Adjust if 24px was too high up, should relate to parent padding */
+        left: 12px;      /* Match parent's fixed left padding */
+        right: 12px;     /* Match parent's fixed right padding */
+        /* text-align, color, position:absolute are inherited or already set */
+    }
 }
