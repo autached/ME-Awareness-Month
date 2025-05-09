@@ -5,7 +5,7 @@
   --font-size: 1.1em;
   --header-bg: #080f19;
   --nav-bg: #1e2733;
-  --button-active: #5dade2;
+  --button-active: #66ccff; /* Defined for sticky-active */
 }
 
 html {
@@ -16,7 +16,6 @@ header {
   background-color: var(--header-bg);
   padding: 20px;
   text-align: center;
-  /* Remove the margin between header and navbar */
   margin-bottom: 0;
 }
 
@@ -67,9 +66,8 @@ nav {
   background-color: var(--nav-bg);
   padding: 10px;
   text-align: center;
-  border-radius: 0; /* Reset border-radius */
+  border-radius: 0;
   margin: 0;
-  /* Make navbar stretch across whole page */
   max-width: none;
 }
 
@@ -105,8 +103,14 @@ button.sticky-active {
 }
 
 #cover-generator {
+  /* display: block; -- Handled by JS or default block behavior */
   padding-top: 32px;
 }
+
+#poster-generator {
+    display: none; /* Hide poster generator by default, JS handles visibility */
+}
+
 
 .canvas-container {
   margin-top: 8px;
@@ -128,13 +132,11 @@ canvas {
 .generator {
   margin-top: 20px;
   margin: 20px auto;
-  padding: 20px;
-  max-width: 700px;
+  max-width: unset;
   width: 100%;
   background-color: transparent;
   box-shadow: none;
   padding: 0;
-  max-width: unset;
 }
 
 .generator .box {
@@ -142,47 +144,40 @@ canvas {
   padding: 16px 20px;
   border-radius: 10px;
   margin: 16px auto;
-  /* Width is now max-width for larger screens */
   max-width: 540px;
-  text-align: center;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.generator .box:has(.template-selector),
+.generator .box:has(.canvas-container) {
+    text-align: center;
 }
 
 .generator .box + .box {
   margin-top: 24px;
 }
 
-/* Form Styling for stacked labels and inputs */
-/* Apply form styling directly to .box */
-.box {
-  display: block;
-  /* Width is now max-width for larger screens */
-  max-width: 540px;
-  padding: 10px 20px;
-  text-align: left;
-}
-
-/* Style for labels */
 .box label {
   display: block;
   text-align: left;
   max-width: 100%;
-  flex: none;
-  padding-right: 0;
-  box-sizing: border-box;
+  font-weight: bold;
 }
 
-/* Style for label descriptions */
 .label-description {
-  font-size: 0.8em;      /* Smaller font size */
-  font-weight: normal; /* Not bold */
-  color: #ccc;           /* Slightly lighter color */
-  display: block;          /* Ensure it's on a new line */
-  margin-top: 3px;       /* Add a little space */
+  font-size: 0.8em;
+  font-weight: normal;
+  color: #ccc;
+  display: block;
+  margin-top: 3px;
 }
 
-/* Style for input and textarea */
-.box input,
-.box textarea {
+.box input[type="file"],
+.box input[type="text"],
+.box input[type="color"],
+.box textarea,
+.box select {
   width: 100%;
   box-sizing: border-box;
   background-color: #333;
@@ -192,19 +187,15 @@ canvas {
   border-radius: 5px;
   margin-bottom: 10px;
   margin-top: 7px;
-  flex: none;
+}
+.box input[type="color"] {
+    height: 40px;
+    padding: 2px;
 }
 
 .box textarea {
   height: 100px;
-}
-
-.box:has(.poster-preview) {
-  padding: 16px;
-  background-color: #222;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  margin: 0 auto;
-  width: fit-content;
+  resize: vertical;
 }
 
 .template-thumb {
@@ -212,316 +203,228 @@ canvas {
   margin: 3px;
   cursor: pointer;
   border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .template-thumb:hover {
-  border: 1px solid #333;
+  border-color: var(--accent);
 }
 
-body.legal-page {
-  background-color: #1c1c1c;
-  color: #111;
-  font-family: system-ui, sans-serif;
+.button-group {
+  display: flex;
+  width: 100%;
+  margin-top: 7px;
+}
+
+.button-group button {
+  flex-grow: 1;
+  border-radius: 0;
   margin: 0;
-  padding: 0;
+  border-left-width: 0;
 }
 
-.legal-main {
-  background-color: #f0f0f0;
-  max-width: 720px;
-  margin: 2em auto;
-  padding: 2em 1.5em;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+.button-group button:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-left-width: 2px;
 }
 
-/* RECHTLICHES.HTML ======================================= */
-.legal-main {
-  background-color: #f2f2f2;
-  max-width: 720px;
-  margin: 2em auto;
-  padding: 2em 1.5em;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  text-align: left;
+.button-group button:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
-
-.legal-header {
-  max-width: 720px;
-  margin: 0 auto;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: var(--bg);
-  padding-bottom: 0.2em;
-  padding-top: 0.2em;
+.button-group button:not(:first-child) {
+    border-left-width: 1px;
 }
 
 /* =========================================================
-   Poster-preview layout (DOM version)
+   Poster Generator Specifics
    =========================================================*/
 #poster-generator {
   padding-top: 32px;
 }
 
-.poster-preview {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
-    color: #fff;
-    font-family: sans-serif;
-    overflow: hidden;
-    position: relative;
-    margin: 0;
-    box-sizing: border-box; /* ADDED */
-    padding: 2vw;          /* ADDED */
+#poster-interactive-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 20px auto 0;
+  padding: 0 10px;
+  max-width: 1000px; /* Max width for the two-column layout */
 }
 
-#poster-generator > .poster-wrapper {
+.poster-controls-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#simple-mode.color-options,
+#advanced-mode.color-options {
+  background-color: #222;
+  padding: 16px 20px;
+  border-radius: 10px;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+/* Label for the entire simple/advanced section */
+#simple-mode.color-options > label:first-of-type,
+#advanced-mode.color-options > label:first-of-type { /* e.g. "Farbkombinationen:" or if you add a heading to advanced */
+  display: block;
+  text-align: left;
+  margin-bottom: 15px; /* Space before the list of options */
+  font-weight: bold;
+}
+
+
+/* Simple Mode Radio Button Styling */
+#simple-mode.color-options label:not(:first-of-type) {
+  display: block;
+  margin-top: 8px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+#simple-mode.color-options label:not(:first-of-type) input[type="radio"] {
+  width: auto;
+  margin-right: 8px;
+  vertical-align: middle;
+  padding: 0; border: none; background: none; margin-bottom: 0; margin-top: 0;
+}
+
+/* Advanced Mode Color Picker Row Styling */
+#advanced-mode.color-options .color-picker-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px; /* Space between each row */
+}
+
+#advanced-mode.color-options .color-picker-row label {
+    margin-bottom: 0; /* Reset bottom margin from general .box label */
+    font-weight: normal; /* Individual labels are normal weight */
+    margin-right: 10px; /* Space between label text and color input */
+    flex-shrink: 0; /* Prevent label from shrinking if text is long */
+}
+
+#advanced-mode.color-options .color-picker-row input[type="color"] {
+    width: 50px;  /* Compact width for the color swatch */
+    height: 28px; /* Compact height */
+    padding: 1px; /* Minimal padding */
+    border-radius: 4px;
+    /* Reset inherited margins from general .box input[type="color"] */
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: auto; /* Pushes input to the right if there's space */
+    flex-shrink: 0; /* Prevent input from shrinking */
+}
+
+
+#poster-download {
+  width: 100%;
+  margin-top: 20px; /* Ensure it's clearly below color options */
+  padding: 12px 20px;
+}
+
+.poster-preview-column {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#poster-generator .poster-wrapper {
     display: block;
-    padding: 0;
-    margin: 0 auto; /* Center the wrapper */
     overflow: hidden;
-    width: 90vw; /* Make it fill 90% on default browser size. */
-    height: calc(90vw * (1350 / 1080)); /* setting aspect ratio */
+    width: 90vw;
+    height: calc(90vw * (1350 / 1080));
     position: relative;
-    box-sizing: border-box;   /* ADDED */
-    max-width: 720px; /* ADDED:  Limit the maximum width */
+    box-sizing: border-box;
+    max-width: 540px;
+    max-height: calc(540px * (1350 / 1080));
 }
 
 #poster {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%; /* Make it fill wrapper */
-    height: 100%; /* Make it fill wrapper */
-    transform-origin: top left; /* Ensure scaling from top-left */
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    transform-origin: top left;
 }
 
-/* Sizes inside of #poster */
-/* headline */
-.poster-preview h1 {
-    margin: 2vw 0 0;         /* ADJUSTED */
-    font-size: 10vw;
-    line-height: 1;
-    text-align: center;
-}
-
-.poster-preview h2 {
-    margin: 0 0 3vw;         /* ADJUSTED */
-    font-size: 5vw;           /* ADJUSTED */
-    text-align: center;
-}
-
-/* photo frames */
-.photos {
-    display: flex;
-    justify-content: center;
-    gap: 2vw;                /* ADJUSTED */
-}
-
-.photo-frame {
-    position: relative;
-    width: 30vw;              /* ADJUSTED */
-    height: 30vw;             /* ADJUSTED */
-    border-radius: 0vw;  /* ADJUSTED 40px > 4vw - scalable */
-    overflow: hidden;
-    /* mask img */
-    background: #eee;
-}
-
-.photo-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* transform will be set by JS for zoom/drag */
-    cursor: grab;
-    touch-action: none;
-}
-
-.hidden {
-    display: none;
-}
-
-.tag {
-    position: absolute;
-    top: 1.2vw;             /* ADJUSTED */
-    left: 1.2vw;            /* ADJUSTED */
-    /* inside the frame */
-    background: #0057a3;
-    padding: 0.6vw 2vw;        /* ADJUSTED */
-    border-radius: 999px;
-    font-size: 1.5vw;         /* ADJUSTED */
-    font-weight: 600;
+.poster-preview {
+    width: 100%; height: 100%;
+    background: linear-gradient(#0068b5 0%, #3b86c4 50%, #f3b9b9 100%);
     color: #fff;
-    z-index: 2;
+    font-family: sans-serif;
+    overflow: hidden; position: relative; margin: 0;
+    box-sizing: border-box; padding: 2vw;
 }
 
-/* pill for name */
+.poster-preview h1 { margin: 2vw 0 0; font-size: 10vw; line-height: 1; text-align: center; }
+.poster-preview h2 { margin: 0 0 3vw; font-size: 5vw; text-align: center; }
+.photos { display: flex; justify-content: center; gap: 2vw; }
+.photo-frame { position: relative; width: 30vw; height: 30vw; border-radius: 2vw; overflow: hidden; background: #eee; }
+.photo-frame img { width: 100%; height: 100%; object-fit: cover; cursor: grab; touch-action: none; }
+.hidden { display: none !important; }
+.tag { position: absolute; top: 1.2vw; left: 1.2vw; background: #0057a3; padding: 0.6vw 2vw; border-radius: 999px; font-size: 1.5vw; font-weight: 600; color: #fff; z-index: 2; }
+
 .name-pill {
-    width: 55vw;              /* ADJUSTED */
-    /* narrower than before */
-    height: 6vw;               /* ADJUSTED */
-    margin: 0 auto;
-    /* remove top margin */
-    transform: translateY(-3vw);   /* ADJUSTED */
-    /* pull upward 40 px to overlap photos */
-    background: #fff;
-    color: #334;
-    border-radius: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3.5vw;           /* ADJUSTED */
-    font-weight: 600;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);   /* subtle lift */
+    width: 55vw; height: 6vw; margin: 0 auto; transform: translateY(-3vw);
+    background: #fff; color: #334; border-radius: 3vw;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.5vw; font-weight: 600; text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    padding: 0.5vw 1vw; box-sizing: border-box;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
-/* quote */
-blockquote {
-    width: 70vw;             /* Relative width! */
-    margin: 2vw auto 4vw ;         /* Relative margins */
-    font-size: 4vw;           /* Relative font size */
-    line-height: 1.25;
-    text-align: center;
-    font-weight: 500;
-    overflow-wrap: break-word; /* For long words */
-}
+blockquote { width: 70vw; margin: 2vw auto 4vw ; font-size: 4vw; line-height: 1.25; text-align: center; font-weight: 500; overflow-wrap: break-word; }
 
-/* note box */
 .note-box {
-    width: 75vw;              /* ADJUSTED */
-    height: 18vw;  /*added hight restrictions back in */
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 2vw;  /* ADJUSTED 40px > 4vw - scalable */
-    color: #334;
-    font-size: 2.3vw;             /* ADJUSTED 4 > 2*/
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: left;
-    padding-right: 7vw;             /* ADJUSTED - let padding control height */
-    padding-top: 1.5vw;
-    padding-left: 2vw;
-    padding-bottom: 1.5vw;
-    box-sizing: border-box;
-    min-height: 12vw;         /* ADDED - Ensure a minimum height */
+    width: 75vw; height: 19vw; margin: 0 auto 5vw;
+    background: #ffffff; border-radius: 2vw; color: #334;
+    font-size: 2.3vw;
+    display: flex; align-items: center; justify-content: flex-start; text-align: left;
+     padding-top: 2vw; padding-right: 8vw; padding-bottom: 1.5vw; padding-left: 2vw; box-sizing: border-box;
+    overflow-wrap: break-word; word-break: break-word;
+overflow: hidden; /* This is the key property */
+
 }
 
-/* ribbon */
-.ribbon {
-    position: absolute;
-    right: 3vw;               /* ADJUSTED */
-    bottom: 9vw;              /* ADJUSTED */
-    width: 20vw;              /* ADJUSTED */
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
-    z-index: 5;
-    /* NEW */
-}
+.ribbon { position: absolute; right: 3vw; bottom: 9vw; width: 20vw; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); z-index: 5; }
 
-/* credit */
-.poster-preview footer {
-    position: absolute;
-    bottom: 3vw;               /* ADJUSTED */
-    /* Relative bottom position */
-    width: 100%;
-    text-align: center;
-    font-size: 3vw;             /* ADJUSTED */
-    color: #fff;
-}
+.poster-preview credit {bottom: 1vw; width: 100%; text-align: center; font-size: 3vw; color: #fff}
 
-@media (max-width: 600px) {
-/*  .box {
-    width: 90%;   Use 90% of the viewport width for mobile
-    max-width: none;  Remove the maximum width
-  } */
-    #poster-generator > .poster-wrapper {
-        width: 90vw; /* Use 90% of viewport width */
-        height: calc(90vw * (1350 / 1080)); /* Maintain aspect ratio */
+
+@media (min-width: 960px) { /* Two-column layout */
+    #poster-interactive-area { flex-direction: row; align-items: flex-start; }
+    .poster-controls-column { flex: 0 0 320px; /* Fixed width for controls */ }
+    .poster-preview-column { flex: 1; min-width: 0; }
+    #poster-generator .poster-wrapper {
+        width: 100%; height: auto; aspect-ratio: 1080 / 1350; margin: 0;
     }
 }
 
-/* Media Query for larger screens (min-width: 600px) - FIXED SIZES */
-@media (min-width: 600px) {
-    #poster-generator > .poster-wrapper {
-        width: 540px; /* Fixed width for large screens */
-        height: 675px; /* Maintain aspect ratio */
-    }
-
-    #poster {
-        transform: scale(1); /* Scale down the entire poster */
-    }
-
-    /* Fixed sizes for sub-elements */
-    .poster-preview h1 {
-        font-size: 54px; /* Fixed size */
-        margin: 12px 0 0;  /* Fixed size */
-    }
-
-    .poster-preview h2 {
-        font-size: 27px; /* Fixed size */
-        margin: 0 0 18px; /* Fixed size */
-    }
-
-    .photos {
-        gap: 12px;  /* Fixed size */
-    }
-
-    .photo-frame {
-        width: 180px;   /* Fixed size */
-        height: 180px;  /* Fixed size */
-        border-radius: 12px;
-    }
-
-    .tag {
-        top: 7.2px;     /* Fixed size */
-        left: 7.2px;    /* Fixed size */
-        padding: 3.6px 12px;  /* Fixed size */
-        font-size: 9px;   /* Fixed size */
-    }
+@media (min-width: 600px) { /* Fixed sizes for poster *content* when poster-wrapper is ~540px */
+    .poster-preview h1 { font-size: 60px; margin: 12px 0 0; }
+    .poster-preview h2 { font-size: 30px; margin: 0 0 18px; }
+    .photos { gap: 12px; }
+    .photo-frame { width: 180px; height: 180px; border-radius: 12px; }
+    .tag { top: 7.2px; left: 7.2px; padding: 3.6px 12px; font-size: 9px; }
 
     .name-pill {
-        width: 330px;  /* Fixed size */
-        height: 36px;   /* Fixed size */
-        transform: translateY(-18px); /* Fixed size */
-        font-size: 21px;  /* Fixed size */
+        width: 330px; height: 36px; transform: translateY(-18px);
+        font-size: 21px; border-radius: 18px; padding: 0 10px;
     }
 
-    blockquote {
-        width: 420px; /* Fixed size */
-        margin: 12px auto 24px; /* Fixed size */
-        font-size: 24px;  /* Fixed size */
-        font-weight: 500;
-    }
+    blockquote { width: 420px; margin: 12px auto 24px; font-size: 24px; }
 
     .note-box {
-        width: 450px; /* Fixed size */
-        height: 108px;  /* Fixed size */
-        border-radius: 12px; /* Fixed size */
-        font-size: 13.8px;  /* Fixed size */
-        padding: 18px;   /* Fixed size */
-        min-height: 72px;  /* Fixed size */
-        margin: 0 63 0;
-        padding-right: 42px;             /* ADJUSTED - let padding control height */
-        padding-top: 9px;
-        padding-left: 12px;
-        padding-bottom: 9px;
+        width: 450px; height: 113px;
+        border-radius: 12px; font-size: 13.8px;
+        padding-top: 12px; padding-right: 48px; padding-bottom: 12px; padding-left: 12px;
+        margin: 0 auto 30px;
     }
 
-    .ribbon {
-        right: 18px;  /* Fixed size */
-        bottom: 54px; /* Fixed size */
-        width: 120px;  /* Fixed size */
-    }
-
-    .poster-preview footer {
-        font-size: 18px;  /* Fixed size */
-        bottom: 18px;  /* Fixed size */
-    }
-
-
+    .ribbon { right: 18px; bottom: 54px; width: 120px; }
+  
+    .poster-preview credit { font-size: 18px; bottom: 18px; }
 }
