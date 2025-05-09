@@ -19,12 +19,15 @@ import json
 
 def get_image_files(folder):
     """
-    Returns a sorted list of image files (png, jpg, jpeg, webp) in the given folder.
+    Returns a case-insensitively sorted list of image files
+    (png, jpg, jpeg, webp) in the given folder.
     """
-    return sorted([
+    image_filenames = [
         f for f in os.listdir(folder)
         if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))
-    ])
+    ]
+    # Sort by the lowercase version of the filename
+    return sorted(image_filenames, key=str.lower)
 
 def save_json(data, path):
     """
