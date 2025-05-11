@@ -354,12 +354,6 @@ canvas {
     background-color: transparent;  
 }
 
-#poster-download {
-  width: 100%;
-  margin-top: 20px; /* Ensure it's clearly below color options */
-  padding: 12px 20px;
-}
-
 .poster-preview-column {
     display: flex;
     justify-content: center;
