@@ -314,7 +314,7 @@ function updatePoster() {
     namePill.textContent = nameInput.value;
     noteBox.textContent = noteInput.value;
     // show pill only when there is text
-    namePill.classList.toggle('hidden', nameInput.value.trim()==='');
+    // namePill.classList.toggle('hidden', nameInput.value.trim()==='');
     noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
 
     //MODIFIED: Update 'before' image source if a file is selected
