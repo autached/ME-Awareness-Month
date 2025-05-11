@@ -122,7 +122,7 @@ button.sticky-active {
 }
 
 canvas {
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
   width: 100%;
   max-width: 540px;
   height: auto;
