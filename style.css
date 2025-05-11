@@ -116,7 +116,7 @@ button.sticky-active {
   margin-top: 8px;
   position: relative;
   display: flex;
-  max-width: 100%;
+  max-width: 300px;
   width: auto;
   justify-content: center;
 }
