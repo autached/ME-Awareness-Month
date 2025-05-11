@@ -23,8 +23,17 @@ let selectedTemplate = null; // Stores only the filename string for cover templa
 // Poster Generator DOM Elements (will be assigned in DOMContentLoaded)
 let beforeImg, afterImg, namePill, noteBox, posterNode;
 
-// NEW: To store colors from the last simple preset or advanced pickers
+//ADDED CANVAS MANIPULATION: Global variables for the before and after canvases and their contexts
+let beforeCanvas, afterCanvas, beforeCtx, afterCtx;
+
+// To store colors from the last simple preset or advanced pickers
 let lastAppliedPresetColors = null; // Use this to remember colors when switching modes
+
+//ADDED: drawnImage objects for beforeCanvas and afterCanvas
+let beforeDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
+let afterDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
+
+
 
 // ===========================================================
 // 3. Cover Image Generator Functions (loadCoverTemplates modified)
@@ -173,10 +182,10 @@ function selectCoverTemplate(templateFile) {
 }
 
 // Function to get mouse/touch position relative to canvas, scaled to canvas pixels
-function getCanvasCoords(clientX, clientY, canvasRect) {
+function getCanvasCoords(clientX, clientY, canvasRect, canvas) {
     // Get canvas's true drawing size vs rendered size
-    const canvasWidth = coverCanvas.width;
-    const canvasHeight = coverCanvas.height;
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
     const renderedWidth = canvasRect.width;
     const renderedHeight = canvasRect.height;
 
@@ -212,198 +221,154 @@ function setSrc(imgEl, file) {
     imgEl.dataset.objectUrl = newUrl; // Store the new object URL on the element
 }
 
-function enableDragZoom(imgEl) {
-    if (!imgEl) return;
-    let scale = 1, posX = 0, posY = 0; // Current transform values
-    let startX = 0, startY = 0, dragging = false; // Variables for mouse drag start position relative to element's 0,0
-    let lastDist = null; // For pinch zoom distance
-    let lastTouchX = null, lastTouchY = null; // For single-touch delta drag (in parent coords)
+//DELETED: enableDragZoom function to work with canvases
+/* function enableDragZoom(canvas) {
+    if (!canvas) return;
 
-    // Apply transform style to the image element
-    const applyTransform = () => {
-        imgEl.style.transform = `translate(${posX}px,${posY}px) scale(${scale})`;
-        imgEl.style.transformOrigin = '0 0'; // Ensure transform is relative to the top-left of the element itself
-    };
+    let ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    // Initial style and state
-    imgEl.style.cursor = 'grab'; // Set cursor to grab
-    applyTransform(); // Apply initial transform (translate 0,0 scale 1)
+    // Initial scale and position
+    let scale = 1;
+    let posX = 0;
+    let posY = 0;
+    let startX = 0;
+    let startY = 0;
+    let dragging = false;
 
-    // --- Mouse events ---
-    imgEl.addEventListener('mousedown', e => {
+    // Apply initial transform
+    applyCanvasTransform(canvas, ctx, scale, posX, posY);
+
+    // Mouse Events
+    canvas.addEventListener("mousedown", function (e) {
         e.preventDefault(); // Prevent default browser drag behavior
-
-        // Only start drag if it's the primary mouse button (usually left)
-        if (e.button === 0) {
              dragging = true;
-             lastTouchDistance = null; // Reset pinch state
-
-             // Calculate start position relative to the image element's parent (photo-frame)
-             const parentRect = imgEl.parentElement.getBoundingClientRect();
-             // Record the mouse position *relative to the image element's current translated position*.
-             // This gives us the offset from the image's top-left corner (0,0 origin before translate)
-             // to the mouse pointer.
-             startX = e.clientX - parentRect.left - posX;
-             startY = e.clientY - parentRect.top - posY;
-
-             imgEl.style.cursor = 'grabbing'; // Change cursor while dragging
-        }
-
+        const rect = canvas.getBoundingClientRect();
+        startX = e.clientX - rect.left - posX;
+        startY = e.clientY - rect.top - posY;
+        canvas.style.cursor = 'grabbing'; // Change cursor while dragging
     });
 
-    // Use window for mousemove and mouseup to handle drags that might go outside the image element
-    window.addEventListener('mousemove', e => {
+    canvas.addEventListener("mousemove", function (e) {
         if (!dragging) return;
-         e.preventDefault(); // Prevent text selection during drag
-
-        // Calculate new position relative to the image element's container (photo-frame)
-        const parentRect = imgEl.parentElement.getBoundingClientRect();
-        // The new position is the current mouse position minus the recorded offset from the start
-        posX = e.clientX - parentRect.left - startX;
-        posY = e.clientY - parentRect.top - startY;
-
-        applyTransform(); // Apply the new position
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        posX = e.clientX - rect.left - startX;
+        posY = e.clientY - rect.top - startY;
+        applyCanvasTransform(canvas, ctx, scale, posX, posY);
     });
 
-    window.addEventListener('mouseup', () => {
-        if (dragging) { // Only reset if dragging was active
+    canvas.addEventListener("mouseup", function (e) {
             dragging = false;
-             // Restore grab cursor when drag ends
-            imgEl.style.cursor = 'grab';
-        }
+        canvas.style.cursor = 'grab';
     });
 
-    // Wheel event for zooming (Mouse)
-    imgEl.addEventListener('wheel', e => {
-        e.preventDefault(); // Prevent page scroll
+    // Mouse Wheel Zoom
+    canvas.addEventListener("wheel", function (e) {
+        e.preventDefault(); // Prevent page scroll zoom
 
-        const rect = imgEl.getBoundingClientRect();
-        // Mouse position relative to the image element's top-left (post-transform)
+        // Calculate zoom factor based on wheel delta (e.g., 1.05 for zoom in, 0.95 for zoom out)
+        const zoomFactor = e.deltaY < 0 ? 1.05 : 0.95;
+        const rect = canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
 
-        const scaleChange = e.deltaY < 0 ? 1.05 : 0.95; // Zoom factor (5% in or out)
+        posX -= (mouseX / scale) * (zoomFactor - scale);
+        posY -= (mouseY / scale) * (zoomFactor - scale);
 
-        // Calculate the new scale value
-        const newScale = Math.max(0.1, Math.min(10, scale * scaleChange)); // Limit scale between 0.1 and 10x original size
+        scale = zoomFactor;
 
-        // Adjust position to keep the mouse cursor point fixed relative to the image content
-        // This formula moves the image's top-left corner (posX, posY) so that the point at mouseX, mouseY
-        // relative to the element's current top-left remains at the same relative position *within the image content itself* after scaling.
-        // The divisor `scale` converts mouseX/mouseY from current scaled pixels to original element pixels.
-        posX -= (mouseX / scale) * (newScale - scale);
-        posY -= (mouseY / scale) * (newScale - scale);
-
-        scale = newScale; // Update the scale value
-        applyTransform(); // Apply the new scale and position
+        // Apply zoom and redraw
+        applyCanvasTransform(canvas, ctx, scale, posX, posY);
     }, { passive: false }); // Use passive: false to allow preventDefault
+} */
 
-    // --- Touch events ---
-    imgEl.addEventListener('touchstart', e => {
-        // Allow touch events if 1 or 2 fingers
-        if (e.touches.length === 1) {
-            e.preventDefault(); // Prevent default scrolling/gestures
+//DELETED: applyCanvasTransform function to apply the transform to the canvas
+/*function applyCanvasTransform(canvas, ctx, scale, posX, posY) {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            dragging = true; // Single touch enables dragging
-            lastTouchDistance = null; // Reset pinch state if it was active
+    // Set the transform
+    ctx.setTransform(scale, 0, 0, scale, posX, posY);
 
-            const touch = e.touches[0];
-            const parentRect = imgEl.parentElement.getBoundingClientRect();
-             // Record the *initial* touch position in parent coords for delta calculation
-            lastTouchX = touch.clientX - parentRect.left;
-            lastTouchY = touch.clientY - parentRect.top;
+    // Redraw the image
+    const img = new Image();
+    img.onload = () => {
+        drawCanvas(canvas, ctx, img);
+    };
+    img.src = canvas.toDataURL();
+}*/
 
-        } else if (e.touches.length === 2) {
-            e.preventDefault(); // Prevent default scrolling/gestures
-
-            dragging = false; // Stop dragging if two fingers are down
-            lastTouchX = null; lastTouchY = null; // Clear drag state for delta method
-
-            const [t1, t2] = e.touches;
-            // Calculate initial distance between fingers (using screen coordinates is fine for ratio)
-            lastDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
-        }
-    }, { passive: false });
-
-    imgEl.addEventListener('touchmove', e => {
-        const rect = imgEl.getBoundingClientRect();
-
-        if (e.touches.length === 1 && dragging) {
-            e.preventDefault(); // Prevent default scrolling/gestures
-
-            const touch = e.touches[0];
-            const parentRect = imgEl.parentElement.getBoundingClientRect();
-            // Current touch position in parent coords
-            const currentTouchX = touch.clientX - parentRect.left;
-            const currentTouchY = touch.clientY - parentRect.top;
-
-            // Calculate movement delta in parent pixels
-            const deltaX = currentTouchX - lastTouchX;
-            const deltaY = currentTouchY - lastTouchY;
-
-            // Update image position (posX/posY are the translation amounts)
-            posX += deltaX;
-            posY += deltaY;
-
-            // Record current position for next delta calculation
-            lastTouchX = currentTouchX;
-            lastTouchY = currentTouchY;
-
-            applyTransform(); // Apply the new position
-
-        } else if (e.touches.length === 2 && lastDist !== null) {
-            e.preventDefault(); // Prevent default scrolling/gestures
-
-            const [t1, t2] = e.touches;
-            const distance = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY); // Current distance (screen coords)
-            if (distance === 0) return; // Avoid division by zero
-
-            const scaleChange = distance / lastDist; // Zoom ratio (e.g., 1.1 for 10% zoom in)
-
-            const newScale = Math.max(0.1, Math.min(10, scale * scaleChange)); // Limit scale
-
-            // Calculate pinch center relative to the image element's top-left (post-transform)
-            const pinchCenterX = ((t1.clientX + t2.clientX) / 2) - rect.left;
-            const pinchCenterY = ((t1.clientY + t2.clientY) / 2) - rect.top;
-
-            // Adjust position to keep the pinch center fixed relative to the image content
-            posX -= (pinchCenterX / scale) * (newScale - scale);
-            posY -= (pinchCenterY / scale) * (newScale - scale);
-
-            scale = newScale; // Update the scale value
-            lastDist = distance; // Update last distance for next move event
-
-            applyTransform(); // Apply the new scale and position
-        }
-    }, { passive: false });
-
-    // Use window for touchend to ensure it's caught even if the touch ends outside the canvas
-    window.addEventListener('touchend', e => {
-        // If touches end such that less than 1 finger remains, stop dragging
-        if (e.touches.length < 1) {
-            dragging = false;
-            lastTouchX = null; lastTouchY = null; // Clear drag state
-            // No cursor change needed for touch events typically
-        }
-        // If touches end such that less than 2 fingers remain, reset pinch distance
-        if (e.touches.length < 2) {
-            lastDist = null;
-        }
-    });
-}
-
-
+//MODIFIED CANVAS MANIPULATION: updatePoster function to get the canvas content
 function updatePoster() {
     const beforeInput = document.getElementById('poster-image-before');
     const afterInput = document.getElementById('poster-image-after');
     const nameInput = document.getElementById('poster-name-info');
     const noteInput = document.getElementById('poster-note');
+    const namePill = document.getElementById('name-pill');
+    const noteBox = document.getElementById('note-box');
     // Get the "HEUTE XXXX" tag element specifically for the 'after' photo frame
     const tagAfterEl = posterNode ? posterNode.querySelector('.photo-frame.after .tag') : null;
 
-    // Update 'before' image source if a file is selected
+
+    namePill.textContent = nameInput.value;
+    noteBox.textContent = noteInput.value;
+    // show pill only when there is text
+    namePill.classList.toggle('hidden', nameInput.value.trim()==='');
+    noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
+
+    //MODIFIED: Update 'before' image source if a file is selected
     if (beforeImg) {
-        if (beforeInput && beforeInput.files && beforeInput.files[0]) setSrc(beforeImg, beforeInput.files[0]);
+        if (beforeInput && beforeInput.files && beforeInput.files[0]) {
+            //ADDED: Draw the uploaded image to the before canvas
+            const file = beforeInput.files[0];
+            const img = new Image();
+            img.onload = () => {
+                // Calculate initial dimensions and position
+                const canvasWidth = beforeCanvas.width;
+                const canvasHeight = beforeCanvas.height;
+                const imgAspectRatio = img.width / img.height;
+                const canvasAspectRatio = canvasWidth / canvasHeight;
+
+                let initialDrawWidth, initialDrawHeight, drawX, drawY;
+
+                if (imgAspectRatio > canvasAspectRatio) {
+                    initialDrawWidth = canvasWidth;
+                    initialDrawHeight = initialDrawWidth / imgAspectRatio;
+                } else {
+                    initialDrawHeight = canvasHeight;
+                    initialDrawWidth = initialDrawHeight * imgAspectRatio;
+                }
+
+                drawX = (canvasWidth - initialDrawWidth) / 2;
+                drawY = (canvasHeight - initialDrawHeight) / 2;
+
+                //ADDED: Clear the canvas before drawing the new image
+                beforeCtx.clearRect(0, 0, beforeCanvas.width, beforeCanvas.height);
+
+
+                //ADDED: Store the current transformation values
+                const currentX = beforeDrawnImage.x || drawX;
+                const currentY = beforeDrawnImage.y || drawY;
+                const currentWidth = beforeDrawnImage.width || initialDrawWidth;
+                const currentHeight = beforeDrawnImage.height || initialDrawHeight;
+
+
+                beforeDrawnImage = {
+                    img: img, //ADDED: Add the image
+                    x: currentX, //ADDED: Use the stored transformation values
+                    y: currentY, //ADDED: Use the stored transformation values
+                    width: currentWidth, //ADDED: Use the stored transformation values
+                    height: currentHeight, //ADDED: Use the stored transformation values
+                    initialWidth: initialDrawWidth,
+                    initialHeight: initialDrawHeight
+                };
+
+                drawCanvas(beforeCanvas, beforeCtx, beforeDrawnImage);
+                beforeImg.src = beforeCanvas.toDataURL(); // Set the img src to the canvas data URL
+            };
+            img.src = URL.createObjectURL(file);
+        }
         // Use a transparent pixel placeholder if no image is set (or if an error occurred)
         // Check both empty src and our specific placeholder data URL (starts with "data:,")
         else if (!beforeImg.src || beforeImg.src === window.location.href + '#' || beforeImg.src.startsWith("data:,")) {
@@ -413,30 +378,53 @@ function updatePoster() {
              beforeImg.style.transformOrigin = '';
         }
     }
-     // Update 'after' image source if a file is selected
+     //MODIFIED: Update 'after' image source if a file is selected
     if (afterImg) {
-        if (afterInput && afterInput.files && afterInput.files[0]) setSrc(afterImg, afterInput.files[0]);
+        // REMOVED: File loading logic from here. This is now handled in the change event listener for the input.
          // Use a transparent pixel placeholder if no image is set (or if an error occurred)
-         else if (!afterImg.src || afterImg.src === window.location.href + '#' || afterImg.src.startsWith("data:,")) {
+         // Keep this placeholder logic here as it's needed when the input is cleared
+         if ((!afterInput || !afterInput.files || !afterInput.files[0]) && (!afterDrawnImage || !afterDrawnImage.img)) {
              afterImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-             // Reset transform
+             // Reset transform if returning to placeholder
              afterImg.style.transform = '';
              afterImg.style.transformOrigin = '';
+        }
+         // If an image is loaded in drawnImage state, ensure the poster img reflects the canvas
+         else if (afterCanvas && afterDrawnImage && afterDrawnImage.img) {
+             // This might be redundant if updatePosterImagesFromCanvases is called elsewhere,
+             // but good for initial state.
+             afterImg.src = afterCanvas.toDataURL();
          }
-    }
-
-    // Update text content for name pill and note box
-    // Use optional chaining (`?.`) for safety in case elements aren't found or inputs are null
-    if (namePill && nameInput) namePill.textContent = nameInput.value.trim(); // Trim whitespace
-    if (noteBox && noteInput) noteBox.textContent = noteInput.value.trim(); // Trim whitespace
-
-    // Update the year in the "HEUTE" tag dynamically
-    if (tagAfterEl) {
-        const currentYear = new Date().getFullYear();
-        tagAfterEl.textContent = `HEUTE ${currentYear}`;
     }
 }
 
+//ADDED: drawCanvas function to draw the image on the canvas
+function drawCanvas(canvas, ctx, drawnImage) {
+    if (!canvas || !ctx || !drawnImage || !drawnImage.img) {
+        // If no image, just clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return; // Exit if no image is available to draw
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    ctx.drawImage(
+        drawnImage.img,
+        0, 0, drawnImage.img.width, drawnImage.img.height, // Source rect (entire image)
+        drawnImage.x, drawnImage.y, drawnImage.width, drawnImage.height // Destination rect on canvas
+    );
+}
+
+// NEW FUNCTION: Update the poster <img> elements from the canvases
+function updatePosterImagesFromCanvases() {
+    if (beforeImg && beforeCanvas) {
+         beforeImg.src = beforeCanvas.toDataURL();
+         // Ensure transforms are captured if set on the canvas context
+         // This is typically handled by toDataURL() but mentioning for clarity
+    }
+     if (afterImg && afterCanvas) {
+         afterImg.src = afterCanvas.toDataURL();
+     }
+}
 
 // ===========================================================
 // 5. Utility Functions (General Purpose)
@@ -653,7 +641,7 @@ if (coverCanvas) {
 
         const rect = coverCanvas.getBoundingClientRect(); // Get canvas position/size on screen
         // Convert mouse coordinates to canvas pixel coordinates (1080x1080 space)
-        const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect);
+        const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect, coverCanvas);
         const x = canvasCoords.x;
         const y = canvasCoords.y;
 
@@ -672,7 +660,7 @@ if (coverCanvas) {
         if (coverDragging && coverImage) { // Continue drag only if dragging is active and image is loaded
             const rect = coverCanvas.getBoundingClientRect(); // Get current canvas position/size
             // Convert current mouse coordinates to canvas pixel coordinates
-            const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect);
+            const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect, coverCanvas);
             const x = canvasCoords.x;
             const y = canvasCoords.y;
 
@@ -710,7 +698,7 @@ if (coverCanvas) {
 
          const rect = coverCanvas.getBoundingClientRect();
          // Get mouse position relative to the canvas in canvas pixels
-         const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect);
+         const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect, coverCanvas);
          const mouseCanvasX = canvasCoords.x;
          const mouseCanvasY = canvasCoords.y;
 
@@ -767,7 +755,7 @@ if (coverCanvas) {
 
             const touch = e.touches[0];
             // Convert touch coordinates to canvas pixel coordinates
-            const canvasCoords = getCanvasCoords(touch.clientX, touch.clientY, rect);
+            const canvasCoords = getCanvasCoords(touch.clientX, touch.clientY, rect, coverCanvas);
             const x = canvasCoords.x;
             const y = canvasCoords.y;
 
@@ -801,7 +789,7 @@ if (coverCanvas) {
 
             const touch = e.touches[0];
             // Convert current touch coordinates to canvas pixel coordinates
-            const canvasCoords = getCanvasCoords(touch.clientX, touch.clientY, rect);
+            const canvasCoords = getCanvasCoords(touch.clientX, touch.clientY, rect, coverCanvas);
             const x = canvasCoords.x;
             const y = canvasCoords.y;
 
@@ -818,6 +806,7 @@ if (coverCanvas) {
             lastMouseY = y;
 
             drawCoverCanvas(); // Redraw with the new position
+            updatePoster();
 
         } else if (e.touches.length === 2 && lastTouchDistance !== null) {
              // Ensure initial dimensions are available for scaling calculations
@@ -869,6 +858,7 @@ if (coverCanvas) {
 
 
             drawCoverCanvas(); // Redraw with scaled and repositioned image
+            updatePoster();
             lastTouchDistance = distance; // Update last distance for next move event
         }
     }, { passive: false });
@@ -1254,9 +1244,408 @@ document.addEventListener('DOMContentLoaded', () => {
     noteBox = document.getElementById('note-box');
     posterNode = document.getElementById('poster');
 
+    //ADDED: Get the before and after canvases and their contexts
+    beforeCanvas = document.getElementById('before-canvas');
+    afterCanvas = document.getElementById('after-canvas');
+    beforeCtx = beforeCanvas ? beforeCanvas.getContext('2d') : null;
+    afterCtx = afterCanvas ? afterCanvas.getContext('2d') : null;
+
     // Apply the custom drag/zoom functionality to the poster image elements
-    if (beforeImg) enableDragZoom(beforeImg);
-    if (afterImg) enableDragZoom(afterImg);
+    //if (beforeImg) enableDragZoom(beforeImg);
+    //if (afterImg) enableDragZoom(afterImg);
+
+    //MODIFIED: Apply the custom drag/zoom functionality to the canvases
+    //if (beforeCanvas) enableDragZoom(beforeCanvas);
+    //if (afterCanvas) enableDragZoom(afterCanvas);
+
+    //NEW: Drag and zoom for beforeCanvas
+    if (beforeCanvas) {
+        let beforeDragging = false;
+        let beforeLastMouseX, beforeLastMouseY;
+        let beforeScale = 1; //ADDED: track scale
+
+        beforeCanvas.addEventListener("mousedown", function (e) {
+            // Ensure drawnImage has an image before allowing drag
+            if (!beforeCanvas || !beforeCtx || !beforeDrawnImage.img) return;
+            e.preventDefault();
+
+            const rect = beforeCanvas.getBoundingClientRect();
+            //MODIFIED: Use beforeCanvas
+            const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect, beforeCanvas);
+            const x = canvasCoords.x;
+            const y = canvasCoords.y;
+
+            // Check if click is within the drawn image bounds (in canvas pixels)
+             if (x >= beforeDrawnImage.x && x <= beforeDrawnImage.x + beforeDrawnImage.width &&
+                 y >= beforeDrawnImage.y && y <= beforeDrawnImage.y + beforeDrawnImage.height) {
+                beforeDragging = true;
+                beforeLastMouseX = x;
+                beforeLastMouseY = y;
+                beforeCanvas.style.cursor = 'grabbing';
+            }
+        });
+
+        beforeCanvas.addEventListener("mousemove", function (e) {
+            if (!beforeDragging) return;
+            e.preventDefault();
+
+            //ADDED: Update canvasRect
+            const rect = beforeCanvas.getBoundingClientRect();
+             //MODIFIED: Use beforeCanvas
+            const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect, beforeCanvas);
+            const x = canvasCoords.x;
+            const y = canvasCoords.y;
+
+            //MODIFIED: Apply scale factor to deltaX and deltaY
+            // Removed division by beforeScale - drag delta should be in canvas pixels
+            const deltaX = (x - beforeLastMouseX);
+            const deltaY = (y - beforeLastMouseY);
+
+            beforeDrawnImage.x += deltaX;
+            beforeDrawnImage.y += deltaY;
+            drawCanvas(beforeCanvas, beforeCtx, beforeDrawnImage); // Redraw the canvas
+            updatePosterImagesFromCanvases(); // NEW: Update the visible poster image
+
+            beforeLastMouseX = x;
+            beforeLastMouseY = y;
+            // REMOVED: updatePoster(); // <-- This was causing the reset
+        });
+
+        beforeCanvas.addEventListener("mouseup", () => {
+            beforeDragging = false;
+            beforeCanvas.style.cursor = 'grab';
+        });
+
+        beforeCanvas.addEventListener("wheel", function (e) {
+            e.preventDefault();
+
+            //MODIFIED: Reduce zoom factor
+            const zoomFactor = e.deltaY < 0 ? 1.05 : 0.95;
+
+            const rect = beforeCanvas.getBoundingClientRect();
+             //MODIFIED: Use beforeCanvas
+            const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect, beforeCanvas);
+            const mouseCanvasX = canvasCoords.x;
+            const mouseCanvasY = canvasCoords.y;
+
+            const newWidth = beforeDrawnImage.width * zoomFactor;
+            const newHeight = beforeDrawnImage.height * zoomFactor;
+
+            //MODIFIED: Adjust x and y coordinates for zoom centering
+            beforeDrawnImage.x -= (mouseCanvasX - beforeDrawnImage.x) * (zoomFactor - 1);
+            beforeDrawnImage.y -= (mouseCanvasY - beforeDrawnImage.y) * (zoomFactor - 1);
+            beforeDrawnImage.width = newWidth;
+            beforeDrawnImage.height = newHeight;
+
+            drawCanvas(beforeCanvas, beforeCtx, beforeDrawnImage); // Redraw the canvas
+            updatePosterImagesFromCanvases(); // NEW: Update the visible poster image
+            beforeScale = beforeDrawnImage.width / beforeDrawnImage.initialWidth; //ADDED: track scale
+            // REMOVED: updatePoster(); // <-- This was causing the reset
+        }, { passive: false });
+
+         // ADDED: Touch Events for beforeCanvas (Similar to Cover Canvas)
+         let beforeLastTouchDistance = null; // For pinch zoom
+
+         beforeCanvas.addEventListener("touchstart", function (e) {
+              if (!beforeCanvas || !beforeDrawnImage.img) return;
+              const rect = beforeCanvas.getBoundingClientRect();
+
+              if (e.touches.length === 1) {
+                  e.preventDefault();
+                  const touch = e.touches[0];
+                  const canvasCoords = getCanvasCoords(touch.clientX, touch.clientY, rect, beforeCanvas);
+                  const x = canvasCoords.x;
+                  const y = canvasCoords.y;
+
+                  if (x >= beforeDrawnImage.x && x <= beforeDrawnImage.x + beforeDrawnImage.width &&
+                      y >= beforeDrawnImage.y && y <= beforeDrawnImage.y + beforeDrawnImage.height) {
+                      beforeDragging = true;
+                      beforeLastMouseX = x;
+                      beforeLastMouseY = y;
+                  }
+                   beforeLastTouchDistance = null; // Reset pinch distance
+              } else if (e.touches.length === 2) {
+                  e.preventDefault();
+                  beforeDragging = false;
+                  beforeLastMouseX = null; beforeLastMouseY = null;
+                  const [t1, t2] = e.touches;
+                  beforeLastTouchDistance = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+              }
+         }, { passive: false });
+
+         beforeCanvas.addEventListener("touchmove", function (e) {
+              if (!beforeCanvas || !beforeDrawnImage.img) return;
+              const rect = beforeCanvas.getBoundingClientRect();
+
+              if (e.touches.length === 1 && beforeDragging) {
+                  e.preventDefault();
+                  const touch = e.touches[0];
+                  const canvasCoords = getCanvasCoords(touch.clientX, touch.clientY, rect, beforeCanvas);
+                  const x = canvasCoords.x;
+                  const y = canvasCoords.y;
+
+                  const deltaX = x - beforeLastMouseX;
+                  const deltaY = y - beforeLastMouseY;
+
+                  beforeDrawnImage.x += deltaX;
+                  beforeDrawnImage.y += deltaY;
+                  drawCanvas(beforeCanvas, beforeCtx, beforeDrawnImage);
+                  updatePosterImagesFromCanvases(); // NEW: Update the visible poster image
+
+                  beforeLastMouseX = x;
+                  beforeLastMouseY = y;
+              } else if (e.touches.length === 2 && beforeLastTouchDistance !== null && beforeDrawnImage.initialWidth) {
+                  e.preventDefault();
+                  const [t1, t2] = e.touches;
+                  const distance = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+                   if (distance === 0) {
+                       beforeLastTouchDistance = distance;
+                       return;
+                   }
+
+                  const idealZoomFactor = distance / beforeLastTouchDistance;
+                  const currentScaleRelativeToFit = beforeDrawnImage.width / beforeDrawnImage.initialWidth;
+                  let potentialNewScaleRelativeToFit = currentScaleRelativeToFit * idealZoomFactor;
+                  const minScale = 0.1;
+                  const maxScale = 10;
+                  const clampedNewScaleRelativeToFit = Math.max(minScale, Math.min(maxScale, potentialNewScaleRelativeToFit));
+                  const actualZoomFactor = clampedNewScaleRelativeToFit / currentScaleRelativeToFit;
+
+                  if (Math.abs(actualZoomFactor - 1) < 0.001) {
+                      beforeLastTouchDistance = distance;
+                      return;
+                  }
+
+                  const pinchCenterX = ((t1.clientX + t2.clientX) / 2 - rect.left) * (beforeCanvas.width / rect.width);
+                  const pinchCenterY = ((t1.clientY + t2.clientY) / 2 - rect.top) * (beforeCanvas.height / rect.height);
+
+                  beforeDrawnImage.x -= (pinchCenterX - beforeDrawnImage.x) * (actualZoomFactor - 1);
+                  beforeDrawnImage.y -= (pinchCenterY - beforeDrawnImage.y) * (actualZoomFactor - 1);
+                  beforeDrawnImage.width *= actualZoomFactor;
+                  beforeDrawnImage.height *= actualZoomFactor;
+
+                  drawCanvas(beforeCanvas, beforeCtx, beforeDrawnImage);
+                  updatePosterImagesFromCanvases(); // NEW: Update the visible poster image
+                  beforeLastTouchDistance = distance;
+              }
+         }, { passive: false });
+
+         // Use window for touchend to ensure it's caught
+         window.addEventListener("touchend", function (e) {
+              if (e.touches.length < 1) {
+                  beforeDragging = false;
+                  beforeLastMouseX = null;
+                  beforeLastMouseY = null;
+              }
+              if (e.touches.length < 2) {
+                  beforeLastTouchDistance = null;
+              }
+         });
+    }
+
+    //NEW: Drag and zoom for afterCanvas
+    if (afterCanvas) {
+        let afterDragging = false;
+        let afterLastMouseX, afterLastMouseY;
+        let afterScale = 1; //ADDED: track scale
+
+        afterCanvas.addEventListener("mousedown", function (e) {
+            // Ensure drawnImage has an image before allowing drag
+            if (!afterCanvas || !afterCtx || !afterDrawnImage.img) return;
+            e.preventDefault();
+
+            const rect = afterCanvas.getBoundingClientRect();
+             //MODIFIED: Use afterCanvas
+            const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect, afterCanvas);
+            const x = canvasCoords.x;
+            const y = canvasCoords.y;
+
+            // Check if click is within the drawn image bounds (in canvas pixels)
+             if (x >= afterDrawnImage.x && x <= afterDrawnImage.x + afterDrawnImage.width &&
+                 y >= afterDrawnImage.y && y <= afterDrawnImage.y + afterDrawnImage.height) {
+                afterDragging = true;
+                afterLastMouseX = x;
+                afterLastMouseY = y;
+                afterCanvas.style.cursor = 'grabbing';
+            }
+        });
+
+        afterCanvas.addEventListener("mousemove", function (e) {
+           if (!afterDragging) return;
+            e.preventDefault();
+
+            const rect = afterCanvas.getBoundingClientRect();
+             //MODIFIED: Use beforeCanvas
+            const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect, afterCanvas);
+            const x = canvasCoords.x;
+            const y = canvasCoords.y;
+
+            //MODIFIED: Apply scale factor to deltaX and deltaY
+            // Removed division by afterScale - drag delta should be in canvas pixels
+            const deltaX = (x - afterLastMouseX);
+            const deltaY = (y - afterLastMouseY);
+
+            afterDrawnImage.x += deltaX;
+            afterDrawnImage.y += deltaY;
+            drawCanvas(afterCanvas, afterCtx, afterDrawnImage); // Redraw the canvas
+            updatePosterImagesFromCanvases(); // NEW: Update the visible poster image
+
+            afterLastMouseX = x;
+            afterLastMouseY = y;
+            // REMOVED: updatePoster(); // <-- This was causing the reset
+        });
+
+        afterCanvas.addEventListener("mouseup", () => {
+            afterDragging = false;
+            afterCanvas.style.cursor = 'grab';
+        });
+
+        afterCanvas.addEventListener("wheel", function (e) {
+             // Ensure initial dimensions are available for scaling calculations
+             if (!afterDrawnImage || !afterDrawnImage.img || !afterDrawnImage.initialWidth) return;
+            e.preventDefault();
+
+            //MODIFIED: Reduce zoom factor
+            const idealZoomFactor = e.deltaY < 0 ? 1.05 : 0.95;
+
+            const rect = afterCanvas.getBoundingClientRect();
+             //MODIFIED: Use afterCanvas
+            const canvasCoords = getCanvasCoords(e.clientX, e.clientY, rect, afterCanvas);
+            const mouseCanvasX = canvasCoords.x;
+            const mouseCanvasY = canvasCoords.y;
+
+            // Calculate current scale relative to the initial 'contain' fitted size
+            const currentScaleRelativeToFit = afterDrawnImage.width / afterDrawnImage.initialWidth;
+
+            // Calculate potential new scale relative to initial fit
+            let potentialNewScaleRelativeToFit = currentScaleRelativeToFit * idealZoomFactor;
+
+            // Clamp the new scale relative to fit between defined min and max limits
+            const minScale = 0.1; // Allow scaling down to 10% of original fitted size
+            const maxScale = 10; // Allow scaling up to 1000% of original fitted size
+            const clampedNewScaleRelativeToFit = Math.max(minScale, Math.min(maxScale, potentialNewScaleRelativeToFit));
+
+            // Calculate the actual zoom factor applied
+            const actualZoomFactor = clampedNewScaleRelativeToFit / currentScaleRelativeToFit;
+
+            // If actualZoomFactor is effectively 1, no zoom needs to be applied
+            if (Math.abs(actualZoomFactor - 1) < 0.001) return;
+
+            const newWidth = afterDrawnImage.width * actualZoomFactor;
+            const newHeight = afterDrawnImage.height * actualZoomFactor;
+
+            //MODIFIED: Adjust x and y coordinates for zoom centering
+            afterDrawnImage.x -= (mouseCanvasX - afterDrawnImage.x) * (actualZoomFactor - 1);
+            afterDrawnImage.y -= (mouseCanvasY - afterDrawnImage.y) * (actualZoomFactor - 1);
+            afterDrawnImage.width = newWidth;
+            afterDrawnImage.height = newHeight;
+
+            drawCanvas(afterCanvas, afterCtx, afterDrawnImage); // Redraw the canvas
+            updatePosterImagesFromCanvases(); // NEW: Update the visible poster image
+            afterScale =  afterDrawnImage.width / afterDrawnImage.initialWidth;; //ADDED: track scale
+            // REMOVED: updatePoster(); // <-- This was causing the reset
+        }, { passive: false });
+
+         // ADDED: Touch Events for afterCanvas (Similar to Cover Canvas)
+         let afterLastTouchDistance = null; // For pinch zoom
+
+         afterCanvas.addEventListener("touchstart", function (e) {
+             if (!afterCanvas || !afterDrawnImage.img) return;
+             const rect = afterCanvas.getBoundingClientRect();
+
+              if (e.touches.length === 1) {
+                  e.preventDefault();
+                  const touch = e.touches[0];
+                  const canvasCoords = getCanvasCoords(touch.clientX, touch.clientY, rect, afterCanvas);
+                  const x = canvasCoords.x;
+                  const y = canvasCoords.y;
+
+                   if (x >= afterDrawnImage.x && x <= afterDrawnImage.x + afterDrawnImage.width &&
+                       y >= afterDrawnImage.y && y <= afterDrawnImage.y + afterDrawnImage.height) {
+                      afterDragging = true;
+                      afterLastMouseX = x;
+                      afterLastMouseY = y;
+                  }
+                   afterLastTouchDistance = null; // Reset pinch distance
+              } else if (e.touches.length === 2) {
+                   e.preventDefault();
+                   afterDragging = false;
+                   afterLastMouseX = null; afterLastMouseY = null;
+                   const [t1, t2] = e.touches;
+                   afterLastTouchDistance = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+               }
+         }, { passive: false });
+
+         afterCanvas.addEventListener("touchmove", function (e) {
+             if (!afterCanvas || !afterDrawnImage.img) return;
+             const rect = afterCanvas.getBoundingClientRect();
+
+             if (e.touches.length === 1 && afterDragging) {
+                 e.preventDefault();
+                 const touch = e.touches[0];
+                 const canvasCoords = getCanvasCoords(touch.clientX, touch.clientY, rect, afterCanvas);
+                 const x = canvasCoords.x;
+                 const y = canvasCoords.y;
+
+                 const deltaX = x - afterLastMouseX;
+                 const deltaY = y - afterLastMouseY;
+
+                 afterDrawnImage.x += deltaX;
+                 afterDrawnImage.y += deltaY;
+                 drawCanvas(afterCanvas, afterCtx, afterDrawnImage);
+                 updatePosterImagesFromCanvases(); // NEW: Update the visible poster image
+
+                 afterLastMouseX = x;
+                 afterLastMouseY = y;
+             } else if (e.touches.length === 2 && afterLastTouchDistance !== null && afterDrawnImage.initialWidth) {
+                  e.preventDefault();
+                 const [t1, t2] = e.touches;
+                 const distance = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+                 if (distance === 0) {
+                       afterLastTouchDistance = distance;
+                       return;
+                   }
+
+                 const idealZoomFactor = distance / afterLastTouchDistance;
+                 const currentScaleRelativeToFit = afterDrawnImage.width / afterDrawnImage.initialWidth;
+                 let potentialNewScaleRelativeToFit = currentScaleRelativeToFit * idealZoomFactor;
+                 const minScale = 0.1;
+                 const maxScale = 10;
+                 const clampedNewScaleRelativeToFit = Math.max(minScale, Math.min(maxScale, potentialNewScaleRelativeToFit));
+                 const actualZoomFactor = clampedNewScaleRelativeToFit / currentScaleRelativeToFit;
+
+                 if (Math.abs(actualZoomFactor - 1) < 0.001) {
+                      afterLastTouchDistance = distance;
+                      return;
+                  }
+
+                 const pinchCenterX = ((t1.clientX + t2.clientX) / 2 - rect.left) * (afterCanvas.width / rect.width);
+                 const pinchCenterY = ((t1.clientY + t2.clientY) / 2 - rect.top) * (afterCanvas.height / rect.height);
+
+                 afterDrawnImage.x -= (pinchCenterX - afterDrawnImage.x) * (actualZoomFactor - 1);
+                 afterDrawnImage.y -= (pinchCenterY - afterDrawnImage.y) * (actualZoomFactor - 1);
+                 afterDrawnImage.width *= actualZoomFactor;
+                 afterDrawnImage.height *= actualZoomFactor;
+
+
+                 drawCanvas(afterCanvas, afterCtx, afterDrawnImage);
+                 updatePosterImagesFromCanvases(); // NEW: Update the visible poster image
+                 afterLastTouchDistance = distance;
+             }
+         }, { passive: false });
+
+         // Use window for touchend to ensure it's caught
+         window.addEventListener("touchend", function (e) {
+              if (e.touches.length < 1) {
+                  afterDragging = false;
+                  afterLastMouseX = null;
+                  afterLastMouseY = null;
+              }
+              if (e.touches.length < 2) {
+                  afterLastTouchDistance = null;
+              }
+         });
+    }
 
     // Initialize color state based on the first preset's colors
      if (colorPresets.length > 0) {
@@ -1328,8 +1717,100 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         ['poster-image-before', 'poster-image-after'].forEach(id => {
              const el = document.getElementById(id);
-             if (el) el.addEventListener('change', updatePoster);
-        });
+             if (el) {
+                  el.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        const isBefore = id === 'poster-image-before';
+                        const canvas = isBefore ? beforeCanvas : afterCanvas;
+                        const ctx = isBefore ? beforeCtx : afterCtx;
+                        const drawnImage = isBefore ? beforeDrawnImage : afterDrawnImage;
+                        const imgElement = isBefore ? beforeImg : afterImg;
+
+                        if (!file) {
+                            // Handle case where file input is cleared
+                            if (isBefore) beforeDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
+                            else afterDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
+                            drawCanvas(canvas, ctx, isBefore ? beforeDrawnImage : afterDrawnImage); // Clear canvas
+                            // Set the <img> src to a placeholder
+                            if (imgElement) imgElement.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+                            return;
+                        }
+
+                        const img = new Image();
+                        img.onload = function () {
+                            const canvasWidth = canvas.width;
+                            const canvasHeight = canvas.height;
+                            const imgAspectRatio = img.width / img.height;
+                            const canvasAspectRatio = canvasWidth / canvasHeight;
+
+                            let initialDrawWidth, initialDrawHeight, drawX, drawY;
+
+                            if (imgAspectRatio > canvasAspectRatio) {
+                                initialDrawWidth = canvasWidth;
+                                initialDrawHeight = initialDrawWidth / imgAspectRatio;
+                            } else {
+                                initialDrawHeight = canvasHeight;
+                                initialDrawWidth = initialDrawHeight * imgAspectRatio;
+                            }
+
+                            drawX = (canvasWidth - initialDrawWidth) / 2;
+                            drawY = (canvasHeight - initialDrawHeight) / 2;
+
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                            // Reset the drawnImage state completely for the NEW image
+                            const newDrawnImageState = {
+                                img: img,
+                                x: drawX,
+                                y: drawY,
+                                width: initialDrawWidth,
+                                height: initialDrawHeight,
+                                initialWidth: initialDrawWidth,
+                                initialHeight: initialDrawHeight
+                            };
+
+                            if (isBefore) {
+                                beforeDrawnImage = newDrawnImageState;
+                                // Reset drag/zoom state variables for this canvas
+                                beforeDragging = false; beforeLastMouseX = null; beforeLastMouseY = null; beforeLastTouchDistance = null; beforeScale = 1;
+                            } else {
+                                afterDrawnImage = newDrawnImageState;
+                                // Reset drag/zoom state variables for this canvas
+                                afterDragging = false; afterLastMouseX = null; afterLastMouseY = null; afterLastTouchDistance = null; afterScale = 1;
+                            }
+
+
+                            drawCanvas(canvas, ctx, newDrawnImageState);
+                            // Update the poster <img> element from the canvas
+                            if (imgElement) imgElement.src = canvas.toDataURL();
+                        };
+
+                        img.onerror = () => {
+                            alert("Error loading image.");
+                            // Reset drawnImage state and clear canvas/img src on error
+                            if (isBefore) {
+                                beforeDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
+                                if (beforeImg) beforeImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="; // Placeholder
+                            } else {
+                                afterDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
+                                if (afterImg) afterImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="; // Placeholder
+                            }
+                            if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+                        };
+
+                        // Revoke the previous object URL before creating a new one
+                        if (e.target.dataset.previousUrl) {
+                            URL.revokeObjectURL(e.target.dataset.previousUrl);
+                            delete e.target.dataset.previousUrl;
+                        }
+
+                        // Load the image using a blob URL
+                        const objectUrl = URL.createObjectURL(file);
+                        img.src = objectUrl;
+                        e.target.dataset.previousUrl = objectUrl;
+                   });
+              }
+         });
 
 
         // Download button listener for the Poster Generator
