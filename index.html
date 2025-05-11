@@ -47,24 +47,26 @@
 
   <div id="poster-generator" class="generator">
     
-    <div class="poster-image-inputs">
-      
-      <div class="box">
-        <label for="poster-image-before"><strong>Vorher-Foto:</strong><br>
-        <span class="label-description">Ein Foto von dir, bevor ME dein Leben stark beeinflusst hat.</span>
-        </label>
-        <input type="file" id="poster-image-before" accept="image/*">
-        <canvas id="before-canvas" width="300" height="300"></canvas>  <!-- Added canvas -->
+    <div class="box">
+      <div class="poster-image-inputs">
+  
+        <div >
+          <label for="poster-image-before"><strong>Vorher-Foto:</strong><br>
+          <span class="label-description">Ein Foto von dir, bevor ME dein Leben stark beeinflusst hat.</span>
+          </label>
+          <input type="file" id="poster-image-before" accept="image/*">
+          <canvas id="before-canvas" width="300" height="300"></canvas>  <!-- Added canvas -->
+        </div>
+  
+        <div class="box">
+          <label for="poster-image-after"><strong>Heute-Foto:</strong><br>
+          <span class="label-description">Ein aktuelles Foto, das deinen Zustand heute zeigt.</span>
+          </label>
+          <input type="file" id="poster-image-after"  accept="image/*">
+          <canvas id="after-canvas" width="300" height="300"></canvas>  <!-- Added canvas -->
+        </div>
       </div>
-
-      <div class="box">
-        <label for="poster-image-after"><strong>Heute-Foto:</strong><br>
-        <span class="label-description">Ein aktuelles Foto, das deinen Zustand heute zeigt.</span>
-        </label>
-        <input type="file" id="poster-image-after"  accept="image/*">
-        <canvas id="after-canvas" width="300" height="300"></canvas>  <!-- Added canvas -->
-      </div>
-      
+      <p class="canvas-info">Bilder können durch Ziehen und Zoomen bearbeitet werden.</p>
     </div>
 
     <div class="box">
