@@ -284,6 +284,8 @@ canvas {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 540px; /* Add this line */
+  margin: 0 auto;
 }
 
 #simple-mode.color-options,
