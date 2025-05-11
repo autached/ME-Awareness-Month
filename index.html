@@ -23,12 +23,21 @@
   </nav>
 
   <div id="cover-generator" class="generator">
-    <div class="box">
+      <h3>
+        1. WÄHLE EIN FOTO AUS
+      </h3>
+      
+      <div class="box">
+
       <label for="cover-image-upload"><strong>Foto:</strong><br>
        <span class="label-description">Wähle ein Foto von deinem Gerät, das dein Profilbild werden soll.</span>
       </label>
       <input type="file" id="cover-image-upload" accept="image/png, image/jpeg">
     </div>
+
+    <h3>
+        2. WÄHLE EINEN RAHMEN
+    </h3>
 
     <div class="box">
       <div class="template-selector">
@@ -36,7 +45,10 @@
       </div>
     </div>
 
-    <button onclick="downloadImage('cover')">Download</button>
+    <h3>
+        3. PASSE DEIN FOTO IM RAHMEN AN
+   </h3>
+
 
     <div class="box">
       <p class="label-description">Das Foto kann durch Ziehen und Zoomen bearbeitet werden.</p>
@@ -44,13 +56,26 @@
         <canvas id="cover-canvas" width="1080" height="1080"></canvas>
       </div>
     </div>
+
+   <h3>
+        4. ZUFRIEDEN? DANN KLICKE AUF DOWNLOAD
+   </h3>
+
+   <button onclick="downloadImage('cover')">Download</button>
+   
   </div>
 
   <div id="poster-generator" class="generator">
-    
+    <h3>
+        1. WÄHLE FOTOS AUS
+    </h3>
+
     <div class="box">
+
+
+
       <div class="poster-image-inputs">
-  
+        
         <div >
           <label for="poster-image-before"><strong>Vorher-Foto:</strong><br>
           <span class="label-description">Ein Foto von dir, bevor ME dein Leben stark beeinflusst hat.</span>
@@ -70,6 +95,10 @@
       <p class="label-description">Die Fotos können durch Ziehen und Zoomen bearbeitet werden.</p>
     </div>
 
+    <h3>
+        2. SCHREIBE ÜBER DICH
+    </h3>
+
     <div class="box">
       <label for="poster-name-info"><strong>Vorname, Alter, ME seit:</strong><br>
        <span class="label-description">Füge die Infos ein, die du teilen möchtest. Vorname, Alter, ME seit sind ein Vorschlag.</span>
@@ -84,8 +113,12 @@
       <textarea id="poster-note" rows="3" placeholder="Dein Text …"></textarea>
     </div>
 
+    <h3>
+        3. PASSE DIE FARBEN AN
+    </h3>
+
     <div class="box">
-      <label><strong>Farbmodus:</strong></label>
+      <label><strong>Farben anpassen:</strong></label>
       <div id="color-mode-buttons" class="button-group">
         <button id="color-mode-simple-btn" data-mode="simple">Einfach</button>
         <button id="color-mode-advanced-btn" data-mode="advanced">Erweitert</button>
@@ -129,6 +162,10 @@
                   <input type="color" id="note-text-color">
               </div>
             </div>
+
+            <h3>
+                4. ZUFRIEDEN? DANN KLICKE AUF DOWNLOAD
+            </h3>
 
             <button id="poster-download">Download</button>
         </div>
