@@ -169,10 +169,14 @@ canvas {
 /* Add this new style rule to style.css */
 .poster-image-inputs {
   display: flex;
-  justify-content: space-between; /* Distribute space evenly between items */
-  gap: 10px; /* Add some space between the inputs */
+  gap: 20px; /* Add some space between the inputs */
   margin: 0 auto;
   max-width: 540px;
+}
+
+.poster-image-inputs > .box {
+  margin:0 auto;
+  padding:0;
 }
 
 /* Target the labels within the flex container to take full width */
