@@ -42,7 +42,7 @@ function drawCoverCanvas() {
     if (!coverCtx) return;
     coverCtx.clearRect(0, 0, 1080, 1080); // Clear the entire canvas
 
-        // Create a circular clipping path
+    // Create a circular clipping path
     coverCtx.beginPath();
     coverCtx.arc(
         540,    // x-coordinate of the circle's center
@@ -61,6 +61,11 @@ function drawCoverCanvas() {
             0, 0, coverDrawnImage.img.width, coverDrawnImage.img.height, // Source rect (entire image)
             coverDrawnImage.x, coverDrawnImage.y, coverDrawnImage.width, coverDrawnImage.height // Destination rect on canvas
         );
+    }
+
+    // Draw the overlay on top, always covering the full canvas (assuming overlay is 1080x1080)
+    if (overlayImage.complete && overlayImage.src) {
+        coverCtx.drawImage(overlayImage, 0, 0, 1080, 1080);
     }
 }
 
@@ -320,7 +325,7 @@ function updatePoster() {
     namePill.textContent = nameInput.value;
     noteBox.textContent = noteInput.value;
     // show pill only when there is text
-    // namePill.classList.toggle('hidden', nameInput.value.trim()==='');
+    namePill.classList.toggle('hidden', nameInput.value.trim()==='');
     noteBox.classList.toggle('hidden', noteInput.value.trim()==='');
 
     //MODIFIED: Update 'before' image source if a file is selected
