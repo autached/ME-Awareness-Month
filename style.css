@@ -419,7 +419,7 @@ canvas {
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
-blockquote { width: 70vw; margin: 2vw auto 4vw ; font-size: 4vw; line-height: 1.25; text-align: center; font-weight: 500; overflow-wrap: break-word; padding:}
+blockquote { width: 70vw; margin: 2vw auto 4vw ; font-size: 4vw; line-height: 1.25; text-align: center; font-weight: 500; overflow-wrap: break-word;}
 
 .note-box {
     width: 75vw; height: 19vw; margin: 0 auto 0vw;
