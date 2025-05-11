@@ -166,6 +166,27 @@ canvas {
   color: var(--accent);
 }
 
+/* Add this new style rule to style.css */
+.poster-image-inputs {
+  display: flex;
+  justify-content: space-between; /* Distribute space evenly between items */
+  gap: 10px; /* Add some space between the inputs */
+  margin: 0 auto;
+  max-width: 540px;
+}
+
+/* Target the labels within the flex container to take full width */
+.poster-image-inputs > .box > label {
+    width: 100%; /* Make labels take full width of their parent */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+/* Target the inputs within the flex container to take 50% width */
+.poster-image-inputs > .box > input[type="file"] {
+    width: 100%; /* Make inputs take half the width of their parent */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
 .label-description {
   font-size: 0.8em;
   font-weight: normal;
