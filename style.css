@@ -390,6 +390,16 @@ canvas {
     box-sizing: border-box; padding: 2vw;
 }
 
+/* Add margin to the top of the poster when note-box is hidden */
+#poster-generator .poster-preview:not(:has(.note-box:not(.hidden))) {
+  padding: 80px; /* Adjust this value as needed */
+}
+
+#poster-generator .poster-preview:not(:has(.note-box:not(.hidden))) .ribbon {
+  bottom:240px;
+  right: 33px;
+}
+
 .poster-preview h1 { margin: 2vw 0 0; font-size: 10vw; line-height: 1; text-align: center; }
 .poster-preview h2 { margin: 0 0 3vw; font-size: 5vw; text-align: center; }
 .photos { display: flex; justify-content: center; gap: 2vw; }
