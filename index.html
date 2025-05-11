@@ -49,22 +49,24 @@
     <div class="box">
          <!-- <h3>Noch nicht ganz ausgereift. <br> Bei genug Energie einfach testen. Bei manchen klappt es.<br> Wir arbeiten an der Optimierung.</h1> -->
     </div>
-    <div class="box">
-      <label for="poster-image-before"><strong>Vorher-Foto:</strong><br>
-       <span class="label-description">Ein Foto von dir, bevor ME dein Leben stark beeinflusst hat.</span>
-      </label>
-      <input type="file" id="poster-image-before" accept="image/*">
-       <!-- Added canvas / image manipulation here instead of on poster -->
-      <canvas id="before-canvas" width="300" height="300"></canvas> 
+    <div class="poster-image-inputs">
+      
+      <div class="box">
+        <label for="poster-image-before"><strong>Vorher-Foto:</strong><br>
+        <span class="label-description">Ein Foto von dir, bevor ME dein Leben stark beeinflusst hat.</span>
+        </label>
+        <input type="file" id="poster-image-before" accept="image/*">
+        <canvas id="before-canvas" width="300" height="300"></canvas>  <!-- Added canvas -->
+      </div>
 
-
-      <label for="poster-image-after"><strong>Heute-Foto:</strong><br>
-       <span class="label-description">Ein aktuelles Foto, das deinen Zustand heute zeigt.</span>
-      </label>
-      <input type="file" id="poster-image-after"  accept="image/*">
-      <!-- Added canvas / image manipulation here instead of on poster -->
-      <canvas id="after-canvas" width="300" height="300"></canvas>
-
+      <div class="box">
+        <label for="poster-image-after"><strong>Heute-Foto:</strong><br>
+        <span class="label-description">Ein aktuelles Foto, das deinen Zustand heute zeigt.</span>
+        </label>
+        <input type="file" id="poster-image-after"  accept="image/*">
+        <canvas id="after-canvas" width="300" height="300"></canvas>  <!-- Added canvas -->
+      </div>
+      
     </div>
 
     <div class="box">
