@@ -393,12 +393,16 @@ canvas {
 
 /* Add margin to the top of the poster when note-box is hidden */
 #poster-generator .poster-preview:not(:has(.note-box:not(.hidden))) {
-  padding: 80px; /* Adjust this value as needed */
+  padding-top: 17vw; /* Adjust this value as needed */
 }
 
 #poster-generator .poster-preview:not(:has(.note-box:not(.hidden))) .ribbon {
-  bottom:240px;
-  right: 33px;
+  bottom:39vw;
+  right:3vw;
+}
+
+#poster-generator .poster-preview:not(:has(.note-box:not(.hidden))) .photo-frame {
+  margin-bottom: 2vw;
 }
 
 .poster-preview h1 { margin: 2vw 0 0; font-size: 10vw; line-height: 1; text-align: center; }
@@ -419,7 +423,7 @@ canvas {
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
-blockquote { width: 70vw; margin: 2vw auto 4vw ; font-size: 4vw; line-height: 1.25; text-align: center; font-weight: 500; overflow-wrap: break-word; }
+blockquote { width: 70vw; margin: 2vw auto 4vw ; font-size: 4vw; line-height: 1.25; text-align: center; font-weight: 500; overflow-wrap: break-word; padding:}
 
 .note-box {
     width: 75vw; height: 19vw; margin: 0 auto 0vw;
@@ -457,9 +461,23 @@ overflow: hidden; /* This is the key property */
 }
 
 @media (min-width: 600px) { /* Fixed sizes for poster *content* when poster-wrapper is ~540px */
-      .poster-preview {
+    .poster-preview {
         padding: 12px;  }  /* Fixed padding for the poster frame at this breakpoint */
  
+    /* Add margin to the top of the poster when note-box is hidden */
+    #poster-generator .poster-preview:not(:has(.note-box:not(.hidden))) {
+      padding-top: 101px; /* Adjust this value as needed */
+    }
+
+    #poster-generator .poster-preview:not(:has(.note-box:not(.hidden))) .ribbon {
+      bottom:235px;
+      right:18px;
+    }
+
+    #poster-generator .poster-preview:not(:has(.note-box:not(.hidden))) .photo-frame {
+      margin-bottom: 12px;
+    }
+
     .poster-preview h1 { font-size: 60px; margin: 12px 0 0; }
     .poster-preview h2 { font-size: 30px; margin: 0 0 18px; }
     .photos { gap: 12px; }
@@ -471,7 +489,7 @@ overflow: hidden; /* This is the key property */
         font-size: 21px; border-radius: 18px; padding: 0 10px;
     }
 
-    blockquote { width: 420px; margin: 12px auto 24px; font-size: 24px; }
+    blockquote { width: 420px; margin: 12px auto 24px; font-size: 24px;  }       
 
     .note-box {
         width: 450px; height: 113px;
