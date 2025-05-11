@@ -42,19 +42,25 @@ function drawCoverCanvas() {
     if (!coverCtx) return;
     coverCtx.clearRect(0, 0, 1080, 1080); // Clear the entire canvas
 
+        // Create a circular clipping path
+    coverCtx.beginPath();
+    coverCtx.arc(
+        540,    // x-coordinate of the circle's center
+        540,    // y-coordinate of the circle's center
+        540,    // Radius of the circle
+        0,      // Start angle (0 degrees)
+        2 * Math.PI  // End angle (360 degrees)
+    );
+    coverCtx.closePath();
+    coverCtx.clip();
+
     if (coverDrawnImage.img) {
         // Draw the user's image based on its current scaled position and dimensions
-        // Use the full source image (0,0,width,height) and draw it into the destination rectangle (x,y,width,height) on the canvas
         coverCtx.drawImage(
             coverDrawnImage.img,
             0, 0, coverDrawnImage.img.width, coverDrawnImage.img.height, // Source rect (entire image)
             coverDrawnImage.x, coverDrawnImage.y, coverDrawnImage.width, coverDrawnImage.height // Destination rect on canvas
         );
-    }
-
-    // Draw the overlay on top, always covering the full canvas (assuming overlay is 1080x1080)
-    if (overlayImage.complete && overlayImage.src) {
-        coverCtx.drawImage(overlayImage, 0, 0, 1080, 1080);
     }
 }
 
