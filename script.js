@@ -505,8 +505,8 @@ function downloadImage(type) {
 
             // Copy the original image sources (which might be blob URLs) and transform styles
             // This is crucial because html2canvas might not capture blob URLs or transforms correctly by default
-            if (beforeImg && clonedBeforeImg) {
-                clonedBeforeImg.src = beforeImg.src; // Use current src
+            if (beforeImg && clonedBeforeImg && beforeCanvas) {
+                clonedBeforeImg.src = beforeCanvas.toDataURL(); // Use data URL from canvas
                 clonedBeforeImg.style.transform = beforeImg.style.transform;
                 clonedBeforeImg.style.transformOrigin = beforeImg.style.transformOrigin;
                 clonedBeforeImg.style.objectFit = beforeImg.style.objectFit || 'contain'; // Ensure object-fit is copied
@@ -514,8 +514,8 @@ function downloadImage(type) {
                  clonedBeforeImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
                  clonedBeforeImg.style.objectFit = 'contain';
             }
-             if (afterImg && clonedAfterImg) {
-                clonedAfterImg.src = afterImg.src; // Use current src
+             if (afterImg && clonedAfterImg && afterCanvas) {
+                clonedAfterImg.src = afterCanvas.toDataURL(); // Use data URL from canvas
                  clonedAfterImg.style.transform = afterImg.style.transform;
                  clonedAfterImg.style.transformOrigin = afterImg.style.transformOrigin;
                  clonedAfterImg.style.objectFit = afterImg.style.objectFit || 'contain'; // Ensure object-fit is copied
