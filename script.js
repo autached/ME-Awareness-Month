@@ -568,7 +568,7 @@ function downloadImage(type) {
 
         // Use html2canvas to render the poster element into a canvas
         html2canvas(posterElement, {
-            scale: 2, // Render at 2x the element's layout size for better resolution
+            scale: 1, // Render at 2x the element's layout size for better resolution
             useCORS: true, // Allow cross-origin images (if server sends CORS headers)
             logging: false, // Disable html2canvas logs
             allowTaint: true, // Allow rendering images without CORS headers, but canvas might be tainted
