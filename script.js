@@ -33,6 +33,31 @@ let lastAppliedPresetColors = null; // Use this to remember colors when switchin
 let beforeDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
 let afterDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
 
+// ===========================================================
+// New: Poster Scenario State (Event/Severity/Photo Mode)
+// ===========================================================
+// Controls which poster scenario is active in the Poster Generator.
+// "may" = 12.05 ME Awareness Tag
+// "aug" = 08.08 severe ME Awareness Tag
+let posterEvent = 'may';
+// For aug scenario only: "severe" or "not-severe" (null when not relevant)
+let posterSeverity = null;
+// Photo mode for the active scenario: "with-photo" or "without-photo"
+let posterPhotoMode = 'with-photo';
+let posterScenarioInitialized = false; // initialize default selection only once
+
+// Aug 8 specific state and elements
+let augCanvas, augCtx, augNoPhotoCanvas, augNoPhotoCtx;
+let augTemplateImage = new Image(); // currently selected aug template image (with cutout or without)
+let augUserImage = null; // user's photo for aug
+let augDrawnImage = { img: null, x: 0, y: 0, width: 0, height: 0, initialWidth: 0, initialHeight: 0 };
+let augDragging = false;
+let augLastMouseX = null;
+let augLastMouseY = null;
+let augLastTouchDistance = null;
+let selectedAugTemplate = null; // filename or URL
+let augCutoutRect = null; // Detected cutout area in template (canvas coords)
+
 
 
 // ===========================================================
@@ -465,11 +490,24 @@ function setMode(selectedAppMode) {
          // Ensure cover canvas cursor is correct based on whether an image is loaded
          if (coverCanvas) coverCanvas.style.cursor = coverImage ? 'grab' : 'default';
     } else if (mode === 'poster' && posterGen) {
+        // One-time default: preselect Aug scenario in August, else May
+        if (!posterScenarioInitialized) {
+            const now = new Date();
+            const isAugust = now.getMonth() === 7; // 0-based; August = 7
+            posterEvent = isAugust ? 'aug' : 'may';
+            if (posterEvent === 'aug') {
+                posterSeverity = posterSeverity || 'not-severe';
+                posterPhotoMode = posterPhotoMode || 'with-photo';
+            }
+            posterScenarioInitialized = true;
+        }
         posterGen.style.display = 'block';
          // Ensure poster state is updated (text, images)
         updatePoster();
         // Ensure correct color UI is shown and colors are applied based on current state
         updateColorModeUIVisibility();
+        // Ensure new scenario controls are reflected in the UI
+        updatePosterScenarioUIVisibility();
     }
 
     // Update the active state for the mode selection buttons
@@ -494,6 +532,19 @@ function downloadImage(type) {
         triggerDownload(canvasToDownload, filename);
 
     } else if (type === 'poster') {
+        // If Aug event is active, export from dedicated canvases directly
+        if (posterEvent === 'aug') {
+            let canvasToDownload = null;
+            if (posterPhotoMode === 'with-photo') {
+                canvasToDownload = document.getElementById('aug-canvas');
+            } else {
+                canvasToDownload = document.getElementById('aug-nophoto-canvas');
+            }
+            if (!canvasToDownload) { alert('08.08. Poster Canvas nicht gefunden.'); return; }
+            triggerDownload(canvasToDownload, 'ME-aug-poster.png');
+            return;
+        }
+
         const posterElement = document.getElementById('poster');
         if (!posterElement) { alert("Poster element not found."); return; }
 
@@ -1245,6 +1296,80 @@ function updateColorModeUIVisibility() {
 }
 
 // ===========================================================
+// New: Poster Scenario UI Visibility Controller
+// ===========================================================
+function updatePosterScenarioUIVisibility() {
+    // Event buttons active state
+    const mayBtn = document.getElementById('poster-event-may-btn');
+    const augBtn = document.getElementById('poster-event-aug-btn');
+    if (mayBtn) mayBtn.classList.toggle('sticky-active', posterEvent === 'may');
+    if (augBtn) augBtn.classList.toggle('sticky-active', posterEvent === 'aug');
+
+    // Show/hide August-specific options
+    const augOptionsBox = document.getElementById('poster-aug-options');
+    if (augOptionsBox) augOptionsBox.classList.toggle('hidden', posterEvent !== 'aug');
+
+    // Severity buttons active state (only relevant for Aug)
+    const augSeveritySevereBtn = document.getElementById('poster-aug-severity-severe-btn');
+    const augSeverityNotSevereBtn = document.getElementById('poster-aug-severity-not-severe-btn');
+    if (posterEvent === 'aug') {
+        if (augSeveritySevereBtn) augSeveritySevereBtn.classList.toggle('sticky-active', posterSeverity === 'severe');
+        if (augSeverityNotSevereBtn) augSeverityNotSevereBtn.classList.toggle('sticky-active', posterSeverity === 'not-severe');
+    } else {
+        if (augSeveritySevereBtn) augSeveritySevereBtn.classList.remove('sticky-active');
+        if (augSeverityNotSevereBtn) augSeverityNotSevereBtn.classList.remove('sticky-active');
+    }
+
+    // Photo mode buttons active state (relevant when event is Aug; for May we still reflect selection)
+    const augPhotoWithBtn = document.getElementById('poster-aug-photo-with-btn');
+    const augPhotoWithoutBtn = document.getElementById('poster-aug-photo-without-btn');
+    if (augPhotoWithBtn) augPhotoWithBtn.classList.toggle('sticky-active', posterPhotoMode === 'with-photo');
+    if (augPhotoWithoutBtn) augPhotoWithoutBtn.classList.toggle('sticky-active', posterPhotoMode === 'without-photo');
+
+    // For May (old poster): show full control set. For Aug: hide May controls and show Aug generator.
+    const mayControls = [
+        document.getElementById('poster-h3-choose-photos'),
+        document.getElementById('poster-photos-helper'),
+        document.getElementById('poster-image-inputs-box'),
+        document.getElementById('poster-h3-write'),
+        document.getElementById('poster-name-box'),
+        document.getElementById('poster-note-box'),
+        document.getElementById('poster-h3-colors'),
+        document.getElementById('poster-color-mode-box'),
+        document.getElementById('poster-interactive-area'),
+        document.getElementById('poster-preview-column'),
+        document.getElementById('poster-h3-download'),
+        document.getElementById('poster-download')
+    ];
+    const augGeneratorBox = document.getElementById('aug-generator');
+
+    const isAug = posterEvent === 'aug';
+    mayControls.forEach(el => { if (el) el.classList.toggle('hidden', isAug); });
+    if (augGeneratorBox) augGeneratorBox.classList.toggle('hidden', !isAug);
+
+    // Within Aug: toggle between with-photo and without-photo sub-areas
+    const augWith = document.getElementById('aug-with-photo-controls');
+    const augWithout = document.getElementById('aug-without-photo-preview');
+    if (augWith) augWith.classList.toggle('hidden', posterPhotoMode !== 'with-photo');
+    if (augWithout) augWithout.classList.toggle('hidden', posterPhotoMode !== 'without-photo');
+
+    // For May poster, photos area is always visible (logic unchanged)
+
+    // When switching to Aug, ensure templates are loaded and canvases drawn
+    if (posterEvent === 'aug') {
+        loadAugTemplates();
+        if (posterPhotoMode === 'without-photo' && augTemplateImage && augTemplateImage.complete && augNoPhotoCanvas && augNoPhotoCtx) {
+            augNoPhotoCtx.clearRect(0, 0, augNoPhotoCanvas.width, augNoPhotoCanvas.height);
+            augNoPhotoCtx.drawImage(augTemplateImage, 0, 0, augNoPhotoCanvas.width, augNoPhotoCanvas.height);
+        }
+        if (posterPhotoMode === 'with-photo' && augCanvas && augCtx) {
+            drawCanvas(augCanvas, augCtx, augDrawnImage);
+            drawAugTemplateOverlay();
+        }
+    }
+}
+
+// ===========================================================
 // 8. DOMContentLoaded - Main Initialization
 // ===========================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -1260,6 +1385,12 @@ document.addEventListener('DOMContentLoaded', () => {
     afterCanvas = document.getElementById('after-canvas');
     beforeCtx = beforeCanvas ? beforeCanvas.getContext('2d') : null;
     afterCtx = afterCanvas ? afterCanvas.getContext('2d') : null;
+
+    // Aug canvases
+    augCanvas = document.getElementById('aug-canvas');
+    augCtx = augCanvas ? augCanvas.getContext('2d') : null;
+    augNoPhotoCanvas = document.getElementById('aug-nophoto-canvas');
+    augNoPhotoCtx = augNoPhotoCanvas ? augNoPhotoCanvas.getContext('2d') : null;
 
     // Apply the custom drag/zoom functionality to the poster image elements
     //if (beforeImg) enableDragZoom(beforeImg);
@@ -1681,13 +1812,171 @@ document.addEventListener('DOMContentLoaded', () => {
     // Populate the advanced color pickers with the initial/last applied colors
     updateAdvancedPickers(lastAppliedPresetColors);
 
-    // Set the initial mode of the application (Profile Picture Generator)
-    // This call handles loading cover templates and setting up the initial view.
-    setMode('cover');
+    // Set initial mode based on URL hash, default to cover
+    // Supported hashes:
+    //   #poster                 → open Poster tab (month-based default scenario)
+    //   #poster-aug             → Poster tab, Aug scenario (Ally + with photo default)
+    //   #poster-aug-severe      → Poster tab, Aug scenario, severe
+    //   #poster-aug-ally        → Poster tab, Aug scenario, ally (not severe)
+    //   #poster-aug-photo       → Poster tab, Aug scenario, with photo
+    //   #poster-aug-nophoto     → Poster tab, Aug scenario, without photo
+    //   #poster-may             → Poster tab, May scenario
+    (function initFromHash(){
+        const hash = (location.hash || '').toLowerCase();
+        if (!hash || !hash.startsWith('#poster')) { setMode('cover'); return; }
+
+        // Pre-initialize scenario so setMode doesn't override it
+        posterScenarioInitialized = true;
+        posterEvent = 'may';
+        posterSeverity = null;
+        posterPhotoMode = 'with-photo';
+
+        const parts = hash.substring(1).split('-'); // remove '#', split by '-'
+        // parts[0] === 'poster'
+        if (parts.includes('aug')) posterEvent = 'aug';
+        if (parts.includes('may')) posterEvent = 'may';
+        if (parts.includes('severe')) posterSeverity = 'severe';
+        if (parts.includes('ally')) posterSeverity = 'not-severe';
+        if (parts.includes('nophoto')) posterPhotoMode = 'without-photo';
+        if (parts.includes('photo')) posterPhotoMode = 'with-photo';
+
+        setMode('poster');
+    })();
 
     // Add event listeners specific to the Poster Generator section
     const posterGenSection = document.getElementById('poster-generator');
     if (posterGenSection) {
+        // =============================
+        // Scenario Selection Listeners
+        // =============================
+        const mayBtn = document.getElementById('poster-event-may-btn');
+        const augBtn = document.getElementById('poster-event-aug-btn');
+        const augSeveritySevereBtn = document.getElementById('poster-aug-severity-severe-btn');
+        const augSeverityNotSevereBtn = document.getElementById('poster-aug-severity-not-severe-btn');
+        const augPhotoWithBtn = document.getElementById('poster-aug-photo-with-btn');
+        const augPhotoWithoutBtn = document.getElementById('poster-aug-photo-without-btn');
+
+        if (mayBtn) mayBtn.addEventListener('click', () => { posterEvent = 'may'; posterSeverity = null; posterPhotoMode = 'with-photo'; updatePosterScenarioUIVisibility(); });
+        if (augBtn) augBtn.addEventListener('click', () => { posterEvent = 'aug'; if (!posterSeverity) posterSeverity = 'not-severe'; if (!posterPhotoMode) posterPhotoMode = 'with-photo'; updatePosterScenarioUIVisibility(); });
+        if (augSeveritySevereBtn) augSeveritySevereBtn.addEventListener('click', () => { posterSeverity = 'severe'; updatePosterScenarioUIVisibility(); });
+        if (augSeverityNotSevereBtn) augSeverityNotSevereBtn.addEventListener('click', () => { posterSeverity = 'not-severe'; updatePosterScenarioUIVisibility(); });
+        if (augPhotoWithBtn) augPhotoWithBtn.addEventListener('click', () => { posterPhotoMode = 'with-photo'; updatePosterScenarioUIVisibility(); });
+        if (augPhotoWithoutBtn) augPhotoWithoutBtn.addEventListener('click', () => { posterPhotoMode = 'without-photo'; updatePosterScenarioUIVisibility(); });
+
+        // Initial scenario UI sync for poster tab (default: May, with photo)
+        updatePosterScenarioUIVisibility();
+
+        // =============================
+        // Aug: drag/zoom for single-photo canvas
+        // =============================
+        if (augCanvas) {
+            augCanvas.addEventListener('mousedown', (e) => {
+                if (!augDrawnImage.img) return;
+                const rect = augCanvas.getBoundingClientRect();
+                const { x, y } = getCanvasCoords(e.clientX, e.clientY, rect, augCanvas);
+                if (x >= augDrawnImage.x && x <= augDrawnImage.x + augDrawnImage.width &&
+                    y >= augDrawnImage.y && y <= augDrawnImage.y + augDrawnImage.height) {
+                    augDragging = true; augLastMouseX = x; augLastMouseY = y; augCanvas.style.cursor = 'grabbing';
+                }
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (!augDragging || !augDrawnImage.img) return;
+                const rect = augCanvas.getBoundingClientRect();
+                const { x, y } = getCanvasCoords(e.clientX, e.clientY, rect, augCanvas);
+                const dx = x - augLastMouseX; const dy = y - augLastMouseY;
+                augDrawnImage.x += dx; augDrawnImage.y += dy; augLastMouseX = x; augLastMouseY = y;
+                drawCanvas(augCanvas, augCtx, augDrawnImage);
+                // Re-draw template overlay after moving image
+                drawAugTemplateOverlay();
+            });
+            window.addEventListener('mouseup', () => { if (augDragging) { augDragging = false; augCanvas.style.cursor = 'grab'; } });
+
+            augCanvas.addEventListener('wheel', (e) => {
+                if (!augDrawnImage.img || !augDrawnImage.initialWidth) return;
+                e.preventDefault();
+                const rect = augCanvas.getBoundingClientRect();
+                const { x: mx, y: my } = getCanvasCoords(e.clientX, e.clientY, rect, augCanvas);
+                const ideal = e.deltaY < 0 ? 1.05 : 0.95;
+                const currentScale = augDrawnImage.width / augDrawnImage.initialWidth;
+                const newScale = Math.max(0.1, Math.min(10, currentScale * ideal));
+                const factor = newScale / currentScale; if (Math.abs(factor - 1) < 0.001) return;
+                augDrawnImage.x -= (mx - augDrawnImage.x) * (factor - 1);
+                augDrawnImage.y -= (my - augDrawnImage.y) * (factor - 1);
+                augDrawnImage.width *= factor; augDrawnImage.height *= factor;
+                drawCanvas(augCanvas, augCtx, augDrawnImage);
+                drawAugTemplateOverlay();
+            }, { passive: false });
+
+            // Touch pinch/drag similar to cover
+            augCanvas.addEventListener('touchstart', (e) => {
+                if (!augDrawnImage.img) return;
+                const rect = augCanvas.getBoundingClientRect();
+                if (e.touches.length === 1) {
+                    const { x, y } = getCanvasCoords(e.touches[0].clientX, e.touches[0].clientY, rect, augCanvas);
+                    if (x >= augDrawnImage.x && x <= augDrawnImage.x + augDrawnImage.width &&
+                        y >= augDrawnImage.y && y <= augDrawnImage.y + augDrawnImage.height) {
+                        augDragging = true; augLastMouseX = x; augLastMouseY = y;
+                    }
+                    augLastTouchDistance = null;
+                } else if (e.touches.length === 2) {
+                    augDragging = false; augLastMouseX = null; augLastMouseY = null;
+                    const [t1, t2] = e.touches; augLastTouchDistance = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+                }
+            }, { passive: false });
+            augCanvas.addEventListener('touchmove', (e) => {
+                if (!augDrawnImage.img) return;
+                const rect = augCanvas.getBoundingClientRect();
+                if (e.touches.length === 1 && augDragging) {
+                    const { x, y } = getCanvasCoords(e.touches[0].clientX, e.touches[0].clientY, rect, augCanvas);
+                    const dx = x - augLastMouseX; const dy = y - augLastMouseY;
+                    augDrawnImage.x += dx; augDrawnImage.y += dy; augLastMouseX = x; augLastMouseY = y;
+                    drawCanvas(augCanvas, augCtx, augDrawnImage); drawAugTemplateOverlay();
+                } else if (e.touches.length === 2 && augLastTouchDistance !== null && augDrawnImage.initialWidth) {
+                    const [t1, t2] = e.touches; const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+                    const ideal = dist / augLastTouchDistance; const current = augDrawnImage.width / augDrawnImage.initialWidth;
+                    const newRel = Math.max(0.1, Math.min(10, current * ideal)); const factor = newRel / current;
+                    if (Math.abs(factor - 1) < 0.001) { augLastTouchDistance = dist; return; }
+                    const cx = ((t1.clientX + t2.clientX) / 2 - rect.left) * (augCanvas.width / rect.width);
+                    const cy = ((t1.clientY + t2.clientY) / 2 - rect.top) * (augCanvas.height / rect.height);
+                    augDrawnImage.x -= (cx - augDrawnImage.x) * (factor - 1);
+                    augDrawnImage.y -= (cy - augDrawnImage.y) * (factor - 1);
+                    augDrawnImage.width *= factor; augDrawnImage.height *= factor;
+                    drawCanvas(augCanvas, augCtx, augDrawnImage); drawAugTemplateOverlay(); augLastTouchDistance = dist;
+                }
+            }, { passive: false });
+            window.addEventListener('touchend', (e) => { if (e.touches.length < 1) { augDragging = false; augLastMouseX = null; augLastMouseY = null; } if (e.touches.length < 2) { augLastTouchDistance = null; } });
+        }
+
+        // Aug image upload listener
+        const augImageUpload = document.getElementById('aug-image-upload');
+        if (augImageUpload && augCanvas) {
+            augImageUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0]; if (!file) return;
+                const img = new Image();
+                img.onload = () => {
+                    augUserImage = img;
+                    // Fit into cutout if detected, otherwise center in full canvas
+                    if (augCutoutRect) {
+                        const { x, y, w, h } = augCutoutRect;
+                        const arImg = img.width / img.height; const arBox = w / h;
+                        let drawW, drawH;
+                        if (arImg > arBox) { drawH = h; drawW = drawH * arImg; } else { drawW = w; drawH = drawW / arImg; }
+                        const drawX = x + (w - drawW) / 2; const drawY = y + (h - drawH) / 2;
+                        augDrawnImage = { img, x: drawX, y: drawY, width: drawW, height: drawH, initialWidth: drawW, initialHeight: drawH };
+                    } else {
+                        const cw = augCanvas.width, ch = augCanvas.height;
+                        const imgAR = img.width / img.height; const canvasAR = cw / ch;
+                        let w, h; if (imgAR > canvasAR) { w = cw; h = w / imgAR; } else { h = ch; w = h * imgAR; }
+                        const x = (cw - w) / 2; const y = (ch - h) / 2;
+                        augDrawnImage = { img, x, y, width: w, height: h, initialWidth: w, initialHeight: h };
+                    }
+                    drawCanvas(augCanvas, augCtx, augDrawnImage);
+                    drawAugTemplateOverlay();
+                };
+                img.onerror = () => { alert('Fehler beim Laden des Fotos.'); };
+                const url = URL.createObjectURL(file); img.src = url; e.target.dataset.previousUrl && URL.revokeObjectURL(e.target.dataset.previousUrl); e.target.dataset.previousUrl = url;
+            });
+        }
 
         // Event listeners for the Simple/Advanced color mode switch buttons
         const simpleBtn = document.getElementById('color-mode-simple-btn');
@@ -1828,6 +2117,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const posterDownloadButton = document.getElementById('poster-download');
         if (posterDownloadButton) posterDownloadButton.addEventListener('click', () => downloadImage('poster'));
 
+        // Aug-specific download button
+        const augDownloadButton = document.getElementById('aug-download');
+        if (augDownloadButton) augDownloadButton.addEventListener('click', () => downloadImage('poster'));
+
+        // Share buttons (May/Poster and Aug)
+        // 12.05 share button removed per request
+        const augShareButton = document.getElementById('aug-share');
+        if (augShareButton) augShareButton.addEventListener('click', shareDeepLink);
+
          // Initial update of the poster content and colors if the poster generator is visible on load.
          // Since setMode('cover') is called first, the poster generator is initially hidden,
          // so this block is mostly for safety or if the initial mode were changed.
@@ -1846,6 +2144,154 @@ document.addEventListener('DOMContentLoaded', () => {
          coverCanvas.style.cursor = 'default';
      }
 });
+
+// =============================
+// Aug template handling helpers
+// =============================
+function loadAugTemplates() {
+    // Fetch list from assets/templates/poster-aug.json if available; otherwise no-op
+    fetch('assets/templates/poster-aug.json').then(r => r.ok ? r.json() : []).then(items => {
+        const container = document.querySelector('.aug-template-selector');
+        if (!container) return;
+        container.innerHTML = '';
+        const list = Array.isArray(items) ? items : [];
+
+        // Filter by severity and photo mode using filename conventions:
+        // - Ally:    prefix aug-poster-ally-
+        // - Severe:  prefix aug-poster-btn-
+        // - Suffix:  -photo or -nophoto
+        const severityPrefix = (posterSeverity === 'severe') ? 'aug-poster-btn-' : 'aug-poster-ally-';
+        const photoSuffix = (posterPhotoMode === 'with-photo') ? '-photo' : '-nophoto';
+        const filtered = list.filter(name => name.startsWith(severityPrefix) && name.includes(photoSuffix));
+
+        filtered.forEach(filename => {
+            const img = document.createElement('img');
+            img.src = `assets/templates/poster-aug/${filename}`;
+            img.className = 'template-thumb';
+            img.alt = filename;
+            img.onclick = () => selectAugTemplate(filename);
+            container.appendChild(img);
+        });
+        // Select first filtered template by default
+        if (filtered.length > 0) selectAugTemplate(filtered[0]);
+    }).catch(() => {
+        // silent fail if not present yet
+    });
+}
+
+function selectAugTemplate(filename) {
+    selectedAugTemplate = filename;
+    const src = `assets/templates/poster-aug/${filename}`;
+    augTemplateImage = new Image();
+    augTemplateImage.crossOrigin = 'anonymous';
+    augTemplateImage.onload = () => {
+        // Detect cutout after template loads
+        detectAugCutoutRect();
+        if (posterPhotoMode === 'with-photo') {
+            // Redraw user image then overlay
+            if (augCanvas && augCtx) {
+                drawCanvas(augCanvas, augCtx, augDrawnImage);
+                drawAugTemplateOverlay();
+            }
+        } else {
+            if (augNoPhotoCanvas && augNoPhotoCtx) {
+                augNoPhotoCtx.clearRect(0, 0, augNoPhotoCanvas.width, augNoPhotoCanvas.height);
+                augNoPhotoCtx.drawImage(augTemplateImage, 0, 0, augNoPhotoCanvas.width, augNoPhotoCanvas.height);
+            }
+        }
+    };
+    augTemplateImage.onerror = () => console.error('Fehler beim Laden der 08.08.-Vorlage:', src);
+    augTemplateImage.src = src;
+}
+
+function drawAugTemplateOverlay() {
+    // Draws the currently selected aug template on top of the user image canvas.
+    if (!augCanvas || !augCtx || !augTemplateImage || !augTemplateImage.complete) return;
+    augCtx.drawImage(augTemplateImage, 0, 0, augCanvas.width, augCanvas.height);
+    // Optionally visualize detected cutout while developing (commented out)
+    // if (augCutoutRect) {
+    //   augCtx.save(); augCtx.strokeStyle = 'rgba(0,255,0,0.7)'; augCtx.lineWidth = 4;
+    //   augCtx.strokeRect(augCutoutRect.x, augCutoutRect.y, augCutoutRect.w, augCutoutRect.h);
+    //   augCtx.restore();
+    // }
+}
+
+// Try to detect the rectangular cutout area in -photo templates
+// Heuristic: the transparent (or nearly transparent) rectangle with largest area
+// in the full-size template image once drawn into canvas dimensions.
+function detectAugCutoutRect() {
+    augCutoutRect = null;
+    if (!augTemplateImage || !augCanvas || !augCtx) return;
+    // Draw template to an offscreen canvas at target size
+    const off = document.createElement('canvas');
+    off.width = augCanvas.width; off.height = augCanvas.height;
+    const offCtx = off.getContext('2d');
+    offCtx.clearRect(0, 0, off.width, off.height);
+    offCtx.drawImage(augTemplateImage, 0, 0, off.width, off.height);
+    try {
+        const imgData = offCtx.getImageData(0, 0, off.width, off.height);
+        // Scan every Nth pixel to speed up; then refine
+        const step = 6;
+        let minX = off.width, minY = off.height, maxX = 0, maxY = 0;
+        let anyTransparent = false;
+        for (let y = 0; y < off.height; y += step) {
+            for (let x = 0; x < off.width; x += step) {
+                const idx = (y * off.width + x) * 4;
+                const a = imgData.data[idx + 3];
+                if (a < 10) { // nearly transparent
+                    anyTransparent = true;
+                    if (x < minX) minX = x;
+                    if (y < minY) minY = y;
+                    if (x > maxX) maxX = x;
+                    if (y > maxY) maxY = y;
+                }
+            }
+        }
+        if (anyTransparent) {
+            // Expand bounds by step to approximate full extent
+            minX = Math.max(0, minX - step);
+            minY = Math.max(0, minY - step);
+            maxX = Math.min(off.width - 1, maxX + step);
+            maxY = Math.min(off.height - 1, maxY + step);
+            // Quick refinement: scan all pixels in the rough box to tighten
+            let rminX = maxX, rminY = maxY, rmaxX = minX, rmaxY = minY;
+            for (let y = minY; y <= maxY; y++) {
+                for (let x = minX; x <= maxX; x++) {
+                    const idx = (y * off.width + x) * 4;
+                    const a = imgData.data[idx + 3];
+                    if (a < 10) {
+                        if (x < rminX) rminX = x;
+                        if (y < rminY) rminY = y;
+                        if (x > rmaxX) rmaxX = x;
+                        if (y > rmaxY) rmaxY = y;
+                    }
+                }
+            }
+            if (rmaxX > rminX && rmaxY > rminY) {
+                augCutoutRect = { x: rminX, y: rminY, w: rmaxX - rminX + 1, h: rmaxY - rminY + 1 };
+                // If we have a user image, re-fit it into this area initially
+                if (augDrawnImage && augDrawnImage.img) fitAugImageIntoCutout();
+            }
+        }
+    } catch (e) {
+        // getImageData can fail due to taint; rely on manual alignment then
+        augCutoutRect = null;
+    }
+}
+
+// Fit current user image into detected cutout while preserving aspect ratio
+function fitAugImageIntoCutout() {
+    if (!augCutoutRect || !augDrawnImage || !augDrawnImage.img) return;
+    const { x, y, w, h } = augCutoutRect;
+    const img = augDrawnImage.img;
+    const arImg = img.width / img.height;
+    const arBox = w / h;
+    let drawW, drawH;
+    if (arImg > arBox) { drawH = h; drawW = drawH * arImg; } else { drawW = w; drawH = drawW / arImg; }
+    const drawX = x + (w - drawW) / 2;
+    const drawY = y + (h - drawH) / 2;
+    augDrawnImage = { img, x: drawX, y: drawY, width: drawW, height: drawH, initialWidth: drawW, initialHeight: drawH };
+}
 
 // Clean up object URLs when the page unloads to prevent memory leaks.
 // This is important for blob URLs created from file inputs.
@@ -1866,3 +2312,41 @@ window.addEventListener('beforeunload', () => {
            delete afterImgEl.dataset.objectUrl; // Clean up attribute
      }
 });
+
+// Build a deep link for current poster scenario and share/copy
+function shareDeepLink() {
+    // Base URL without hash + UTM params for share attribution
+    const base = location.origin + location.pathname + '?utm_source=share&utm_medium=button&utm_campaign=me-awareness';
+    let hash = '#poster';
+    if (posterEvent === 'aug') {
+        const parts = ['poster', 'aug'];
+        if (posterSeverity === 'severe') parts.push('severe');
+        if (posterSeverity === 'not-severe') parts.push('ally');
+        parts.push(posterPhotoMode === 'without-photo' ? 'nophoto' : 'photo');
+        hash = '#' + parts.join('-');
+    } else {
+        hash = '#poster-may';
+    }
+    const url = base + hash;
+
+    if (navigator.share) {
+        navigator.share({ title: 'ME Awareness Generator', url }).catch(() => copyToClipboard(url));
+    } else {
+        copyToClipboard(url);
+    }
+}
+
+function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => alert('Link kopiert: ' + text)).catch(() => fallbackCopy(text));
+    } else {
+        fallbackCopy(text);
+    }
+}
+
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); alert('Link kopiert: ' + text); } catch(e) { prompt('Link zum Kopieren:', text); }
+    document.body.removeChild(ta);
+}
