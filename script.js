@@ -2165,8 +2165,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // Aug template handling helpers
 // =============================
 function loadAugTemplates() {
-    // Fetch list from assets/templates/poster-aug.json if available; otherwise no-op
-    fetch('assets/templates/poster-aug.json').then(r => r.ok ? r.json() : []).then(items => {
+    // Fetch list with cache-busting to ensure latest JSON after uploads
+    const url = 'assets/templates/poster-aug.json?cb=' + Date.now();
+    fetch(url, { cache: 'no-store' }).then(r => r.ok ? r.json() : []).then(items => {
         const container = document.querySelector('.aug-template-selector');
         if (!container) return;
         container.innerHTML = '';
@@ -2198,6 +2199,14 @@ function loadAugTemplates() {
         });
         // Select first filtered template by default
         if (filtered.length > 0) selectAugTemplate(filtered[0]);
+        else {
+            // Show an informative message if none match current filters
+            const msg = document.createElement('div');
+            msg.style.color = '#ccc';
+            msg.style.margin = '8px 0';
+            msg.textContent = 'Keine passenden Vorlagen gefunden.';
+            container.appendChild(msg);
+        }
     }).catch(() => {
         // silent fail if not present yet
     });
