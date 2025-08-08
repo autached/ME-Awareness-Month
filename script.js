@@ -2181,13 +2181,15 @@ function loadAugTemplates() {
         //   without:   contains "nophoto" OR "no-photo"
         const severityPrefix = (posterSeverity === 'severe') ? 'aug-poster-btn-' : 'aug-poster-ally-';
         const wantsPhoto = (posterPhotoMode === 'with-photo');
-        const filtered = list.filter(nameOrig => {
+        let filtered = list.filter(nameOrig => {
             const name = String(nameOrig).toLowerCase();
             if (!name.startsWith(severityPrefix)) return false;
             const hasNoPhoto = name.includes('nophoto') || name.includes('no-photo');
             const hasPhoto = name.includes('-photo');
             return wantsPhoto ? (hasPhoto && !hasNoPhoto) : hasNoPhoto;
         });
+        // Ensure predictable ordering A→Z regardless of JSON order
+        filtered = filtered.sort((a, b) => String(a).toLowerCase().localeCompare(String(b).toLowerCase()));
 
         filtered.forEach(filename => {
             const img = document.createElement('img');
