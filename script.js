@@ -514,6 +514,21 @@ function setMode(selectedAppMode) {
     document.querySelectorAll('#mode-select button').forEach(btn => {
         btn.classList.toggle('sticky-active', btn.id === (mode + '-button'));
     });
+
+    // Reflect selection in URL hash for shareability/navigation
+    if (mode === 'cover') {
+        updateUrlHash('#cover');
+    } else if (mode === 'poster') {
+        updateUrlHash('#poster'); // month-based default will still apply for deep links
+    }
+}
+
+// Helper: update hash without scrolling or adding extra history entries
+function updateUrlHash(hash) {
+    const base = location.pathname + location.search;
+    if (location.hash !== hash) {
+        history.replaceState(null, '', base + hash);
+    }
 }
 
 function downloadImage(type) {
@@ -1825,21 +1840,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const hash = (location.hash || '').toLowerCase();
         if (!hash || !hash.startsWith('#poster')) { setMode('cover'); return; }
 
-        // Pre-initialize scenario so setMode doesn't override it
-        posterScenarioInitialized = true;
-        posterEvent = 'may';
-        posterSeverity = null;
-        posterPhotoMode = 'with-photo';
-
         const parts = hash.substring(1).split('-'); // remove '#', split by '-'
-        // parts[0] === 'poster'
-        if (parts.includes('aug')) posterEvent = 'aug';
-        if (parts.includes('may')) posterEvent = 'may';
-        if (parts.includes('severe')) posterSeverity = 'severe';
-        if (parts.includes('ally')) posterSeverity = 'not-severe';
-        if (parts.includes('nophoto')) posterPhotoMode = 'without-photo';
-        if (parts.includes('photo')) posterPhotoMode = 'with-photo';
+        // If only '#poster' provided, let month-based default decide inside setMode('poster')
+        if (parts.length === 1) { // ['poster']
+            posterScenarioInitialized = false; // allow month-based preselection
+            setMode('poster');
+            return;
+        }
 
+        // Otherwise, explicitly set scenario from hash and lock it in
+        posterScenarioInitialized = true;
+        posterEvent = parts.includes('aug') ? 'aug' : (parts.includes('may') ? 'may' : 'may');
+        posterSeverity = parts.includes('severe') ? 'severe' : (parts.includes('ally') ? 'not-severe' : null);
+        posterPhotoMode = parts.includes('nophoto') ? 'without-photo' : 'with-photo';
         setMode('poster');
     })();
 
@@ -2125,6 +2138,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // 12.05 share button removed per request
         const augShareButton = document.getElementById('aug-share');
         if (augShareButton) augShareButton.addEventListener('click', shareDeepLink);
+
+        const globalShareButton = document.getElementById('global-share');
+        if (globalShareButton) globalShareButton.addEventListener('click', shareDeepLink);
 
          // Initial update of the poster content and colors if the poster generator is visible on load.
          // Since setMode('cover') is called first, the poster generator is initially hidden,
