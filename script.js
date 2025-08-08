@@ -2175,10 +2175,18 @@ function loadAugTemplates() {
         // Filter by severity and photo mode using filename conventions:
         // - Ally:    prefix aug-poster-ally-
         // - Severe:  prefix aug-poster-btn-
-        // - Suffix:  -photo or -nophoto
+        // - Photo tokens accepted:
+        //   with photo: contains "-photo" but NOT "nophoto"/"no-photo"
+        //   without:   contains "nophoto" OR "no-photo"
         const severityPrefix = (posterSeverity === 'severe') ? 'aug-poster-btn-' : 'aug-poster-ally-';
-        const photoSuffix = (posterPhotoMode === 'with-photo') ? '-photo' : '-nophoto';
-        const filtered = list.filter(name => name.startsWith(severityPrefix) && name.includes(photoSuffix));
+        const wantsPhoto = (posterPhotoMode === 'with-photo');
+        const filtered = list.filter(nameOrig => {
+            const name = String(nameOrig).toLowerCase();
+            if (!name.startsWith(severityPrefix)) return false;
+            const hasNoPhoto = name.includes('nophoto') || name.includes('no-photo');
+            const hasPhoto = name.includes('-photo');
+            return wantsPhoto ? (hasPhoto && !hasNoPhoto) : hasNoPhoto;
+        });
 
         filtered.forEach(filename => {
             const img = document.createElement('img');
