@@ -71,11 +71,61 @@
 
   <div id="poster-generator" class="generator">
     <h3>
-        1. WÄHLE FOTOS AUS
+        AUSWAHL: ANLASS UND OPTIONEN
     </h3>
-    <p class="label-description">Die Fotos können durch Ziehen und Zoomen angepasst werden.</p>
 
     <div class="box">
+      <label><strong>Anlass wählen:</strong></label>
+      <div id="poster-event-buttons" class="button-group">
+        <button id="poster-event-may-btn" data-event="may">12.05. ME Awareness Tag</button>
+        <button id="poster-event-aug-btn" data-event="aug">08.08. severe ME Awareness Tag</button>
+      </div>
+    </div>
+
+    <div id="poster-aug-options" class="box hidden">
+      <label><strong>Optionen für 08.08.:</strong></label>
+      <div class="button-group" style="margin-top: 8px;">
+        <button id="poster-aug-severity-not-severe-btn" data-severity="not-severe">Ich bin Ally - nicht schwer/st ME</button>
+        <button id="poster-aug-severity-severe-btn" data-severity="severe">Ich habe schwer/ste ME</button>
+      </div>
+      <div class="button-group" style="margin-top: 8px;">
+        <button id="poster-aug-photo-with-btn" data-photo="with">mit Foto</button>
+        <button id="poster-aug-photo-without-btn" data-photo="without">ohne Foto</button>
+      </div>
+    </div>
+
+    <!-- 08.08. simplified generator (separate from May poster) -->
+    <div id="aug-generator" class="box hidden">
+      <label><strong>Vorlage wählen (08.08.):</strong></label>
+      <div class="aug-template-selector" style="text-align:center; margin-bottom: 12px;"></div>
+
+      <div id="aug-with-photo-controls" class="aug-controls hidden">
+        <label for="aug-image-upload"><strong>Foto:</strong><br>
+          <span class="label-description">Ein Foto von dir, das in die Vorlage eingesetzt wird.</span>
+        </label>
+        <input type="file" id="aug-image-upload" accept="image/*">
+        <div class="canvas-container">
+          <canvas id="aug-canvas" width="1080" height="1350"></canvas>
+        </div>
+      </div>
+
+      <div id="aug-without-photo-preview" class="aug-controls hidden">
+        <div class="canvas-container">
+          <canvas id="aug-nophoto-canvas" width="1080" height="1350"></canvas>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top: 12px;">
+        <button id="aug-download">Download</button>
+      </div>
+    </div>
+
+    <h3 id="poster-h3-choose-photos">
+        1. WÄHLE FOTOS AUS
+    </h3>
+    <p id="poster-photos-helper" class="label-description">Die Fotos können durch Ziehen und Zoomen angepasst werden.</p>
+
+    <div id="poster-image-inputs-box" class="box">
       <div class="poster-image-inputs">
   
         <div >
@@ -96,29 +146,29 @@
       </div>
     </div>
 
-    <h3>
+    <h3 id="poster-h3-write">
         2. SCHREIBE ÜBER DICH
     </h3>
 
-    <div class="box">
+    <div class="box" id="poster-name-box">
       <label for="poster-name-info"><strong>Vorname, Alter, ME seit:</strong><br>
        <span class="label-description">Füge die Infos ein, die du teilen möchtest. Vorname, Alter, ME seit sind ein Vorschlag.</span>
       </label>
       <input type="text" id="poster-name-info" placeholder="Anna, 32 J., ME seit 2016">
     </div>
 
-    <div class="box">
+    <div class="box" id="poster-note-box">
       <label for="poster-note"><strong>Optional Platz für deinen Input:</strong><br>
         <span class="label-description">Was du anderen zu ME mitteilen möchtest. // Kann leer bleiben, wenn dir nichts einfällt. Das Poster-Design passt sich an. </span>
       </label>
       <textarea id="poster-note" rows="3" placeholder="Dein Text …"></textarea>
     </div>
 
-    <h3>
+    <h3 id="poster-h3-colors">
         3. PASSE DIE FARBEN AN
     </h3>
 
-    <div class="box">
+    <div class="box" id="poster-color-mode-box">
       <label><strong>Farben anpassen:</strong></label>
       <div id="color-mode-buttons" class="button-group">
         <button id="color-mode-simple-btn" data-mode="simple">Einfach</button>
@@ -165,7 +215,7 @@
             </div>
         </div>
 
-        <div class="poster-preview-column">
+        <div class="poster-preview-column" id="poster-preview-column">
             <div class="poster-wrapper">
               <div id="poster" class="poster-preview">
                 <h1>12. MAI</h1>
@@ -195,7 +245,7 @@
      
     </div>
 
-    <h3>
+    <h3 id="poster-h3-download">
         4. ZUFRIEDEN? DANN RUNTERLADEN 
     </h3>
 
