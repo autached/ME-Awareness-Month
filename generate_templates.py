@@ -57,7 +57,7 @@ def main():
     # Save them to JSON
     save_json(cover_files, cover_json_path)
     save_json(poster_files, poster_json_path)
-    save_json(poster-aug_files, poster_aug_json_path) #new
+    save_json(poster_aug_files, poster_aug_json_path) #new
 
 # This runs when you execute the file: python generate_templates.py
 if __name__ == "__main__":
