@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ME Awareness Generator</title>
+  <!-- Open Graph / Twitter for rich link previews -->
+  <meta property="og:title" content="ME Awareness Generator – mecfs.space">
+  <meta property="og:description" content="Erstelle dein ME Awareness Profilbild oder Poster – komplett im Browser.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://memonat.mecfs.space/">
+  <meta property="og:image" content="/assets/templates/poster/poster-template.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ME Awareness Generator – mecfs.space">
+  <meta name="twitter:description" content="Erstelle dein ME Awareness Profilbild oder Poster – komplett im Browser.">
+  <meta name="twitter:image" content="/assets/templates/poster/poster-template.png">
   <link rel="stylesheet" href="style.css">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -14,6 +24,9 @@
   <header>
     <h1>ME Awareness Monat - Bild Generator</h1>
     <p> von der Initiative <a href="https://link.mecfs.space">@mecfs.space</a></p>
+    <p style="margin-top:10px;">
+      <a class="primary-donate-link" href="https://mecfs-research.org/en/support" target="_blank" rel="noopener noreferrer">Jetzt an ME-Forschung spenden</a>
+    </p>
   </header>
   <nav>
     <div id="mode-select">
@@ -249,7 +262,9 @@
         4. ZUFRIEDEN? DANN RUNTERLADEN 
     </h3>
 
-    <button id="poster-download">Download</button>
+    <div style="text-align:center;">
+      <button id="poster-download">Download</button>
+    </div>
     
     <h3>
         TEILE UNSEREN GENERATOR MIT ANDEREN <br>
@@ -260,6 +275,9 @@
   </div>
 
   <script src="script.js"></script>
+  <script>
+    // Optional: Social share intent helper in HTML (kept minimal; logic lives in script.js)
+  </script>
   
 </body>
 
