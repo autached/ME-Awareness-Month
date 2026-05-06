@@ -68,6 +68,7 @@ function drawCoverCanvas() {
     coverCtx.clearRect(0, 0, 1080, 1080); // Clear the entire canvas
 
     // Create a circular clipping path
+    /*
     coverCtx.beginPath();
     coverCtx.arc(
         540,    // x-coordinate of the circle's center
@@ -78,6 +79,7 @@ function drawCoverCanvas() {
     );
     coverCtx.closePath();
     coverCtx.clip();
+    */
 
     if (coverDrawnImage.img) {
         // Draw the user's image based on its current scaled position and dimensions
